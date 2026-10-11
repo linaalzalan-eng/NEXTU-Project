@@ -1,0 +1,48 @@
+{
+  "permissions": {
+    "ask": [
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "PowerShell(git commit *)",
+      "PowerShell(git push *)",
+      "Bash(vercel *)",
+      "PowerShell(vercel *)",
+      "Bash(npx vercel *)",
+      "PowerShell(npx vercel *)"
+    ],
+    "deny": [
+      "Read(**/.env)",
+      "Read(**/.env.local)",
+      "Read(**/.env.*.local)",
+      "Read(**/.env.development)",
+      "Read(**/.env.production)",
+      "Read(**/.env.test)",
+      "Edit(**/.env)",
+      "Edit(**/.env.local)",
+      "Edit(**/.env.*.local)",
+      "Edit(**/.env.development)",
+      "Edit(**/.env.production)",
+      "Edit(**/.env.test)",
+      "Bash(* .env)",
+      "Bash(* .env *)",
+      "Bash(*/.env)",
+      "Bash(*/.env *)",
+      "Bash(*.env.local*)",
+      "Bash(*.env.*.local*)",
+      "Bash(*.env.development*)",
+      "Bash(*.env.production*)",
+      "Bash(*.env.test*)",
+      "PowerShell(* .env)",
+      "PowerShell(* .env *)",
+      "PowerShell(*/.env)",
+      "PowerShell(*/.env *)",
+      "PowerShell(*\\.env)",
+      "PowerShell(*\\.env *)",
+      "PowerShell(*.env.local*)",
+      "PowerShell(*.env.*.local*)",
+      "PowerShell(*.env.development*)",
+      "PowerShell(*.env.production*)",
+      "PowerShell(*.env.test*)"
+    ]
+  }
+}
