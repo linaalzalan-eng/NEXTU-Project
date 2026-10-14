@@ -3,10 +3,10 @@
 _Last updated: 2026-10-14_
 
 ## Current Status
-- **Current phase:** Phase 2 — UI/UX & React Foundation. **Complete**, awaiting owner review.
-- **Current task:** none. Waiting for the owner's review of the UI and approval of Phase 3.
+- **Current phase:** Phase 2 — UI/UX & React Foundation. **Complete and approved** (2026-10-14).
+- **Current task:** none. Phase 2 approved and committed; waiting for approval of Phase 3.
 - **Workflow:** phase-level approval (D-14). Every phase ends with an Arabic explanation file in `docs/phase-reports/` (D-25).
-- **Last commit:** `docs: complete phase 1 planning`. The Phase 2 work is not committed yet. It is waiting for owner approval.
+- **Last commit:** `0dde35b feat: phase 2 ui foundation, design system, and phase explanations` (2026-10-14, approved by the owner).
 
 ## Completed
 - [x] Phase 1: P1-T01 to P1-T16. See `IMPLEMENTATION_PLAN.md`. Explanation: `docs/phase-reports/PHASE_1_EXPLAINED.md`.
@@ -80,5 +80,5 @@ _Last updated: 2026-10-14_
 
 ## Next Recommended Action
 1. The owner reads `docs/phase-reports/PHASE_1_EXPLAINED.md` and `PHASE_2_EXPLAINED.md`, runs `npm install` and `npm run dev`, and reviews the UI (README → Getting Started).
-2. The owner approves a Phase 2 commit (proposed: `feat: phase 2 ui foundation and design system`).
+2. Done: Phase 2 committed as `0dde35b` (2026-10-14).
 3. The owner approves Phase 3.
