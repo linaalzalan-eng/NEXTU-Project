@@ -1,10 +1,12 @@
-# Mind AI Project
+# NEXTU
 
-> "Your only competition is your previous self."
+> "Meet your next self." (تعرّف على نسختك القادمة)
+
+NEXTU combines *Next* + *You*: the next, better version of you. Philosophy: "Your only competition is your previous self."
 
 A personal productivity and achievement-tracking web app. Plan your daily tasks, complete them, and see how you are progressing compared with **your own** past performance: today's progress, this week vs. last week, and your personal bests.
 
-**Status:** Phase 1 (planning) complete. See [`docs/PROGRESS.md`](docs/PROGRESS.md).
+**Status:** Phase 2 (UI/UX and React foundation) complete, awaiting review. See [`docs/PROGRESS.md`](docs/PROGRESS.md).
 
 ## MVP Features
 - Email/password authentication with email confirmation, password reset, and private, per-user data.
@@ -22,7 +24,22 @@ Full scope: [`docs/MVP_SCOPE.md`](docs/MVP_SCOPE.md).
 - Vercel.
 
 ## Getting Started
-_Will be added in Phase 2, when the app is initialized._
+
+Requirements: Node.js 22.22 or newer (React Router 8 needs it) and npm.
+
+```bash
+npm install        # install dependencies
+npm run dev        # start the dev server at http://localhost:5173
+npm run lint       # check the code with ESLint
+npm run build      # production build into dist/
+npm run preview    # serve the production build locally
+```
+
+While developing:
+- `/dashboard`, `/tasks`, and `/analytics` show **labelled sample data** (Phase 2 preview). Add `?preview=empty` to the URL, or use the button in the notice, to see the empty state.
+- `/login`, `/register`, `/forgot-password`, and `/reset-password` show the account screens. They are not connected yet (Phase 5).
+- `/ui` is a development-only gallery of every UI component and state.
+- The language switch (العربية / English) is in the sidebar on desktop and in the top bar on mobile. The choice is remembered.
 
 ## Documentation
 - Why we build it: [Project Intent](docs/PROJECT_INTENT.md).
@@ -36,12 +53,13 @@ _Will be added in Phase 2, when the app is initialized._
   - [Architecture](docs/ARCHITECTURE.md)
   - [Database Schema](docs/DATABASE_SCHEMA.md)
   - [API Contracts](docs/API_CONTRACTS.md)
-  - Design System: Phase 2
+  - [Design System](docs/DESIGN_SYSTEM.md)
 - Plan and quality:
   - [Implementation Plan](docs/IMPLEMENTATION_PLAN.md)
   - [Testing Plan](docs/TESTING_PLAN.md)
   - [Decisions](docs/DECISIONS.md)
   - [Progress](docs/PROGRESS.md)
+  - Phase explanations in Arabic: [`docs/phase-reports/`](docs/phase-reports/)
 
 ## Development with Claude Code
 Project instructions for Claude Code are in [`CLAUDE.md`](CLAUDE.md). Shared settings and the review agent are in `.claude/`.

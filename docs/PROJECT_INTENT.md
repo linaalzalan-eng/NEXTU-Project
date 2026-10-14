@@ -1,6 +1,8 @@
-# Project Intent — Mind AI Project
+# Project Intent — NEXTU
 
-> "Your only competition is your previous self."
+> "Meet your next self." (تعرّف على نسختك القادمة)
+
+**Name:** NEXTU = *Next* + *You*, the next, better version of you (D-24). Philosophy: "Your only competition is your previous self."
 
 ## Vision
 

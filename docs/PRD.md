@@ -5,7 +5,7 @@ Vision and goals: `PROJECT_INTENT.md`. Scope boundaries: `MVP_SCOPE.md`. Detaile
 
 ## 1. Product Overview
 
-Mind AI Project is a personal productivity web app. Users plan dated tasks, complete them, and see their progress compared with their own past performance. The app has four main areas:
+NEXTU is a personal productivity web app. Users plan dated tasks, complete them, and see their progress compared with their own past performance. The app has four main areas:
 
 - **Dashboard** (`/dashboard`): the default screen after login, focused on today.
 - **Tasks** (`/tasks`): manage tasks for any date.

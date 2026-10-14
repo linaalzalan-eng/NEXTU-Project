@@ -1,6 +1,6 @@
-# Mind AI Project — Claude Code Instructions
+# NEXTU — Claude Code Instructions
 
-A personal productivity and achievement-tracking web app: "Your only competition is your previous self." Users plan dated tasks and compare their progress with their own past. The owner is a frontend developer who is learning React Router, Recharts, Supabase, and PostgreSQL through this project. **Building the app and teaching the owner are equally important.**
+A personal productivity and achievement-tracking web app named NEXTU ("Meet your next self."; philosophy: "Your only competition is your previous self."). "Mind AI" is the owner's training program, not the product name (D-24). Users plan dated tasks and compare their progress with their own past. The owner is a frontend developer who is learning React Router, Recharts, Supabase, and PostgreSQL through this project. **Building the app and teaching the owner are equally important.**
 
 ## Documentation (read only what the task needs)
 - Scope: `docs/MVP_SCOPE.md`. Do not build anything listed as excluded.
@@ -9,6 +9,7 @@ A personal productivity and achievement-tracking web app: "Your only competition
 - Structure and layers: `docs/ARCHITECTURE.md`. Service signatures: `docs/API_CONTRACTS.md`.
 - Database and RLS: `docs/DATABASE_SCHEMA.md`. Tests: `docs/TESTING_PLAN.md`.
 - Tasks per phase: `docs/IMPLEMENTATION_PLAN.md`. Status: `docs/PROGRESS.md`. Decisions: `docs/DECISIONS.md`.
+- Arabic phase explanations: `docs/phase-reports/PHASE_<N>_EXPLAINED.md`.
 - Reference documents by ID. Do not copy their content into other files.
 
 ## Stack (fixed; changes need owner approval)
@@ -25,16 +26,40 @@ A personal productivity and achievement-tracking web app: "Your only competition
 5. Never add features outside the MVP. Never change the stack.
 6. End of phase:
    - Run the `code-reviewer` subagent and fix critical findings.
-   - Update `docs/PROGRESS.md` (check off the tasks in `IMPLEMENTATION_PLAN.md`).
+   - After implementation and tests, write the phase explanation file (below). A phase is not complete without it.
+   - Update `docs/PROGRESS.md` (check off the tasks in `IMPLEMENTATION_PLAN.md`, link the explanation file).
    - Deliver the Arabic report.
    - **STOP.** Do not start the next phase.
 7. **Never without explicit approval:** `git commit`, `git push`, public deployment, deleting existing work, or paid-service changes. Propose one commit message per phase.
 
-### Arabic phase report (concise)
-Cover: what was completed · important files created or changed · why the key technical decisions were made · new technologies and concepts to understand · how the owner can test it · unresolved issues.
+### Arabic phase report (concise, in the terminal)
+A short Arabic summary plus the path to the explanation file. Cover: what was completed · important files · key decisions · how to test · unresolved issues. The detail belongs in the explanation file, not the terminal.
+
+### Phase explanation file (D-25, permanent rule)
+At the end of every phase write `docs/phase-reports/PHASE_<N>_EXPLAINED.md` (`PHASE_1_EXPLAINED.md` … `PHASE_6_EXPLAINED.md`). It is a detailed teaching document in Arabic for the owner, a frontend developer learning project architecture and new libraries.
+
+Sections, in this order:
+1. Phase summary: the goal, and what was actually achieved.
+2. Files and folders: what was created or changed, and the job of each important file.
+3. Technologies and libraries: what was used, why it was chosen, and how it is used in the project.
+4. Code walkthrough: the main components, functions, hooks, and props, how files connect, with short excerpts of the real code.
+5. How the phase works: the data and event flow step by step, from user interaction to the visible result.
+6. Technical decisions: the important ones and why (reference D-xx).
+7. Tests: what was tested, the results, and how the owner can test it personally.
+8. Problems and solutions: what came up during the work and how it was solved.
+9. Not done yet: what is deferred and to which phase.
+10. What you learned: the key concepts, with practical examples and short review questions.
+
+Rules:
+- Simple Arabic; technical terms, code, and file paths stay in English. This folder is the one exception to D-03.
+- Use real file names and paths. Tie every point to code that was actually built; no generic theory.
+- Focus on the important parts; do not explain every line or repeat information without need.
+- Clearly separate real functionality from mock or sample data.
+- Never state that something is complete, or that a test passed, unless it was verified in the session.
+- Organize it for easy reference (headings, short lists, short code blocks; no wide tables).
 
 ## Learning-first rules
-- Explanations to the owner are in **Arabic**. Code, identifiers, and `docs/` are in English (D-03).
+- Explanations to the owner are in **Arabic**. Code, identifiers, and `docs/` are in English (D-03), except `docs/phase-reports/`, which is in Arabic (D-25).
 - When introducing an unfamiliar technology, cover in Arabic:
   - What it is, simply.
   - Why we need it here.

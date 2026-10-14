@@ -145,6 +145,46 @@ Business rules (BR-xx) are defined in `PRD.md`; decisions below reference them i
   - Shell-command rules are pattern-based, so they reduce risk but cannot block every possible command. `.gitignore` and the security rules in `CLAUDE.md` remain the main protection.
 - **Status:** Approved (2026-10-11).
 
+## D-21 — Typeface and visual direction
+- **Decision:** Use IBM Plex Sans Arabic (weights 400–700) for both languages, loaded from Google Fonts with a `<link>` in `index.html`. The visual direction is "paper and ink" with one primary color (pine) and one accent (ember), as defined in `DESIGN_SYSTEM.md`.
+- **Reason:** Plex Sans Arabic has matching Arabic and Latin glyphs, so mixed-language task titles look consistent. Its restrained, editorial character fits the calm, self-comparison tone better than Cairo's rounder, louder shapes. A `<link>` needs no npm package.
+- **Alternatives:** Cairo; self-hosting through `@fontsource` (one more dependency).
+- **Consequences:** Visitors' browsers request the font from Google's servers. Self-hosting can replace this later without changing any components.
+- **Status:** Approved (2026-10-11). Minor technical decision (font choice delegated to Phase 2).
+
+## D-22 — Phase 2 design preview with labelled sample data
+- **Decision:**
+  - Until real data exists, the Dashboard, Tasks, and Analytics pages show hand-written sample values from `src/pages/preview/`.
+  - A visible "Preview" notice explains this and switches to the empty state (`?preview=empty`).
+  - The auth forms show a toast instead of submitting.
+  - A development-only `/ui` route shows every UI component and state. It is excluded from production builds.
+- **Reason:** The owner asked to review a polished interface in Phase 2 without implementing Phase 3–5 logic. Labelled samples avoid presenting fake data as real.
+- **Consequences:**
+  - Sample values are typed by hand, not calculated. Business rules are implemented and tested in Phases 3 and 4.
+  - Each phase removes the preview code it replaces (see the `feature-development` skill).
+- **Status:** Approved (2026-10-11).
+
+## D-23 — Tooling versions at scaffold time
+- **Decision:**
+  - The scaffold uses current major versions: Vite 8, React 19, React Router 8 (declarative mode, imports from `react-router`), Tailwind CSS 4, and ESLint 10 (flat config with `eslint-plugin-react-hooks` and `eslint-plugin-react-refresh`).
+  - The Vite template now ships oxlint as its linter. We replaced it with ESLint, as the approved stack specifies.
+  - `@types/react` and `@types/react-dom` are kept from the template only for editor IntelliSense. The project stays JavaScript-only.
+- **Reason:** Follow the current official setup while keeping the approved stack unchanged.
+- **Status:** Approved (2026-10-11). Minor technical decision.
+
+## D-24 — Product name: NEXTU
+- **Context:** The project was called "Mind AI Project", but Mind AI is the name of the owner's training program, not the product.
+- **Decision:** The product is named **NEXTU** (*Next* + *You*: the next, better version of you). The slogan is "Meet your next self." / "تعرّف على نسختك القادمة." The core philosophy, "Your only competition is your previous self.", is unchanged. The brand name stays in Latin letters in both languages. The npm package is `nextu`. The local folder and the Git history keep their old name.
+- **Status:** Approved by the owner (2026-10-11).
+
+## D-25 — Arabic phase explanation file required for every phase
+- **Decision:** Every phase ends with a detailed Arabic teaching document, `docs/phase-reports/PHASE_<N>_EXPLAINED.md`, written after implementation and tests. A phase is not complete without it. Its ten sections and writing rules are defined in `CLAUDE.md` ("Phase explanation file"). The short Arabic report in the terminal now summarizes and links to this file.
+- **Reason:** The terminal report disappears with the conversation. A file in the repository keeps the learning material next to the code it explains, so the owner can return to it later.
+- **Consequences:**
+  - `docs/phase-reports/` is written in Arabic. It is the only exception to D-03.
+  - Phases 1 and 2 received their files retroactively (2026-10-14), based on the existing documents and code.
+- **Status:** Approved by the owner (2026-10-14).
+
 ---
 
 ## Resolved open decisions

@@ -38,7 +38,8 @@ src/
   app/
     App.jsx                    # Providers + router
     AppRoutes.jsx              # Route table (public / protected)
-    AppProviders.jsx           # I18nProvider, AuthProvider, TasksProvider
+    AppProviders.jsx           # I18nProvider, ErrorBoundary, BrowserRouter, ToastProvider
+                               # (+ TasksProvider in Phase 3, AuthProvider in Phase 5)
     ErrorBoundary.jsx
   pages/                       # Thin route screens: compose feature components
     DashboardPage.jsx
@@ -49,9 +50,13 @@ src/
     ForgotPasswordPage.jsx
     ResetPasswordPage.jsx
     NotFoundPage.jsx
+    UiGalleryPage.jsx          # Development-only /ui route (D-22)
+    preview/                   # Phase 2 sample data + PreviewNotice; removed in Phases 3–5 (D-22)
   components/                  # Shared, feature-agnostic UI
-    ui/                        # Button, Input, Card, Dialog, ProgressBar, EmptyState, Spinner, Alert, Toast
-    layout/                    # AppLayout, SideNav, BottomNav, LanguageSwitch
+    ui/                        # Button (+ buttonStyles), Input, Card, Dialog, ProgressBar, EmptyState,
+                               # Spinner, Alert, ToastProvider/useToast, textLink
+    layout/                    # AppLayout, AuthLayout, SideNav, BottomNav, LanguageSwitch, BrandMark,
+                               # PageHeader, AuthHeader, SkipLink, PageLoader, ScrollToTop, navItems
   features/
     auth/
       AuthContext.jsx          # Provides { user, session, status, signIn, signUp, signOut,
@@ -85,11 +90,14 @@ src/
       supabaseAuthService.js
       supabaseTasksService.js  # Row <-> object mapping, pagination
   lib/
+    cx.js                      # Class-name join helper
     dates.js                   # D-10 calendar-date helpers, WEEK_STARTS_ON = 6
     useToday.js                # Current local date; updates on focus/visibility and at midnight (BR-10)
     stats.js                   # toRate, getDailyStats (BR-01, BR-06): shared by dashboard + analytics
     i18n/
-      I18nProvider.jsx         # lang, dir, t(), setLanguage
+      I18nProvider.jsx         # lang, dir, t(), setLanguage, formatDate
+      I18nContext.js
+      translate.js             # Pure lookup + {param} interpolation, English fallback
       useI18n.js
       ar.js
       en.js
@@ -139,7 +147,7 @@ Task loading strategy (MVP):
 - `I18nProvider` stores `lang` (`'ar'` by default) in localStorage and sets `document.documentElement.lang` and `dir`.
 - `t('key', params)` looks up `ar.js` or `en.js`. A missing key falls back to English and logs a warning in development.
 - Layout uses only logical utilities (`ms-`, `me-`, `ps-`, `pe-`, `start-`, `end-`, `text-start`). Physical left and right classes are not allowed.
-- Direction-dependent icons (chevrons) are mirrored in RTL with `rtl:rotate-180`.
+- Direction-dependent icons (chevrons) are mirrored in RTL with `rtl:-scale-x-100`.
 - Dates are formatted with `Intl.DateTimeFormat` using the locales `ar-u-nu-latn` and `en`, so both languages show Latin digits (D-02).
 
 ## 7. Supabase Integration Strategy (Phase 5)
@@ -163,4 +171,5 @@ If a custom API (for example Node or Express) replaces or complements Supabase l
 - `/reset-password` is neither public-only nor protected. The recovery link signs the user in and sets `isRecovery` (from the `PASSWORD_RECOVERY` event). The page shows the form only when `isRecovery` is true. A normal session is redirected to `/dashboard`, and no session shows "Link invalid or expired" (D-19).
 - Protected routes: `/dashboard`, `/tasks`, `/analytics`. They render inside `AppLayout` and are wrapped by `ProtectedRoute` from Phase 5.
 - `/` redirects to `/dashboard`. `*` shows `NotFoundPage`.
+- `/ui` (component gallery) exists only in development builds (D-22).
 - Vercel needs a SPA rewrite so that deep links work (`vercel.json`, Phase 6).

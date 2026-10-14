@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+/* Design tokens: see docs/DESIGN_SYSTEM.md. The default palette is removed
+   so only these colors can be used. */
+@theme {
+  --color-*: initial;
+  --color-white: #ffffff;
+
+  --color-paper: #f6f4ef;
+  --color-surface: #ffffff;
+  --color-sunken: #efece5;
+  --color-ink: #1b1a17;
+  --color-ink-2: #57534a;
+  --color-ink-3: #6b665b;
+  --color-line: #e3ded3;
+  --color-line-strong: #857e70;
+
+  --color-pine-50: #e4eee8;
+  --color-pine-600: #1e5a47;
+  --color-pine-700: #174837;
+
+  --color-ember-50: #fbebdd;
+  --color-ember-600: #c2551f;
+  --color-ember-700: #9c4114;
+
+  --color-danger-50: #fbe9e7;
+  --color-danger-600: #b3261e;
+  --color-danger-700: #8f1e18;
+
+  --color-warning-50: #fbf1da;
+  --color-warning-700: #8a5a00;
+
+  --font-sans: "IBM Plex Sans Arabic", system-ui, "Segoe UI", Tahoma, sans-serif;
+
+  --text-display: 3.5rem;
+  --text-display--line-height: 1;
+
+  --radius-lg: 0.625rem;
+  --radius-xl: 0.875rem;
+
+  --shadow-hairline: 0 1px 0 rgb(27 26 23 / 0.04);
+  --shadow-raised: 0 1px 2px rgb(27 26 23 / 0.06), 0 2px 6px -2px rgb(27 26 23 / 0.08);
+  --shadow-overlay: 0 16px 40px -12px rgb(27 26 23 / 0.25);
+}
+
+@layer base {
+  html {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  html[lang="en"] body {
+    line-height: 1.6;
+  }
+
+  /* One focus style for every focusable element (DESIGN_SYSTEM §6). */
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background-color: var(--color-pine-50);
+  }
+
+  dialog::backdrop {
+    background-color: rgb(27 26 23 / 0.4);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

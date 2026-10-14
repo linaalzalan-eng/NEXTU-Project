@@ -13,12 +13,14 @@ Effort is estimated in focused working sessions (about 2 hours each) and include
 6. At the end of a phase:
    - Run the `code-reviewer` subagent.
    - Fix any critical findings.
+   - Write the Arabic explanation file `docs/phase-reports/PHASE_<N>_EXPLAINED.md` (D-25), after implementation and tests.
    - Update `PROGRESS.md` and the related docs.
-   - Write the Arabic phase report.
+   - Write the short Arabic phase report, with the path to the explanation file.
    - **Stop.**
 7. Never without explicit approval: commit, push, deploy publicly, delete existing work, or make paid-service changes. Claude proposes one commit per phase after the report.
 
-Arabic phase report template: completed work · important files · reasons for key decisions · new concepts to understand · how to test · unresolved issues.
+Arabic phase report template: completed work · important files · reasons for key decisions · how to test · unresolved issues · path to the explanation file.
+Explanation file: ten sections and writing rules in `CLAUDE.md` ("Phase explanation file"). **Every phase's Definition of Done requires it.**
 
 ---
 
@@ -44,6 +46,7 @@ Arabic phase report template: completed work · important files · reasons for k
 - [x] **P1-T13** Write `docs/PROGRESS.md` and `README.md`.
 - [x] **P1-T14** Configure Claude Code: `CLAUDE.md`, `.claude/settings.json`, `.claude/agents/code-reviewer.md`.
 - [x] **P1-T15** Resolve OD-01 and OD-02 (D-18, D-19), add US-26 and its requirements and tests, and harden environment-file protection (D-20).
+- [x] **P1-T16** Write `docs/phase-reports/PHASE_1_EXPLAINED.md` (added by D-25, written retroactively on 2026-10-14).
 
 ### Acceptance criteria
 - Every required document exists.
@@ -62,6 +65,7 @@ None (no code). Instead, the `code-reviewer` subagent checks the documents for c
 - The acceptance criteria are met.
 - The Arabic report has been delivered.
 - The owner has approved the phase.
+- `docs/phase-reports/PHASE_1_EXPLAINED.md` is written (D-25; retroactively, 2026-10-14).
 
 ### Risks
 - Over-documentation slowing progress. Mitigation: keep documents concise and reference rather than repeat.
@@ -79,42 +83,44 @@ The owner reviews the documents and approves Phase 2. OD-01 and OD-02 are resolv
 - **Estimated effort:** 4–5 sessions.
 
 ### Tasks
-- [ ] **P2-T01 Design system and screen specs**
+- [x] **P2-T01 Design system and screen specs**
   - Create `docs/DESIGN_SYSTEM.md`: visual direction, color tokens (light mode only in the MVP), typography (an Arabic-capable font such as IBM Plex Sans Arabic or Cairo, to be confirmed), spacing, radii, breakpoints, component specs, RTL rules, and accessibility.
   - Add a "Screens" section with text wireframes for Dashboard, Tasks, Analytics, Login, Register, Check your email, Forgot password, Reset password, and Not Found, at mobile and desktop sizes.
-- [ ] **P2-T02 Initialize Vite + React (JavaScript)**
+- [x] **P2-T02 Initialize Vite + React (JavaScript)**
   - Create the scaffold with `npm create vite@latest` using the `react` (JS) template in a temporary folder, then move it into the project root without touching `docs/` or `CLAUDE.md`.
   - Remove the boilerplate.
   - Verify that `npm run dev` and `npm run build` work.
   - Files: `package.json`, `vite.config.js`, `index.html`, `src/main.jsx`, `eslint.config.js`.
-- [ ] **P2-T03 Configure Tailwind CSS v4**
+- [x] **P2-T03 Configure Tailwind CSS v4**
   - Install `tailwindcss` and `@tailwindcss/vite`. Add the plugin to `vite.config.js`.
   - Add `@import "tailwindcss";` and the `@theme` tokens from DESIGN_SYSTEM to `src/index.css`.
   - Load fonts.
-- [ ] **P2-T04 ESLint and the path alias**
+- [x] **P2-T04 ESLint and the path alias**
   - Make sure the Vite flat config runs.
   - Add `npm run lint`.
   - Configure the `@/` → `src/` alias in Vite (and in `jsconfig.json` for VS Code IntelliSense).
-- [ ] **P2-T05 Feature-based structure**
+- [x] **P2-T05 Feature-based structure**
   - Create the folders from `ARCHITECTURE.md` §3, with only the files the phase needs (no empty placeholder files).
-- [ ] **P2-T06 i18n foundation**
+- [x] **P2-T06 i18n foundation**
   - Create `lib/i18n` (provider, `useI18n`, `ar.js`, `en.js`) and the `LanguageSwitch` component.
   - Update `<html lang/dir>` and persist the choice (D-02, FR-40, US-23).
-- [ ] **P2-T07 React Router**
+- [x] **P2-T07 React Router**
   - Install `react-router`.
   - Create `AppRoutes.jsx` with `/`, `/dashboard`, `/tasks`, `/analytics`, `/login`, `/register`, `/forgot-password`, `/reset-password`, and `*`.
   - Add placeholder pages with translated headings, and `NotFoundPage` (FR-41).
   - Lesson: routes, `Link` and `NavLink`, nested routes with `<Outlet>`.
-- [ ] **P2-T08 App layout and navigation**
+- [x] **P2-T08 App layout and navigation**
   - Install `lucide-react`.
   - Create `AppLayout` with `SideNav` (≥ `lg`) and `BottomNav` (< `lg`), the active-link state, and a language switch in the header (US-24).
-- [ ] **P2-T09 Reusable UI components**
+- [x] **P2-T09 Reusable UI components**
   - Create `components/ui`: Button (variants and loading state), Input (label, error, `aria-describedby`), Card, Dialog (native `<dialog>` with focus handling), ProgressBar, EmptyState, Spinner, Alert, Toast (with an `aria-live` region).
   - Create `ErrorBoundary`.
-- [ ] **P2-T10 Phase wrap-up**
+- [x] **P2-T10 Phase wrap-up**
   - Create the skill `.claude/skills/feature-development/SKILL.md`: how to add a feature following the architecture, i18n, RTL rules, and the component checklist.
   - Update the README run instructions and `PROGRESS.md`.
   - Run the code review, then write the report.
+- [x] **P2-T11 Explanation file** (added by D-25, written retroactively on 2026-10-14)
+  - Write `docs/phase-reports/PHASE_2_EXPLAINED.md`.
 
 ### Acceptance criteria
 - `npm run dev`, `npm run build`, and `npm run lint` all succeed.
@@ -135,6 +141,7 @@ A working frontend skeleton with navigation.
 - Lint is clean.
 - The documents are updated.
 - The report has been delivered.
+- `docs/phase-reports/PHASE_2_EXPLAINED.md` is written (D-25; retroactively, 2026-10-14).
 
 ### Risks
 - Tailwind v4 configuration differs from v3 tutorials. Mitigation: follow the official v4 Vite guide.
@@ -190,7 +197,7 @@ The owner runs the app locally, reviews the look and feel, and approves Phase 3.
 - [ ] **P3-T11 Integration and wrap-up**
   - Tests: IT-01, IT-04, and IT-05 (routing part).
   - Run the manual script, steps 3–5.
-  - Run the review and write the report.
+  - Run the review, write `PHASE_3_EXPLAINED.md`, and write the report.
 
 ### Acceptance criteria
 - The acceptance criteria of US-07 to US-16 and US-25 (P3 part) are met.
@@ -206,6 +213,7 @@ Functional task management without a backend.
 - The tests have been run and pass, with the output recorded.
 - The documents are updated.
 - The report has been delivered.
+- `docs/phase-reports/PHASE_3_EXPLAINED.md` is written (D-25).
 
 ### Risks
 - Date or time-zone bugs. Mitigation: calendar-date strings and UT-01 edge cases.
@@ -247,7 +255,7 @@ The owner manages tasks in the browser and approves Phase 4.
 - [ ] **P4-T08 Wrap-up**
   - Run the manual script, step 6.
   - Check performance against NFR-04 with 5k seeded tasks.
-  - Run the review and write the report.
+  - Run the review, write `PHASE_4_EXPLAINED.md`, and write the report.
 
 ### Acceptance criteria
 - The acceptance criteria of US-17 to US-22 are met.
@@ -263,6 +271,7 @@ A working Dashboard and Analytics with mock data.
 - The tests pass.
 - The calculations have been checked against hand-calculated examples.
 - The report has been delivered.
+- `docs/phase-reports/PHASE_4_EXPLAINED.md` is written (D-25).
 
 ### Risks
 - Chart accessibility and RTL in Recharts. Mitigation: text summaries and explicit axis configuration.
@@ -308,7 +317,7 @@ The owner reviews the analytics with seeded data, confirms that the business rul
 - [ ] **P5-T08 Verification**
   - Run ST-01 to ST-10 with two accounts.
   - Check persistence across browsers (US-06, US-25).
-  - Run the review and write the report.
+  - Run the review, write `PHASE_5_EXPLAINED.md`, and write the report.
 
 ### Acceptance criteria
 - US-01 to US-06, US-26, and US-25 (P5 part) are met.
@@ -325,6 +334,7 @@ A functional multi-user MVP connected to a real database.
 - Security tests pass and are documented.
 - The mock is still usable for tests.
 - The report has been delivered.
+- `docs/phase-reports/PHASE_5_EXPLAINED.md` is written (D-25).
 
 ### Risks
 - RLS misconfiguration. Mitigation: ST tests and the Security Advisor.
@@ -363,7 +373,7 @@ The owner tests with two accounts and approves Phase 6.
 - [ ] **P6-T08 Deploy**
   - **This requires explicit owner approval.** Connect the GitHub repository to Vercel, set the environment variables, deploy, and run a smoke test.
 - [ ] **P6-T09 Beta checklist**
-  - Complete `TESTING_PLAN.md` §8, finalize the README, and write the final report.
+  - Complete `TESTING_PLAN.md` §8, finalize the README, write `PHASE_6_EXPLAINED.md`, and write the final report.
 
 ### Acceptance criteria
 The Release Acceptance Criteria in `MVP_SCOPE.md` are fully met.
@@ -378,6 +388,7 @@ A deployed MVP ready for initial real users.
 - The Beta checklist is complete.
 - The production URL works.
 - The documents are final.
+- `docs/phase-reports/PHASE_6_EXPLAINED.md` is written (D-25).
 
 ### Risks
 - Environment differences between local and production. Mitigation: a preview deployment before production.
