@@ -161,40 +161,40 @@ The owner runs the app locally, reviews the look and feel, and approves Phase 3.
 - **Estimated effort:** 5–6 sessions.
 
 ### Tasks
-- [ ] **P3-T01 Testing setup**
+- [x] **P3-T01 Testing setup**
   - Install `vitest`, `jsdom`, `@testing-library/react`, `@testing-library/user-event`, and `@testing-library/jest-dom`.
   - Add a `test` block to `vite.config.js`, plus `src/test/setup.js` and `src/test/factories.js`.
   - Add the scripts `test` and `test:run`.
   - Create the skill `.claude/skills/testing-conventions/SKILL.md`.
-- [ ] **P3-T02 Date helpers**
+- [x] **P3-T02 Date helpers**
   - Create `src/lib/dates.js`: `todayLocal`, `toDateString`, `parseDate`, `addDays`, `startOfWeek`, `isValidDateString`, `WEEK_STARTS_ON`. All arithmetic uses UTC (D-10).
   - Create `src/lib/useToday.js`, which rolls over at midnight and on focus or visibility change (BR-10).
   - Tests: UT-01, and CT-09 (the `LanguageSwitch` from Phase 2).
-- [ ] **P3-T03 Service layer and mock tasks service**
+- [x] **P3-T03 Service layer and mock tasks service**
   - Create `services/errors.js`, `services/index.js` (selection by `VITE_DATA_SOURCE`, default `mock`), `services/mock/mockTasksService.js`, and `mockAuthService.js` (fixed demo user).
   - Add `.env.example`.
   - Tests: UT-08.
-- [ ] **P3-T04 Validation and selectors**
+- [x] **P3-T04 Validation and selectors**
   - Create `features/tasks/lib/taskValidation.js` and `taskSelectors.js`.
   - Tests: UT-02 and UT-03.
-- [ ] **P3-T05 Tasks state**
-  - Create `TasksContext.jsx` and `useTasks.js`: load, create, update, toggle, delete, with optimistic updates and rollback, and `loading`/`error` states.
-- [ ] **P3-T06 Create task**
+- [x] **P3-T05 Tasks state**
+  - Create `TasksContext.js`, `TasksProvider.jsx`, and `useTasks.js` (D-27): load, create, update, toggle, delete, with optimistic updates and rollback, and `loading`/`error` states.
+- [x] **P3-T06 Create task**
   - Create `TaskForm` (US-07).
   - Tests: CT-01.
-- [ ] **P3-T07 List and toggle**
+- [x] **P3-T07 List and toggle**
   - Create `TaskList` and `TaskItem`, with completion toggling (US-10, US-11) and empty, loading, and error states.
   - Tests: CT-02.
-- [ ] **P3-T08 Edit and reschedule**
+- [x] **P3-T08 Edit and reschedule**
   - Create `TaskEditDialog` (US-08, US-09).
   - Tests: CT-03.
-- [ ] **P3-T09 Delete**
+- [x] **P3-T09 Delete**
   - Create `DeleteTaskDialog` (US-12).
   - Tests: CT-04.
-- [ ] **P3-T10 Date navigation, filtering, overdue**
+- [x] **P3-T10 Date navigation, filtering, overdue**
   - Create `DateNavigator`, `StatusFilter`, and `OverdueSection` with "Move to today" (US-13 to US-16).
   - Tests: CT-05.
-- [ ] **P3-T11 Integration and wrap-up**
+- [x] **P3-T11 Integration and wrap-up**
   - Tests: IT-01, IT-04, and IT-05 (routing part).
   - Run the manual script, steps 3–5.
   - Run the review, write `PHASE_3_EXPLAINED.md`, and write the report.
@@ -217,7 +217,7 @@ Functional task management without a backend.
 
 ### Risks
 - Date or time-zone bugs. Mitigation: calendar-date strings and UT-01 edge cases.
-- Rollback complexity. Mitigation: a single, tested pattern in `TasksContext`.
+- Rollback complexity. Mitigation: a single, tested pattern in `TasksProvider`.
 
 ### Approval checkpoint
 The owner manages tasks in the browser and approves Phase 4.

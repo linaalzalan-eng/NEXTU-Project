@@ -10,16 +10,16 @@ Follow `CLAUDE.md` first. This skill is the practical checklist for writing fron
 ## 1. Where the file goes (ARCHITECTURE §3)
 - **Route screen** → `src/pages/XPage.jsx`. Thin: it reads params, composes feature components, and has no business logic. Pages use `PageHeader` (it also sets the `<title>`).
 - **Feature UI** → `src/features/<feature>/components/`. Presentational: it receives values and calls hook actions. No fetching, no calculations.
-- **State** → `src/features/<feature>/<Feature>Context.jsx` and `use<Feature>.js`. Keep the context object in its own `.js` file, so React Fast Refresh keeps working (pattern: `lib/i18n`, `components/ui/Toast*`).
+- **State** → `src/features/<feature>/<Feature>Context.js` (the context object only), `<Feature>Provider.jsx`, and `use<Feature>.js`. The split keeps React Fast Refresh working (pattern: `features/tasks`, `lib/i18n`, `components/ui/Toast*`).
 - **Business rules** → pure functions in `src/features/<feature>/lib/` or `src/lib/`, with `today` passed in. Each one gets unit tests next to it.
-- **Data** → only through `@/services` (D-08). UI never imports Supabase.
+- **Data** → only through `@/services` (D-08). UI never imports Supabase. Task UI calls `useTaskActions()` (feedback included) or `useTasks()` (state).
 - **Shared UI** → `src/components/ui` (no feature knowledge). App chrome → `src/components/layout`.
 - Use the `@/` import alias. Do not create empty or placeholder files.
 
 ## 2. Text and language (D-02)
 - Every visible string goes through `t('area.key', { param })` from `useI18n()`. Add the key to **both** `src/lib/i18n/en.js` and `ar.js` in the same change.
 - Avoid building sentences from fragments. For counts, prefer label–value phrasing ("Open tasks: {count}") over Arabic plural forms.
-- Dates: `formatDate(date, options)` from `useI18n()` (Latin digits in both languages).
+- Dates: `formatDate(date, options)` for a `Date`, `formatDay('YYYY-MM-DD', options)` for a calendar day, both from `useI18n()` (Latin digits in both languages). Never pass a calendar day to `formatDate`.
 - User text (task titles) gets `dir="auto"`. Email and password inputs get `dir="ltr"`. Signed numbers go in `<bdi dir="ltr">`.
 
 ## 3. Styling (DESIGN_SYSTEM.md)
@@ -41,4 +41,4 @@ Follow `CLAUDE.md` first. This skill is the practical checklist for writing fron
 - [ ] Run `npm run lint`. From Phase 3, also run `npm run test:run`.
 
 ## 5. Phase 2 preview code (D-22)
-`src/pages/preview/` (sample data, `PreviewNotice`, `usePreviewSubmit`) and the `/ui` gallery exist only for design review. When a phase connects real data to a page, delete the preview imports from that page. Once nothing uses a preview file, delete it.
+`src/pages/preview/` (sample data, `PreviewNotice`, `usePreviewSubmit`) and the `/ui` gallery exist only for design review. Since Phase 3 the Tasks page uses real data; the Dashboard and Analytics still use the preview until Phase 4, and the auth pages until Phase 5. When a phase connects real data to a page, delete the preview imports from that page. Once nothing uses a preview file, delete it.

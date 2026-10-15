@@ -11,4 +11,13 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  // https://vitest.dev/config/
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['./src/test/setup.js'],
+    // Most tests take well under 1 s; the IT-01 journey about 2 s. Under heavy load
+    // (six suites at once) IT-01 reached 15 s, and 5 s caused false failures. A generous
+    // limit only delays the report of a test that is really stuck.
+    testTimeout: 30_000,
+  },
 })

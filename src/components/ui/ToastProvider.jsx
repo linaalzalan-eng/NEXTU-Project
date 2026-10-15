@@ -35,6 +35,18 @@ function Toast({ toast, onDismiss }) {
     >
       <Icon aria-hidden="true" className={cx('mt-0.5 size-[1.15rem] shrink-0', ICON_COLORS[toast.variant])} />
       <p className="flex-1 py-0.5">{toast.message}</p>
+      {toast.action && (
+        <button
+          type="button"
+          onClick={() => {
+            onDismiss(toast.id)
+            toast.action.onClick()
+          }}
+          className="-my-2 h-11 shrink-0 rounded-md px-3 font-medium text-ink underline underline-offset-4 transition-colors hover:bg-sunken"
+        >
+          {toast.action.label}
+        </button>
+      )}
       <button
         type="button"
         onClick={() => onDismiss(toast.id)}
@@ -56,10 +68,10 @@ export function ToastProvider({ children }) {
     setToasts((current) => current.filter((toast) => toast.id !== id))
   }, [])
 
-  const showToast = useCallback(({ message, variant = 'info' }) => {
+  const showToast = useCallback(({ message, variant = 'info', action }) => {
     nextId.current += 1
     const id = nextId.current
-    setToasts((current) => [...current.slice(-(MAX_VISIBLE - 1)), { id, message, variant }])
+    setToasts((current) => [...current.slice(-(MAX_VISIBLE - 1)), { id, message, variant, action }])
   }, [])
 
   const value = useMemo(() => ({ showToast }), [showToast])

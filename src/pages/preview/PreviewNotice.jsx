@@ -9,7 +9,7 @@ import { usePreviewState } from './usePreviewState.js'
  * PHASE 2 PREVIEW ONLY (D-22): says the page shows sample data and switches
  * between the sample and empty states for design review.
  */
-export function PreviewNotice({ messageKey = 'preview.notice' }) {
+export function PreviewNotice({ messageKey }) {
   const { t } = useI18n()
   const state = usePreviewState()
 

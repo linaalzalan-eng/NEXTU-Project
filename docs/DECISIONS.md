@@ -185,6 +185,32 @@ Business rules (BR-xx) are defined in `PRD.md`; decisions below reference them i
   - Phases 1 and 2 received their files retroactively (2026-10-14), based on the existing documents and code.
 - **Status:** Approved by the owner (2026-10-14).
 
+## D-26 — Testing setup (Phase 3)
+- **Decision:**
+  - Vitest 5 with jsdom, React Testing Library 16, `@testing-library/user-event` 14, and `@testing-library/jest-dom` 7, configured in the `test` block of `vite.config.js`.
+  - `@testing-library/dom` is installed explicitly, because React Testing Library declares it as a peer dependency.
+  - Test functions are imported explicitly (no Vitest globals). `src/test/setup.js` therefore runs RTL `cleanup()` itself, and also clears localStorage after each test.
+  - jsdom has no `<dialog>.showModal()`, so the setup file adds a small shim that follows browser behavior (Escape closes, focus returns). Real dialog behavior is still checked in a browser.
+  - ESLint allows Node globals in test files only.
+  - Every test types through `setupUser()` (userEvent with `delay: null`). Limits: `testTimeout` 30 s, `asyncUtilTimeout` 3 s. These replaced the defaults after a flaky test was reproduced under parallel load (`PROGRESS.md`, 2026-10-14). Async results are always awaited with `waitFor`/`findBy`.
+- **Reason:** These follow the tools' current documentation and the approved stack. Explicit imports make each test file self-explanatory for learning.
+- **Consequences:** `TESTING_PLAN.md` asks for 90% line coverage of `lib/` folders. Measuring it needs `@vitest/coverage-v8`, which is not in the Phase 3 dependency list, so coverage is not measured yet. It can be added with the owner's approval.
+- **Status:** Approved (2026-10-14). Minor technical decision.
+
+## D-27 — Task state and Tasks page details (Phase 3)
+- **Decision:**
+  - **Scope:** Phase 3 makes the Tasks page real. The Dashboard keeps its labelled preview until P4-T05, as the plan places its statistics and quick add in Phase 4. Its notice says so.
+  - **State files:** `TasksContext.js` (context object), `TasksProvider.jsx` (state and actions), and `useTasks.js`. This is the same split as i18n and Toast, for React Fast Refresh.
+  - **Optimistic updates:** create, toggle, and delete change the list at once, then call the service. A failure restores only the affected task (not a whole-list snapshot), so changes to other tasks made meanwhile are kept. While a request for a task is in flight, its id is in `busyIds` and the UI locks that task's controls, so a task never has two requests at once and its restored copy cannot overwrite a newer change. The edit dialog waits for the service and shows a loading state (NFR-02). `NOT_FOUND` removes the task locally (SRS §4).
+  - **Feedback:** `useTaskActions` adds toasts. A failure shows a danger toast with "Try again", so the Toast gained an optional `action`. A new task has a `temp-` id until it is saved, and its controls are disabled until then.
+  - **Viewed day:** `null` means "today", so the page follows the date when a new day starts (BR-10).
+  - **Dialog form mode:** `Dialog` takes an optional `onSubmit`, which wraps the body and footer in one `<form>`. Enter in any field then submits with the footer's Save button.
+  - **Title length** counts characters as PostgreSQL `char_length` does (an emoji is one), so the client and the database constraint agree (VR-03).
+  - **Calendar days** are formatted with `formatDay` in UTC. Formatting a UTC-midnight date in local time would show the previous day in zones behind UTC.
+  - **Mock storage key:** `nextu.tasks`.
+- **Known limitation:** native `<input type="date">` fields are drawn by the browser in the browser's own locale. In a browser set to Arabic they show Arabic-Indic digits, unlike the Latin digits of D-02, whatever the page language. Text the app formats keeps Latin digits. A custom date picker would remove this but is not planned.
+- **Status:** Approved (2026-10-14). Minor technical decisions within the approved phase.
+
 ---
 
 ## Resolved open decisions

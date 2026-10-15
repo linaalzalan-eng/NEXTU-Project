@@ -66,10 +66,12 @@ src/
       components/              # LoginForm, RegisterForm, ForgotPasswordForm, ResetPasswordForm
       lib/authValidation.js    # VR-01, VR-02, VR-05
     tasks/
-      TasksContext.jsx         # Task state + actions with optimistic updates
+      TasksContext.js          # The context object only (keeps React Fast Refresh working)
+      TasksProvider.jsx        # Task state + actions with optimistic updates and rollback (D-27)
       useTasks.js
+      useTaskActions.js        # Actions + user feedback (toasts with Retry) for the UI
       components/              # TaskForm, TaskList, TaskItem, TaskEditDialog, DeleteTaskDialog,
-                               # DateNavigator, StatusFilter, OverdueSection
+                               # DateNavigator, StatusFilter, OverdueSection, TaskListSkeleton
       lib/taskValidation.js    # VR-03, VR-04, BR-14
       lib/taskSelectors.js     # selectTasksForDate, filterByStatus, selectOverdue (BR-09), sortTasks
     dashboard/
@@ -91,19 +93,21 @@ src/
       supabaseTasksService.js  # Row <-> object mapping, pagination
   lib/
     cx.js                      # Class-name join helper
+    errorMessageKey.js         # ServiceError code -> translated message key (NFR-14)
     dates.js                   # D-10 calendar-date helpers, WEEK_STARTS_ON = 6
     useToday.js                # Current local date; updates on focus/visibility and at midnight (BR-10)
     stats.js                   # toRate, getDailyStats (BR-01, BR-06): shared by dashboard + analytics
     i18n/
-      I18nProvider.jsx         # lang, dir, t(), setLanguage, formatDate
+      I18nProvider.jsx         # lang, dir, t(), setLanguage, formatDate, formatDay
       I18nContext.js
       translate.js             # Pure lookup + {param} interpolation, English fallback
       useI18n.js
       ar.js
       en.js
   test/
-    setup.js                   # Vitest + jest-dom setup (Phase 3)
+    setup.js                   # Vitest + jest-dom setup, cleanup, <dialog> shim (D-26)
     factories.js               # makeTask() helpers for tests
+    renderWithProviders.jsx    # Renders a component with i18n, router, and toasts
 supabase/
   migrations/                  # Numbered SQL files (D-17)
 ```
@@ -127,7 +131,7 @@ Changes from the suggested structure:
 
 ```mermaid
 flowchart LR
-    UI[Feature component] -->|calls action| Hook[useTasks / TasksContext]
+    UI[Feature component] -->|calls action| Hook[useTaskActions / useTasks / TasksProvider]
     Hook -->|derives stats with| Lib[lib pure functions]
     Hook -->|async I/O| Svc[services/index.js]
     Svc -->|VITE_DATA_SOURCE=mock| Mock[mockTasksService - localStorage]

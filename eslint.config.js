@@ -27,4 +27,9 @@ export default defineConfig([
     files: ['*.config.js'],
     languageOptions: { globals: globals.node },
   },
+  {
+    // Tests run in Node (Vitest + jsdom), so they may use Node globals such as process.
+    files: ['src/**/*.test.{js,jsx}', 'src/test/**'],
+    languageOptions: { globals: { ...globals.browser, ...globals.node } },
+  },
 ])

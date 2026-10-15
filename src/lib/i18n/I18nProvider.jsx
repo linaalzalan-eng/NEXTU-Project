@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { parseDate } from '../dates.js'
 import { I18nContext } from './I18nContext.js'
 import { translate } from './translate.js'
 
@@ -41,6 +42,10 @@ export function I18nProvider({ children }) {
       setLanguage,
       t: (key, params) => translate(lang, key, params),
       formatDate: (date, options) => new Intl.DateTimeFormat(LOCALES[lang], options).format(date),
+      // A "YYYY-MM-DD" calendar day is parsed as UTC midnight, so it must also be
+      // formatted in UTC; otherwise zones behind UTC would show the previous day.
+      formatDay: (dateString, options) =>
+        new Intl.DateTimeFormat(LOCALES[lang], { ...options, timeZone: 'UTC' }).format(parseDate(dateString)),
     }),
     [lang, setLanguage],
   )

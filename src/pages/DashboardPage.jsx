@@ -16,7 +16,7 @@ const EMPTY_TODAY = { completed: 0, total: 0, rate: null, motivationKey: 'motiva
 
 export default function DashboardPage() {
   const { t, formatDate } = useI18n()
-  // Phase 2: sample or empty preview data (D-22). Phase 3/4 replace this with useTasks().
+  // Sample or empty preview data (D-22). Phase 4 (P4-T05) replaces this with useTasks() and lib/stats.js.
   const today = usePreviewState() === 'empty' ? EMPTY_TODAY : SAMPLE_TODAY
 
   return (
@@ -26,7 +26,7 @@ export default function DashboardPage() {
         title={t('dashboard.title')}
         lede={t('dashboard.lede')}
       />
-      <PreviewNotice />
+      <PreviewNotice messageKey="preview.noticeDashboard" />
 
       <div className="grid gap-6 lg:grid-cols-3 lg:gap-8">
         <div className="flex flex-col gap-8 lg:col-span-2">

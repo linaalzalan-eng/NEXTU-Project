@@ -6,7 +6,7 @@ NEXTU combines *Next* + *You*: the next, better version of you. Philosophy: "You
 
 A personal productivity and achievement-tracking web app. Plan your daily tasks, complete them, and see how you are progressing compared with **your own** past performance: today's progress, this week vs. last week, and your personal bests.
 
-**Status:** Phase 2 (UI/UX and React foundation) complete, awaiting review. See [`docs/PROGRESS.md`](docs/PROGRESS.md).
+**Status:** Phase 3 (task management with mock data) complete, awaiting review. See [`docs/PROGRESS.md`](docs/PROGRESS.md).
 
 ## MVP Features
 - Email/password authentication with email confirmation, password reset, and private, per-user data.
@@ -33,10 +33,14 @@ npm run dev        # start the dev server at http://localhost:5173
 npm run lint       # check the code with ESLint
 npm run build      # production build into dist/
 npm run preview    # serve the production build locally
+npm run test       # run the tests in watch mode
+npm run test:run   # run all tests once
 ```
 
 While developing:
-- `/dashboard`, `/tasks`, and `/analytics` show **labelled sample data** (Phase 2 preview). Add `?preview=empty` to the URL, or use the button in the notice, to see the empty state.
+- `/tasks` is fully working with **real data** saved in your browser (localStorage, mock service until Phase 5): add, complete, edit, reschedule, delete, browse dates, filter, and move overdue tasks to today.
+- `/dashboard` and `/analytics` still show **labelled sample data** until Phase 4. Add `?preview=empty` to the URL, or use the button in the notice, to see the empty state.
+- Optional: copy `.env.example` to `.env.local`. The default data source is `mock`.
 - `/login`, `/register`, `/forgot-password`, and `/reset-password` show the account screens. They are not connected yet (Phase 5).
 - `/ui` is a development-only gallery of every UI component and state.
 - The language switch (العربية / English) is in the sidebar on desktop and in the top bar on mobile. The choice is remembered.

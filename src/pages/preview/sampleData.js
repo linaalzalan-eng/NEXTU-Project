@@ -2,7 +2,7 @@
  * PHASE 2 DESIGN PREVIEW ONLY (D-22).
  * Hand-written sample values so the layouts can be reviewed before real data exists.
  * Nothing here is calculated: rates and deltas are typed in by hand.
- * Removed in Phase 3 (tasks, dashboard) and Phase 4 (analytics).
+ * The Tasks page uses real data since Phase 3. Removed in Phase 4 (dashboard, analytics).
  */
 
 /** A local Date `days` days before now. Used only to label sample dates. */
@@ -26,11 +26,6 @@ export const SAMPLE_TODAY = {
     { id: 'sample-3', title: 'Morning run — 5 km', status: 'completed' },
   ],
 }
-
-export const SAMPLE_OVERDUE = [
-  { id: 'sample-4', title: 'الاتصال بالبنك بخصوص البطاقة', status: 'pending', daysAgo: 2 },
-  { id: 'sample-5', title: 'Send the project proposal', status: 'pending', daysAgo: 1 },
-]
 
 export const SAMPLE_WEEK = {
   current: { completed: 12, total: 15, rate: 80 },
