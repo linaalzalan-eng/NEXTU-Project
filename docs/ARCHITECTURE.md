@@ -51,7 +51,7 @@ src/
     ResetPasswordPage.jsx
     NotFoundPage.jsx
     UiGalleryPage.jsx          # Development-only /ui route (D-22)
-    preview/                   # Phase 2 sample data + PreviewNotice; removed in Phases 3–5 (D-22)
+    preview/                   # usePreviewSubmit for the auth forms until Phase 5 (D-22)
   components/                  # Shared, feature-agnostic UI
     ui/                        # Button (+ buttonStyles), Input, Card, Dialog, ProgressBar, EmptyState,
                                # Spinner, Alert, ToastProvider/useToast, textLink
@@ -71,14 +71,18 @@ src/
       useTasks.js
       useTaskActions.js        # Actions + user feedback (toasts with Retry) for the UI
       components/              # TaskForm, TaskList, TaskItem, TaskEditDialog, DeleteTaskDialog,
-                               # DateNavigator, StatusFilter, OverdueSection, TaskListSkeleton
+                               # DateNavigator, StatusFilter, OverdueSection, TaskListSkeleton,
+                               # TasksLoadError (error state shared by Tasks, Dashboard, Analytics)
       lib/taskValidation.js    # VR-03, VR-04, BR-14
       lib/taskSelectors.js     # selectTasksForDate, filterByStatus, selectOverdue (BR-09), sortTasks
     dashboard/
-      components/              # TodaySummary, ProgressCard, MotivationMessage, OverdueBanner
+      components/              # TodaySummary (rate, progress bar, counts; D-28), TodaySummarySkeleton,
+                               # MotivationMessage, OverdueBanner
       lib/motivation.js        # BR-13
     analytics/
-      components/              # WeekComparison, DailyChart, TrendChart, PersonalBest, CalculationInfo
+      useAnalytics.js          # Runs the analytics lib/ functions in useMemo for the page
+      components/              # WeekComparison, DailyChart, TrendChart, PersonalBest, CalculationInfo,
+                               # ChartFigure (+ ChartCanvas, ChartTable, ChartTooltip), chartTheme.js
       lib/weeklyStats.js       # BR-02, BR-03, BR-04
       lib/personalBest.js      # BR-05
   services/
@@ -87,6 +91,7 @@ src/
     mock/
       mockAuthService.js
       mockTasksService.js      # localStorage persistence
+      devSeed.js               # Development-only seed data (nextu.seed() in the console; P4-T01)
     supabase/                  # Phase 5
       supabaseClient.js
       supabaseAuthService.js
@@ -105,7 +110,8 @@ src/
       ar.js
       en.js
   test/
-    setup.js                   # Vitest + jest-dom setup, cleanup, <dialog> shim (D-26)
+    setup.js                   # Vitest + jest-dom setup, cleanup, <dialog> shim (D-26),
+                               # ResizeObserver stub for Recharts (D-28)
     factories.js               # makeTask() helpers for tests
     renderWithProviders.jsx    # Renders a component with i18n, router, and toasts
 supabase/
@@ -120,7 +126,7 @@ Changes from the suggested structure:
 
 ## 4. Responsibilities
 
-- **Pages:** read route params, compose feature components, set the document title. They hold no business logic.
+- **Pages:** read route params, compose feature components, set the document title. They hold no business logic. A page may call ready-made `lib/` functions in `useMemo` to pick its data (Tasks and Dashboard do); when a page needs many results, a feature hook gathers them (`useAnalytics`).
 - **Feature components:** render UI and call hook actions. They contain no data fetching and no calculations beyond formatting.
 - **Context and hooks:** own state (`loading`, `error`, `data`), call services, and apply optimistic updates and rollback (NFR-21). They call `lib/` functions inside `useMemo`.
 - **`lib/` functions:** pure business rules and validation. They are fully unit-tested.
@@ -152,6 +158,7 @@ Task loading strategy (MVP):
 - `t('key', params)` looks up `ar.js` or `en.js`. A missing key falls back to English and logs a warning in development.
 - Layout uses only logical utilities (`ms-`, `me-`, `ps-`, `pe-`, `start-`, `end-`, `text-start`). Physical left and right classes are not allowed.
 - Direction-dependent icons (chevrons) are mirrored in RTL with `rtl:-scale-x-100`.
+- Charts: the Recharts drawing is always laid out LTR (`ChartCanvas`), because SVG text in an RTL page flips `text-anchor`. In Arabic the chart mirrors itself: the x axis is `reversed` and the value axis moves to the right (`directionProps` in `chartTheme.js`). Tooltips, legends, and tables follow the page direction (D-28).
 - Dates are formatted with `Intl.DateTimeFormat` using the locales `ar-u-nu-latn` and `en`, so both languages show Latin digits (D-02).
 
 ## 7. Supabase Integration Strategy (Phase 5)

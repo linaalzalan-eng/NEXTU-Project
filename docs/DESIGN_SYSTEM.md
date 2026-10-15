@@ -219,8 +219,10 @@ Analytics · "You vs. your previous self"
   ▌▌▌▌▌▌▌▌▌▌▌▌          ┆┆┆┆┆┆┆┆┆           ← present solid, past ghost
   +3 tasks · +8 pts ]
 [ ★ Personal best: day (6, Tue 7 Oct) · week (21) ]  ← ember accent
-[ Daily breakdown chart · Phase 4 ]
-[ 8-week trend chart · Phase 4 ]
+[ Day by day · full weeks: per weekday, last week ┆ then this week ▌,
+  completed at the bottom, planned-but-not-done light on top ]
+[ The last 8 weeks · completed per week (past ┆, this week ▌)
+  + completion rate per week (line), two charts on one week axis ]
 [ How we calculate (BR-01…BR-06, plain words) ]
 ```
 Empty: "Your story starts with your first completed task", with a link to Tasks.

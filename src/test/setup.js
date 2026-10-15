@@ -53,3 +53,14 @@ if (typeof HTMLDialogElement !== 'undefined' && !HTMLDialogElement.prototype.sho
     },
   })
 }
+
+// jsdom has no ResizeObserver, which Recharts' ResponsiveContainer uses to follow
+// the width of its box. jsdom has no layout either, so a no-op is enough: the
+// charts render at their `initialDimension` size. Chart drawing is checked in a browser.
+if (typeof window.ResizeObserver === 'undefined') {
+  window.ResizeObserver = class ResizeObserver {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  }
+}

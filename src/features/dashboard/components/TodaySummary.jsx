@@ -7,14 +7,14 @@ import { useI18n } from '@/lib/i18n/useI18n.js'
  * and the counts as a short sentence-like row (FR-21, FR-22).
  * `rate` is null when there are no tasks today (BR-06).
  */
-export function TodaySummary({ completed, total, rate }) {
+export function TodaySummary({ completed, remaining, total, rate }) {
   const { t } = useI18n()
   const headingId = useId()
   const hasRate = rate !== null
 
   const counts = [
     { label: t('dashboard.done'), value: completed },
-    { label: t('dashboard.left'), value: total - completed },
+    { label: t('dashboard.left'), value: remaining },
     { label: t('dashboard.planned'), value: total },
   ]
 
@@ -28,7 +28,7 @@ export function TodaySummary({ completed, total, rate }) {
       </h2>
 
       <div className="mt-3 flex flex-wrap items-baseline gap-x-4 gap-y-1">
-        <p dir="ltr" className="text-display font-semibold tracking-tight text-ink tabular-nums">
+        <p dir="ltr" className="text-display font-semibold tracking-tight text-ink">
           {hasRate ? (
             <>
               {rate}

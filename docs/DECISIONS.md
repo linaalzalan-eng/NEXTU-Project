@@ -211,6 +211,21 @@ Business rules (BR-xx) are defined in `PRD.md`; decisions below reference them i
 - **Known limitation:** native `<input type="date">` fields are drawn by the browser in the browser's own locale. In a browser set to Arabic they show Arabic-Indic digits, unlike the Latin digits of D-02, whatever the page language. Text the app formats keeps Latin digits. A custom date picker would remove this but is not planned.
 - **Status:** Approved (2026-10-14). Minor technical decisions within the approved phase.
 
+## D-28 — Dashboard, Analytics, and charts (Phase 4)
+- **Decision:**
+  - **Calculations:** every number on the Dashboard and Analytics comes from the pure functions in `src/lib/stats.js`, `features/dashboard/lib/motivation.js`, and `features/analytics/lib/` (D-09), run in `useMemo` over the task list from `TasksProvider`. `today` comes from `useToday()`, so the numbers follow midnight (BR-10) and every task change (BR-11).
+  - **BR-13 band edge:** "none done" and "all done" are decided from the raw counts. Between them, the band follows the displayed rate (≥ 50 is "close"), so 99/200, shown as 50%, gets the 50–99 message.
+  - **Components:** `TodaySummary` keeps the rate, progress bar, and counts in one hero panel, as in the `DESIGN_SYSTEM.md` Dashboard wireframe. The separate `ProgressCard` named in the plan was not created. `TasksLoadError` is the shared error state of the three data pages. The Dashboard list offers toggling and quick add only (PRD F3); editing and deleting stay on the Tasks page. `TaskItem`'s read-only mode, used only by the Phase 2 preview, was removed with the preview files.
+  - **Trend summary:** the 8-week total and the strongest week (ties to the most recent, as BR-05) come from the pure `summarizeHistory()` in `weeklyStats.js`, not from the chart component. A week without tasks is described as "No tasks", never "0 of 0" (BR-06).
+  - **Analytics empty state:** shown only when the user has no tasks at all. With tasks but no completions, the cards show their own empty states ("Not enough data", "No record yet").
+  - **Recharts 3.10.1** (with its peer `react-is` 19.3.0, matching React), chosen at the newest release at least two weeks old. It is imported only by the lazy Analytics route (NFR-03).
+  - **Chart design:** the present is solid pine and the past a dashed outline (DESIGN_SYSTEM §1). Pine against the `line-strong` outline passed the dataviz palette validator's colour-blind (ΔE 14.7) and normal-vision (ΔE 18.6) separation checks and 3:1 contrast. Two measures with different scales (weekly count and rate) are two small charts on one week axis, never one chart with two value axes. No animation.
+  - **Chart accessibility (NFR-44):** each chart is a `ChartFigure` with a visible one-sentence summary and a "Show as table" data table. The drawing is `aria-hidden` and Recharts' keyboard layer is off, so nothing hidden can take focus. The hover tooltip is a convenience for mouse users only.
+  - **Charts in RTL:** the drawing is laid out LTR (`ChartCanvas`), because SVG text in an RTL page flips `text-anchor` and pushed the axis labels into the plot. In Arabic the chart mirrors itself (reversed x axis, value axis on the right, the past/present pair reversed), and the tooltip keeps the page direction.
+  - **Development seed (P4-T01):** `services/mock/devSeed.js`, loaded by `main.jsx` only when `import.meta.env.DEV` is true, adds `nextu.seed()`, `nextu.seed({ count })`, and `nextu.clear()` to the browser console. The data is deterministic (seeded random numbers) and valid (VR-03, VR-04, BR-12, BR-14). The production build was checked: it contains none of it.
+  - **Tests:** jsdom has no `ResizeObserver`, so `src/test/setup.js` adds a no-op stub and the charts render at their `initialDimension`. Chart drawing is checked in a real browser.
+- **Status:** Approved (2026-10-15). Minor technical decisions within the approved phase.
+
 ---
 
 ## Resolved open decisions

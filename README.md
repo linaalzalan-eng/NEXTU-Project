@@ -6,7 +6,7 @@ NEXTU combines *Next* + *You*: the next, better version of you. Philosophy: "You
 
 A personal productivity and achievement-tracking web app. Plan your daily tasks, complete them, and see how you are progressing compared with **your own** past performance: today's progress, this week vs. last week, and your personal bests.
 
-**Status:** Phase 3 (task management with mock data) complete, awaiting review. See [`docs/PROGRESS.md`](docs/PROGRESS.md).
+**Status:** Phase 4 (Dashboard and Analytics with mock data) complete, awaiting review. See [`docs/PROGRESS.md`](docs/PROGRESS.md).
 
 ## MVP Features
 - Email/password authentication with email confirmation, password reset, and private, per-user data.
@@ -39,7 +39,8 @@ npm run test:run   # run all tests once
 
 While developing:
 - `/tasks` is fully working with **real data** saved in your browser (localStorage, mock service until Phase 5): add, complete, edit, reschedule, delete, browse dates, filter, and move overdue tasks to today.
-- `/dashboard` and `/analytics` still show **labelled sample data** until Phase 4. Add `?preview=empty` to the URL, or use the button in the notice, to see the empty state.
+- `/dashboard` and `/analytics` are calculated from the same real tasks: today's rate and message, this week vs. last week, personal bests, and charts.
+- Development data (only in `npm run dev`): open the browser console and run `nextu.seed()` for about 10 weeks of realistic tasks, `nextu.seed({ count: 5000 })` for a performance check, or `nextu.clear()` to start empty. Seeding **replaces** the tasks saved in this browser.
 - Optional: copy `.env.example` to `.env.local`. The default data source is `mock`.
 - `/login`, `/register`, `/forgot-password`, and `/reset-password` show the account screens. They are not connected yet (Phase 5).
 - `/ui` is a development-only gallery of every UI component and state.

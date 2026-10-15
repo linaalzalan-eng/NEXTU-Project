@@ -125,7 +125,7 @@ Statistics are always computed from the user's current tasks. No snapshots are s
 Marking a task completed sets `status = 'completed'` and `completed_at` to the current time. Marking it pending again sets `status = 'pending'` and `completed_at = null`. The database enforces that `completed_at` is set **if and only if** the status is completed.
 
 **BR-13 — Motivating message (daily)**
-The message is selected from today's counts. Bands are decided from the raw counts (`completed === 0`, `completed === total`), never from a rounded number. In display-rate terms:
+The message is selected from today's counts. The edges are decided from the raw counts (`completed === 0`, `completed === total`), never from a rounded number. Between the edges, the band follows the displayed rate, so the message always matches the number the user sees (for example, 99/200 is shown as 50% and gets the 50–99 message; D-28). In display-rate terms:
 - `null` (no tasks today): invite the user to plan the day.
 - `0`: encourage the first step.
 - `1–49`: acknowledge the start and encourage momentum.

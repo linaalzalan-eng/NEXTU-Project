@@ -1,8 +1,6 @@
 import { CalendarDays, CircleCheckBig, ListTodo } from 'lucide-react'
 import { useMemo, useRef, useState } from 'react'
 import { PageHeader } from '@/components/layout/PageHeader.jsx'
-import { Alert } from '@/components/ui/Alert.jsx'
-import { Button } from '@/components/ui/Button.jsx'
 import { EmptyState } from '@/components/ui/EmptyState.jsx'
 import { DateNavigator } from '@/features/tasks/components/DateNavigator.jsx'
 import { DeleteTaskDialog } from '@/features/tasks/components/DeleteTaskDialog.jsx'
@@ -12,10 +10,10 @@ import { TaskEditDialog } from '@/features/tasks/components/TaskEditDialog.jsx'
 import { TaskForm } from '@/features/tasks/components/TaskForm.jsx'
 import { TaskList } from '@/features/tasks/components/TaskList.jsx'
 import { TaskListSkeleton } from '@/features/tasks/components/TaskListSkeleton.jsx'
+import { TasksLoadError } from '@/features/tasks/components/TasksLoadError.jsx'
 import { filterByStatus, selectOverdue, selectTasksForDate, sortTasks } from '@/features/tasks/lib/taskSelectors.js'
 import { useTaskActions } from '@/features/tasks/useTaskActions.js'
 import { useTasks } from '@/features/tasks/useTasks.js'
-import { errorMessageKey } from '@/lib/errorMessageKey.js'
 import { useI18n } from '@/lib/i18n/useI18n.js'
 import { useToday } from '@/lib/useToday.js'
 
@@ -67,19 +65,7 @@ export default function TasksPage() {
   if (status === 'loading') {
     content = <TaskListSkeleton />
   } else if (status === 'error') {
-    content = (
-      <Alert
-        variant="danger"
-        title={t('tasks.loadError')}
-        action={
-          <Button variant="secondary" size="sm" onClick={reload}>
-            {t('common.retry')}
-          </Button>
-        }
-      >
-        {t(errorMessageKey(error))}
-      </Alert>
-    )
+    content = <TasksLoadError error={error} onRetry={reload} />
   } else {
     const filterEmpty = FILTER_EMPTY[filter]
     content = (

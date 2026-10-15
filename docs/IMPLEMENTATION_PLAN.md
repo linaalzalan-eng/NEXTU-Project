@@ -232,27 +232,27 @@ The owner manages tasks in the browser and approves Phase 4.
 - **Estimated effort:** 4–5 sessions.
 
 ### Tasks
-- [ ] **P4-T01 Development seed data**
+- [x] **P4-T01 Development seed data**
   - Add a dev-only helper that fills the mock with about 10 weeks of realistic tasks. It is never included in production builds.
-- [ ] **P4-T02 Daily stats**
+- [x] **P4-T02 Daily stats**
   - Create `src/lib/stats.js` (BR-01, BR-06) and `features/dashboard/lib/motivation.js` (BR-13).
   - Tests: UT-04.
-- [ ] **P4-T03 Weekly stats and comparison**
+- [x] **P4-T03 Weekly stats and comparison**
   - Create `weeklyStats.js` (BR-02 to BR-04, 8-week history).
   - Tests: UT-05.
-- [ ] **P4-T04 Personal best**
+- [x] **P4-T04 Personal best**
   - Create `personalBest.js` (BR-05).
   - Tests: UT-06.
-- [ ] **P4-T05 Dashboard page**
-  - Create `TodaySummary`, `ProgressCard`, `MotivationMessage`, and `OverdueBanner`, plus today's list with quick add (US-17, US-18).
+- [x] **P4-T05 Dashboard page**
+  - Create `TodaySummary`, `ProgressCard`, `MotivationMessage`, and `OverdueBanner`, plus today's list with quick add (US-17, US-18). `ProgressCard` was merged into `TodaySummary` (D-28).
   - Tests: CT-06, CT-07, IT-02, IT-06.
-- [ ] **P4-T06 Introduce Recharts**
+- [x] **P4-T06 Introduce Recharts**
   - Install `recharts`.
   - Create `DailyChart` (current vs. previous week) and `TrendChart` (8 weeks), each with a text summary (NFR-44) and RTL-aware layout.
-- [ ] **P4-T07 Analytics page**
+- [x] **P4-T07 Analytics page**
   - Create `WeekComparison`, `PersonalBest`, and `CalculationInfo`, with empty states. Lazy-load the route (NFR-03) (US-19 to US-22).
   - Tests: CT-08, IT-03.
-- [ ] **P4-T08 Wrap-up**
+- [x] **P4-T08 Wrap-up**
   - Run the manual script, step 6.
   - Check performance against NFR-04 with 5k seeded tasks.
   - Run the review, write `PHASE_4_EXPLAINED.md`, and write the report.

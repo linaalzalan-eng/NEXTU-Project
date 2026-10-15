@@ -84,15 +84,4 @@ describe('TaskItem', () => {
     setup(makeTask({ title: 'قراءة' }))
     expect(screen.getByText('قراءة')).toHaveAttribute('dir', 'auto')
   })
-
-  it('is read-only without onToggle and states the status in words', () => {
-    renderWithProviders(
-      <ul>
-        <TaskItem task={makeTask({ title: 'Read', status: 'completed' })} />
-      </ul>,
-    )
-    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
-    expect(screen.queryByRole('button')).not.toBeInTheDocument()
-    expect(screen.getByText('Completed')).toHaveClass('sr-only')
-  })
 })

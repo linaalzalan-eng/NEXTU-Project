@@ -16,13 +16,19 @@ function signed(value) {
  * numbers are written as text next to it.
  */
 function WeekRow({ label, week, ghost }) {
-  const { t } = useI18n()
+  const { t, formatDay } = useI18n()
   const hasRate = week.rate !== null
+  const day = (date) => formatDay(date, { day: 'numeric', month: 'short' })
+  // One day (today is Saturday) is shown as a single date, not "Sat – Sat".
+  const range = week.from === week.to ? day(week.from) : t('analytics.range', { from: day(week.from), to: day(week.to) })
 
   return (
     <div>
       <div className="flex flex-wrap items-baseline justify-between gap-x-4">
-        <p className={cx('font-medium', ghost ? 'text-ink-2' : 'text-ink')}>{label}</p>
+        <p className={cx('font-medium', ghost ? 'text-ink-2' : 'text-ink')}>
+          {label}
+          <span className="block text-sm font-normal text-ink-3">{range}</span>
+        </p>
         <p className="text-sm text-ink-3">
           {t('analytics.completedOf', { completed: week.completed, total: week.total })}
           <span className="mx-2" aria-hidden="true">
@@ -34,7 +40,8 @@ function WeekRow({ label, week, ghost }) {
         </p>
       </div>
       <div aria-hidden="true" className="mt-2 h-3 w-full rounded-full bg-sunken">
-        {hasRate &&
+        {/* At 0% nothing is drawn (the dashed border alone would still show a sliver). */}
+        {week.rate > 0 &&
           (ghost ? (
             <div className="h-full rounded-full border-2 border-dashed border-ink-2" style={{ width: `${week.rate}%` }} />
           ) : (
@@ -74,7 +81,10 @@ function Delta({ label, value }) {
   )
 }
 
-/** This week so far vs. the same days last week (FR-30, BR-02 to BR-04). Values come in already calculated. */
+/**
+ * This week so far vs. the same days last week (FR-30, BR-02 to BR-04).
+ * Takes the result of compareWeeksToDate() as props; it does no calculation itself.
+ */
 export function WeekComparison({ current, previous, completedDelta, rateDelta }) {
   const { t } = useI18n()
 

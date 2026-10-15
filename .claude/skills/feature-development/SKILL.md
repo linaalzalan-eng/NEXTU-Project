@@ -36,9 +36,9 @@ Follow `CLAUDE.md` first. This skill is the practical checklist for writing fron
 - [ ] **Forms:** use `Input` (a visible label, with hint and error linked through `aria-describedby`); validate with the shared VR-xx validators.
 - [ ] **Keyboard:** everything is reachable and operable; focus stays visible (the global `:focus-visible` style); dialogs use `Dialog`.
 - [ ] **Meaning without color:** status also uses an icon or a word, plus `sr-only` text where needed.
-- [ ] **Charts** (Phase 4): include a text summary.
+- [ ] **Charts:** use `ChartFigure` (a visible summary sentence and a "Show as table" view; the drawing is `aria-hidden`), wrap the Recharts drawing in `ChartCanvas`, take colors from `chartTheme.js`, and mirror with `directionProps(dir)`. One value axis per chart.
 - [ ] **RTL:** check the screen in Arabic **and** English, at 360px and 1280px.
 - [ ] Run `npm run lint`. From Phase 3, also run `npm run test:run`.
 
 ## 5. Phase 2 preview code (D-22)
-`src/pages/preview/` (sample data, `PreviewNotice`, `usePreviewSubmit`) and the `/ui` gallery exist only for design review. Since Phase 3 the Tasks page uses real data; the Dashboard and Analytics still use the preview until Phase 4, and the auth pages until Phase 5. When a phase connects real data to a page, delete the preview imports from that page. Once nothing uses a preview file, delete it.
+`src/pages/preview/usePreviewSubmit.js` and the `/ui` gallery exist only for design review. Since Phase 4 the Tasks, Dashboard, and Analytics pages use real data; only the auth pages still use the preview, until Phase 5. When a phase connects real data to a page, delete the preview imports from that page. Once nothing uses a preview file, delete it.

@@ -1,7 +1,7 @@
 import { ChevronDown } from 'lucide-react'
 import { useI18n } from '@/lib/i18n/useI18n.js'
 
-const ITEM_KEYS = ['calcRate', 'calcWeek', 'calcCompare', 'calcBest', 'calcEmpty']
+const ITEM_KEYS = ['calcRate', 'calcWeek', 'calcCompare', 'calcCharts', 'calcBest', 'calcEmpty']
 
 /** Plain-language explanation of the formulas (FR-34, PRD Philosophy principle 3). */
 export function CalculationInfo() {

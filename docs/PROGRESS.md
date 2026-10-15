@@ -3,10 +3,10 @@
 _Last updated: 2026-10-15_
 
 ## Current Status
-- **Current phase:** Phase 3 — Task Management (mock data). **Complete** and committed (2026-10-15).
-- **Current task:** none. Phase 3 committed (2026-10-15). Waiting for approval of Phase 4.
+- **Current phase:** Phase 4 — Dashboard & Analytics (mock data). **Complete**, awaiting owner review (2026-10-15).
+- **Current task:** none. Waiting for the owner's review, the Phase 4 commit approval, and approval of Phase 5.
 - **Where task data lives now:** the browser's localStorage, key `nextu.tasks`, written only by `src/services/mock/mockTasksService.js` (one demo user, this browser only). Phase 5 adds `supabaseTasksService` behind the same `tasksService` contract and switches `VITE_DATA_SOURCE` to `supabase`; UI code does not change. Local mock data is not migrated (development data only). See `PHASE_3_EXPLAINED.md` §4.9.
-- **Branch:** `phase/03-task-management` (local, not pushed).
+- **Branch:** `phase/04-dashboard-analytics` (local, created from `phase/03-task-management`). Phase 4 work is not committed yet.
 - **Workflow:** phase-level approval (D-14). Every phase ends with an Arabic explanation file in `docs/phase-reports/` (D-25).
 - **Last commit:** `4b76c4d feat: phase 3 task management with mock data, tests, and explanation` (2026-10-15, approved by the owner).
 
@@ -36,14 +36,39 @@ _Last updated: 2026-10-15_
   - Shared UI additions: Toast `action`, `Dialog` `onSubmit` (form mode), `Button` `mirrorIcon`, i18n `formatDay`, `errorMessageKey`.
   - P3-T11: integration tests, manual script steps in Chrome, the review, docs, and `PHASE_3_EXPLAINED.md`.
   - The Dashboard keeps its labelled preview until P4-T05 (D-27); its notice now says so.
+- [x] Phase 4: P4-T01 to P4-T08 (2026-10-15). Explanation: `docs/phase-reports/PHASE_4_EXPLAINED.md`. Decisions: D-28.
+  - P4-T01: `services/mock/devSeed.js` (development only): `nextu.seed()`, `nextu.seed({ count: 5000 })`, `nextu.clear()` in the browser console.
+  - P4-T02 to P4-T04: `lib/stats.js` (BR-01, BR-06), `dashboard/lib/motivation.js` (BR-13), `analytics/lib/weeklyStats.js` (BR-02 to BR-04, 8-week history, `summarizeHistory`), `analytics/lib/personalBest.js` (BR-05).
+  - P4-T05: Dashboard on real data: `TodaySummary` (with the progress bar; `ProgressCard` merged, D-28), `TodaySummarySkeleton`, today's list with toggle and quick add, `MotivationMessage`, `OverdueBanner`, shared `TasksLoadError`.
+  - P4-T06: Recharts 3.10.1 (+ `react-is` 19.3.0). `DailyChart` and `TrendChart` in `ChartFigure` (summary + "Show as table"), RTL through `ChartCanvas` and `directionProps`.
+  - P4-T07: Analytics on real data through `useAnalytics`: `WeekComparison`, `PersonalBest` (highlight and empty state), charts, `CalculationInfo` (+ full-week note). Lazy route kept (NFR-03).
+  - P4-T08: tests, manual script step 6, NFR-04 check, review, docs, explanation.
+  - Removed the Phase 2 preview files `PreviewNotice.jsx`, `sampleData.js`, `usePreviewState.js`, their strings, and `TaskItem`'s read-only mode. `usePreviewSubmit.js` stays for the auth pages (Phase 5).
 
 ## Pending
-- Phase 4 — Dashboard & Analytics with mock data (P4-T01 onward). It starts after the owner's approval.
+- Phase 5 — Supabase & Authentication (P5-T01 onward). It starts after the owner's approval.
 
 ## Blockers
 - None.
 
 ## Test Results
+- 2026-10-15, Phase 4, run in this session:
+  - `npm run test:run`: **29 files, 230 tests passed** (73 new in 13 files; the Phase 3 test of the removed read-only `TaskItem` mode was deleted). IDs covered: UT-04, UT-05, UT-06, CT-06, CT-07, CT-08, IT-02, IT-03, IT-06, plus the seed, `summarizeHistory`, `directionProps`, and an Arabic render of `DailyChart`.
+  - `npm run lint`: 0 errors, 0 warnings.
+  - `npm run build`: succeeds. Main JS 330.18 kB (104.32 kB gzip), about the same as Phase 3. The Analytics chunk with Recharts is 390.74 kB (112.09 kB gzip) and loads only on `/analytics` (NFR-03). `dist/` contains no trace of `devSeed.js`.
+  - `ar.js` and `en.js`: 201 keys each, none missing on either side.
+  - **NFR-04** (all Dashboard and Analytics calculations on 5,000 seeded tasks): Chrome median 5.7 ms, slowest 19.5 ms (first, cold run); Node 4–17 ms. Limit: 50 ms.
+  - **Hand calculations:** IT-03 uses a dataset calculated by hand in the test file (67% vs. 80%, −13 points; best day 4, best week 5; after a reschedule and a delete: 50% vs. 100%, −1 and −50).
+- 2026-10-15, Phase 4 browser checks: headless Chrome through the DevTools Protocol against `npm run dev` (needed for `nextu.seed()`), real mouse events: **34/34 passed.**
+  - Manual script step 6: with seeded data, the Dashboard rate, overdue count, week comparison, deltas, and personal bests match an independent calculation written in the page from the PRD rules. Also steps 1 and 2 (empty states; a real click changes the rate).
+  - Charts draw solid and dashed (ghost) bars; CSS-variable colors resolve inside SVG; hover tooltip; "Show as table".
+  - RTL: Saturday on the right, value axis on the right, last week's bar read first in each pair.
+  - No horizontal scrolling at 360, 390, 768, 1024, and 1440 px in Arabic and English (Analytics) and at 360, 768, 1440 px in Arabic (Dashboard).
+  - 5,000 tasks: Analytics renders and the numbers still match. `nextu.clear()`: empty states.
+  - Fixed after reviewing screenshots: axis labels overlapped the plot in RTL (`ChartCanvas`), the bar pair order in RTL, the hover band color equal to "planned", and the week label wrapping on mobile in Arabic.
+- 2026-10-15, code-reviewer review of Phase 4: 0 critical, 2 important, 10 minor. All fixed:
+  - Important: `TrendChart` calculated the strongest week itself → pure `summarizeHistory()` with tests; this file was not updated → updated here.
+  - Minor: `remaining` passed from `getDailyStats`; "No tasks" instead of "0 of 0" in the daily summary; no dashed sliver at 0%; tooltip lines through `t()`; tests for `directionProps` and the Arabic chart; BR-13 wording clarified in `PRD.md` (D-28); `ProgressCard` note in the plan; `ARCHITECTURE.md` (pages may call `lib/` in `useMemo`, `setup.js` stub); two references in the explanation file.
 - 2026-10-14, Phase 3, run in this session:
   - `npm run test:run`: **16 files, 158 tests passed** (final count after the pre-approval checks). IDs covered: UT-01, UT-02, UT-03, UT-08, CT-01 to CT-05, CT-09, IT-01, IT-04, IT-05 (routing part), plus TasksProvider and useToday tests, the loading state, and the filter-specific empty message.
   - **Flaky test: resolved.**
@@ -115,7 +140,6 @@ _Last updated: 2026-10-15_
 - 2026-10-11, product renamed to NEXTU at the owner's request (D-24): UI name and slogan in `ar.js`/`en.js`, `index.html`, `package.json`, README, CLAUDE.md, and the docs.
 
 ## Notes for Later Phases
-- Phase 4: connect the Dashboard to `useTasks()` and `lib/stats.js`, and remove `SAMPLE_TODAY` (P4-T05). `TaskItem`'s read-only mode can then be removed if nothing uses it. Replace the sample analytics values with `weeklyStats`/`personalBest`. Add the Recharts charts.
 - Phase 5: with real network latency, consider blocking Escape while the edit dialog saves, and adding a spinner to "Move to today" (review minors).
 - Owner decision, any time: rename the language storage key `mind.lang` (D-24 naming). Renaming resets each browser's saved language once, unless the old key is migrated.
 - Phase 5: replace `usePreviewSubmit` with real auth handlers. Replace the sidebar's "Log in" link with "Log out".
