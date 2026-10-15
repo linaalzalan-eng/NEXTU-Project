@@ -3,12 +3,12 @@
 _Last updated: 2026-10-15_
 
 ## Current Status
-- **Current phase:** Phase 4 — Dashboard & Analytics (mock data). **Complete**, awaiting owner review (2026-10-15).
-- **Current task:** none. Waiting for the owner's review, the Phase 4 commit approval, and approval of Phase 5.
+- **Current phase:** Phase 4 — Dashboard & Analytics (mock data). **Complete** and committed (2026-10-15).
+- **Current task:** none. Phase 4 committed (2026-10-15). Waiting for approval of Phase 5.
 - **Where task data lives now:** the browser's localStorage, key `nextu.tasks`, written only by `src/services/mock/mockTasksService.js` (one demo user, this browser only). Phase 5 adds `supabaseTasksService` behind the same `tasksService` contract and switches `VITE_DATA_SOURCE` to `supabase`; UI code does not change. Local mock data is not migrated (development data only). See `PHASE_3_EXPLAINED.md` §4.9.
-- **Branch:** `phase/04-dashboard-analytics` (local, created from `phase/03-task-management`). Phase 4 work is not committed yet.
+- **Branch:** `phase/04-dashboard-analytics` (local, created from `phase/03-task-management`, not pushed).
 - **Workflow:** phase-level approval (D-14). Every phase ends with an Arabic explanation file in `docs/phase-reports/` (D-25).
-- **Last commit:** `4b76c4d feat: phase 3 task management with mock data, tests, and explanation` (2026-10-15, approved by the owner).
+- **Last commit:** `89f1464 feat: phase 4 dashboard and analytics with calculations, charts, tests, and explanation` (2026-10-15, approved by the owner).
 
 ## Completed
 - [x] Phase 1: P1-T01 to P1-T16. See `IMPLEMENTATION_PLAN.md`. Explanation: `docs/phase-reports/PHASE_1_EXPLAINED.md`.
