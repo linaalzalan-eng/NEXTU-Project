@@ -59,8 +59,9 @@ describe('TaskItem', () => {
     expect(onDelete).toHaveBeenCalledWith(task)
   })
 
-  it('locks its controls while a new task is still being saved', async () => {
-    const { user, onToggle } = setup(makeTask({ id: 'temp-1', title: 'Read' }))
+  // `locked` comes from TaskList (isTaskLocked: unsaved, or a request in flight).
+  it('locks its controls while locked', async () => {
+    const { user, onToggle } = setup(makeTask({ title: 'Read' }), { locked: true })
     const checkbox = screen.getByRole('checkbox', { name: 'Read' })
 
     // aria-disabled, not disabled, so the checkbox keeps keyboard focus.
@@ -69,14 +70,6 @@ describe('TaskItem', () => {
     expect(onToggle).not.toHaveBeenCalled()
     expect(checkbox).not.toBeChecked()
     expect(screen.getByRole('button', { name: 'Edit “Read”' })).toBeDisabled()
-  })
-
-  it('locks its controls while a request for it is in flight (busy)', async () => {
-    const { user, onToggle } = setup(makeTask({ title: 'Read' }), { busy: true })
-
-    await user.click(screen.getByRole('checkbox', { name: 'Read' }))
-
-    expect(onToggle).not.toHaveBeenCalled()
     expect(screen.getByRole('button', { name: 'Delete “Read”' })).toBeDisabled()
   })
 

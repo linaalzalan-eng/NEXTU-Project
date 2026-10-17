@@ -8,19 +8,29 @@ import { useTasks } from './useTasks.js'
  * The task actions the UI calls, with user feedback added (USER_FLOW §3–6).
  * When an optimistic action fails, TasksProvider has already restored the list;
  * this hook shows a toast with "Try again". A task that no longer exists gets a
- * short notice instead. These promises never reject, except `update`: the edit
- * dialog awaits it and shows its own error message.
+ * short notice instead (SRS §4), always from here.
+ *
+ * One contract for all of them: the promise never rejects. It resolves to the
+ * saved task, or to null when the action failed and the user has been told.
+ * The one exception is `saveEdit`: the edit dialog shows its own error message,
+ * so any failure other than "no longer exists" rejects with the ServiceError.
+ *
+ * "Try again" starts from the current version of the task (`getTask`), not the
+ * copy from the first attempt, so it cannot bring back an older title or date.
  */
 export function useTaskActions() {
-  const { createTask, updateTask, setTaskCompletion, deleteTask } = useTasks()
+  const { getTask, createTask, updateTask, setTaskCompletion, deleteTask } = useTasks()
   const { t, formatDay } = useI18n()
   const { showToast } = useToast()
 
-  const report = useCallback(
+  const notifyGone = useCallback(() => showToast({ message: t('errors.notFound') }), [showToast, t])
+
+  /** Tells the user about a failure and resolves the action to null. */
+  const reportFailure = useCallback(
     (error, retry) => {
       if (error?.code === 'NOT_FOUND') {
-        showToast({ message: t('errors.notFound') })
-        return
+        notifyGone()
+        return null
       }
       // Retrying can only help when the problem was the connection or the server.
       const canRetry = !error?.code || error.code === 'NETWORK' || error.code === 'UNKNOWN'
@@ -29,36 +39,61 @@ export function useTaskActions() {
         message: t(errorMessageKey(error)),
         action: canRetry ? { label: t('common.retry'), onClick: retry } : undefined,
       })
+      return null
     },
-    [showToast, t],
+    [notifyGone, showToast, t],
   )
 
   return useMemo(() => {
-    function create(input) {
-      return createTask(input).catch((error) => report(error, () => create(input)))
+    /** Runs `action` again on the current version of the task; tells the user if it is gone. */
+    function retryWithLatest(task, action) {
+      return () => {
+        const latest = getTask(task.id)
+        if (latest) action(latest)
+        else notifyGone()
+      }
     }
 
-    function toggle(task, completed) {
-      return setTaskCompletion(task, completed).catch((error) => report(error, () => toggle(task, completed)))
+    function create(input) {
+      return createTask(input).catch((error) => reportFailure(error, () => create(input)))
+    }
+
+    function setCompleted(task, completed) {
+      return setTaskCompletion(task, completed).catch((error) =>
+        reportFailure(error, retryWithLatest(task, (latest) => setCompleted(latest, completed))),
+      )
     }
 
     function remove(task) {
       return deleteTask(task).then(
-        () => showToast({ variant: 'success', message: t('taskDelete.done') }),
-        (error) => report(error, () => remove(task)),
+        () => {
+          showToast({ variant: 'success', message: t('taskDelete.done') })
+          return task
+        },
+        (error) => reportFailure(error, retryWithLatest(task, remove)),
       )
     }
 
     function moveToToday(task, today) {
       return updateTask(task, { taskDate: today }).then(
-        () => showToast({ variant: 'success', message: t('task.movedToToday') }),
-        (error) => report(error, () => moveToToday(task, today)),
+        (saved) => {
+          showToast({ variant: 'success', message: t('task.movedToToday') })
+          return saved
+        },
+        (error) => reportFailure(error, retryWithLatest(task, (latest) => moveToToday(latest, today))),
       )
     }
 
     /** Edit dialog save (BR-08). A new date moves the task off the viewed day, so say where it went. */
-    async function update(task, changes) {
-      const saved = await updateTask(task, changes)
+    async function saveEdit(task, changes) {
+      let saved
+      try {
+        saved = await updateTask(task, changes)
+      } catch (error) {
+        // The list has already dropped it; the dialog just closes.
+        if (error?.code === 'NOT_FOUND') return reportFailure(error)
+        throw error
+      }
       if (changes.taskDate) {
         const date = formatDay(changes.taskDate, { day: 'numeric', month: 'long' })
         showToast({ variant: 'success', message: t('taskEdit.movedTo', { date }) })
@@ -66,6 +101,6 @@ export function useTaskActions() {
       return saved
     }
 
-    return { create, toggle, remove, moveToToday, update }
-  }, [createTask, updateTask, setTaskCompletion, deleteTask, report, showToast, t, formatDay])
+    return { create, setCompleted, remove, moveToToday, saveEdit }
+  }, [getTask, createTask, updateTask, setTaskCompletion, deleteTask, notifyGone, reportFailure, showToast, t, formatDay])
 }

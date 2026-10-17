@@ -3,20 +3,20 @@ import { Alert } from '@/components/ui/Alert.jsx'
 import { Button } from '@/components/ui/Button.jsx'
 import { Dialog } from '@/components/ui/Dialog.jsx'
 import { Input } from '@/components/ui/Input.jsx'
-import { useToast } from '@/components/ui/useToast.js'
 import { errorMessageKey } from '@/lib/errorMessageKey.js'
 import { useI18n } from '@/lib/i18n/useI18n.js'
 import { getTaskDateRange, normalizeTitle, validateTaskInput } from '../lib/taskValidation.js'
 
 /**
  * Edit a task's title and date (US-08, US-09, BR-08). Open while `task` is set.
- * Saving waits for the service and shows a loading state (NFR-02); on failure the
- * dialog stays open with the message. Cancel and Escape discard the changes.
- * `onSave(task, changes)` receives only the fields that changed.
+ * Saving waits for the service and shows a loading state (NFR-02).
+ * `onSave(task, changes)` receives only the fields that changed (useTaskActions().saveEdit):
+ * when it resolves, the dialog closes (also when the task turned out to be gone;
+ * that notice comes from the action); when it rejects, the dialog stays open with
+ * the message. Cancel and Escape discard the changes.
  */
 export function TaskEditDialog({ task, today, onSave, onClose }) {
   const { t } = useI18n()
-  const { showToast } = useToast()
   const titleRef = useRef(null)
   const dateRef = useRef(null)
   const [title, setTitle] = useState('')
@@ -57,13 +57,7 @@ export function TaskEditDialog({ task, today, onSave, onClose }) {
       await onSave(task, changes)
       onClose()
     } catch (error) {
-      // The task is gone (deleted elsewhere); the list has already dropped it (SRS §4).
-      if (error.code === 'NOT_FOUND') {
-        showToast({ message: t('errors.notFound') })
-        onClose()
-      } else {
-        setSaveError(error)
-      }
+      setSaveError(error)
     } finally {
       setSaving(false)
     }
@@ -92,7 +86,11 @@ export function TaskEditDialog({ task, today, onSave, onClose }) {
           ref={titleRef}
           label={t('taskEdit.titleLabel')}
           value={title}
-          onChange={(event) => setTitle(event.target.value)}
+          onChange={(event) => {
+            setTitle(event.target.value)
+            // Like the create form: a field's error clears as soon as it is edited.
+            if (errors.title) setErrors((current) => ({ ...current, title: undefined }))
+          }}
           error={errors.title && t(`validation.title.${errors.title}`)}
           dir="auto"
           autoComplete="off"
@@ -104,7 +102,10 @@ export function TaskEditDialog({ task, today, onSave, onClose }) {
           value={taskDate}
           min={range.min}
           max={range.max}
-          onChange={(event) => setTaskDate(event.target.value)}
+          onChange={(event) => {
+            setTaskDate(event.target.value)
+            if (errors.taskDate) setErrors((current) => ({ ...current, taskDate: undefined }))
+          }}
           error={errors.taskDate && t(`validation.taskDate.${errors.taskDate}`)}
         />
       </div>

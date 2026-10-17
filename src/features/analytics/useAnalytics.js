@@ -14,7 +14,7 @@ export const TREND_WEEKS = 8
  */
 export function useAnalytics() {
   const today = useToday()
-  const { tasks, status, error, reload } = useTasks()
+  const { tasks, loadStatus, error, reload } = useTasks()
 
   const stats = useMemo(() => {
     const history = getWeeklyHistory(tasks, today, TREND_WEEKS)
@@ -29,5 +29,5 @@ export function useAnalytics() {
     }
   }, [tasks, today])
 
-  return { status, error, reload, today, hasTasks: tasks.length > 0, ...stats }
+  return { loadStatus, error, reload, today, hasTasks: tasks.length > 0, ...stats }
 }

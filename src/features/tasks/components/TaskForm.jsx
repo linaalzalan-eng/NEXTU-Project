@@ -29,8 +29,9 @@ export function TaskForm({ defaultDate, today, onCreate }) {
     if (nextErrors.title) return titleRef.current.focus()
     if (nextErrors.taskDate) return dateRef.current.focus()
 
-    // onCreate resolves with the saved task, or with nothing if saving failed
-    // (the failure has its own message). Confirm another day only after it is saved.
+    // onCreate follows the useTaskActions contract: it resolves to the saved task, or
+    // to null if saving failed (the failure has its own message). Confirm another day
+    // only after it is saved.
     Promise.resolve(onCreate({ title, taskDate })).then((saved) => {
       if (saved && taskDate !== defaultDate) {
         const date = formatDay(taskDate, { day: 'numeric', month: 'long' })

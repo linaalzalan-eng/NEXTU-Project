@@ -26,7 +26,7 @@ import { useToday } from '@/lib/useToday.js'
 export default function DashboardPage() {
   const { t, formatDay } = useI18n()
   const today = useToday()
-  const { tasks, busyIds, status, error, reload } = useTasks()
+  const { tasks, busyIds, loadStatus, error, reload } = useTasks()
   const actions = useTaskActions()
 
   const stats = useMemo(() => getDailyStats(tasks, today), [tasks, today])
@@ -34,14 +34,14 @@ export default function DashboardPage() {
   const overdueCount = useMemo(() => selectOverdue(tasks, today).length, [tasks, today])
 
   let content
-  if (status === 'loading') {
+  if (loadStatus === 'loading') {
     content = (
       <div className="flex flex-col gap-8 lg:w-2/3">
         <TodaySummarySkeleton />
         <TaskListSkeleton />
       </div>
     )
-  } else if (status === 'error') {
+  } else if (loadStatus === 'error') {
     content = <TasksLoadError error={error} onRetry={reload} />
   } else {
     content = (
@@ -56,7 +56,7 @@ export default function DashboardPage() {
             {/* key: a new day starts with a fresh form whose date is the new today (BR-10). */}
             <TaskForm key={today} defaultDate={today} today={today} onCreate={actions.create} />
             {todayTasks.length > 0 ? (
-              <TaskList tasks={todayTasks} busyIds={busyIds} onToggle={actions.toggle} />
+              <TaskList tasks={todayTasks} busyIds={busyIds} onToggle={actions.setCompleted} />
             ) : (
               <div className="rounded-lg border border-dashed border-line-strong">
                 <EmptyState icon={Sprout} title={t('dashboard.emptyTitle')} headingLevel="h3">

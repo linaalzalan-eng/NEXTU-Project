@@ -3,7 +3,6 @@ import { useId } from 'react'
 import { Button } from '@/components/ui/Button.jsx'
 import { useI18n } from '@/lib/i18n/useI18n.js'
 import { cx } from '@/lib/cx.js'
-import { isTempTask } from '../lib/taskSelectors.js'
 import { TaskList } from './TaskList.jsx'
 
 /**
@@ -32,13 +31,13 @@ export function OverdueSection({ tasks, busyIds, onToggle, onMoveToToday, classN
         getMeta={(task) =>
           t('task.plannedFor', { date: formatDay(task.taskDate, { weekday: 'short', day: 'numeric', month: 'short' }) })
         }
-        getAction={(task) => (
+        getAction={(task, { locked }) => (
           <Button
             variant="secondary"
             icon={CalendarArrowUp}
             // The visible text comes first, so the name still matches what is seen (WCAG 2.5.3).
             aria-label={t('task.moveToTodayNamed', { title: task.title })}
-            disabled={isTempTask(task) || (busyIds?.has(task.id) ?? false)}
+            disabled={locked}
             onClick={() => onMoveToToday(task)}
           >
             {t('task.moveToToday')}

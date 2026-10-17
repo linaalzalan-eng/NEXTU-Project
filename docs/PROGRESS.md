@@ -1,10 +1,10 @@
 # Progress
 
-_Last updated: 2026-10-15_
+_Last updated: 2026-10-17_
 
 ## Current Status
 - **Current phase:** Phase 4 — Dashboard & Analytics (mock data). **Complete** and committed (2026-10-15).
-- **Current task:** none. Phase 4 committed (2026-10-15). Waiting for approval of Phase 5.
+- **Current task:** none. Phase 4 committed (2026-10-15). The task-feature refactor from the code smell review (D-29) is done and not committed yet. Waiting for approval of Phase 5.
 - **Where task data lives now:** the browser's localStorage, key `nextu.tasks`, written only by `src/services/mock/mockTasksService.js` (one demo user, this browser only). Phase 5 adds `supabaseTasksService` behind the same `tasksService` contract and switches `VITE_DATA_SOURCE` to `supabase`; UI code does not change. Local mock data is not migrated (development data only). See `PHASE_3_EXPLAINED.md` §4.9.
 - **Branch:** `phase/04-dashboard-analytics` (local, created from `phase/03-task-management`, not pushed).
 - **Workflow:** phase-level approval (D-14). Every phase ends with an Arabic explanation file in `docs/phase-reports/` (D-25).
@@ -44,6 +44,12 @@ _Last updated: 2026-10-15_
   - P4-T07: Analytics on real data through `useAnalytics`: `WeekComparison`, `PersonalBest` (highlight and empty state), charts, `CalculationInfo` (+ full-week note). Lazy route kept (NFR-03).
   - P4-T08: tests, manual script step 6, NFR-04 check, review, docs, explanation.
   - Removed the Phase 2 preview files `PreviewNotice.jsx`, `sampleData.js`, `usePreviewState.js`, their strings, and `TaskItem`'s read-only mode. `usePreviewSubmit.js` stays for the auth pages (Phase 5).
+- [x] 2026-10-17, task-feature refactor (D-29), approved by the owner after the review in `CODE_SMELL_PHASE_3.md`:
+  - One `useTaskActions` contract (`setCompleted`, `saveEdit`); the "no longer exists" notice comes from one place.
+  - Rollbacks and "Try again" work on the current version of a task (`getTask`).
+  - Shared `applyCompletion` (BR-12), `byDateThenCreation` (with `id`), `isTaskLocked`; `loadStatus` naming.
+  - `DayTasksSection` extracted from `TasksPage`; an active filter stays visible on an empty day; the edit dialog clears field errors on edit.
+  - M-1 and M-2 are Phase 5 tasks in `IMPLEMENTATION_PLAN.md` (P5-T03, P5-T06).
 
 ## Pending
 - Phase 5 — Supabase & Authentication (P5-T01 onward). It starts after the owner's approval.
@@ -52,6 +58,10 @@ _Last updated: 2026-10-15_
 - None.
 
 ## Test Results
+- 2026-10-17, task-feature refactor (D-29), run in this session:
+  - `npm run test:run`: **30 files, 242 tests passed** (12 more than Phase 4; the two `TaskItem` lock tests became one `locked` test. New: `applyCompletion`, `byDateThenCreation` tie, `isTaskLocked`, rollback on the current version, `getTask`, edit-dialog error clearing, and three Tasks page integration tests). One earlier full run had a single timeout in `AnalyticsPage.test.jsx` (the lazy page took over 3 s to open under load); that file passed alone, and the next full run passed completely.
+  - `npm run lint`: 0 errors, 0 warnings.
+  - `npm run build`: succeeds. Main JS 331.05 kB (104.65 kB gzip).
 - 2026-10-15, Phase 4, run in this session:
   - `npm run test:run`: **29 files, 230 tests passed** (73 new in 13 files; the Phase 3 test of the removed read-only `TaskItem` mode was deleted). IDs covered: UT-04, UT-05, UT-06, CT-06, CT-07, CT-08, IT-02, IT-03, IT-06, plus the seed, `summarizeHistory`, `directionProps`, and an Arabic render of `DailyChart`.
   - `npm run lint`: 0 errors, 0 warnings.

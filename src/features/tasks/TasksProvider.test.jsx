@@ -8,7 +8,7 @@ const TODAY = '2026-10-14'
 
 async function renderTasks() {
   const view = renderHook(() => useTasks(), { wrapper: TasksProvider })
-  await waitFor(() => expect(view.result.current.status).toBe('ready'))
+  await waitFor(() => expect(view.result.current.loadStatus).toBe('ready'))
   return view
 }
 
@@ -48,12 +48,12 @@ describe('TasksProvider', () => {
     vi.spyOn(tasksService, 'listTasks').mockRejectedValueOnce(new ServiceError('NETWORK'))
     const { result } = renderHook(() => useTasks(), { wrapper: TasksProvider })
 
-    await waitFor(() => expect(result.current.status).toBe('error'))
+    await waitFor(() => expect(result.current.loadStatus).toBe('error'))
     expect(result.current.error.code).toBe('NETWORK')
 
     act(() => result.current.reload())
-    expect(result.current.status).toBe('loading')
-    await waitFor(() => expect(result.current.status).toBe('ready'))
+    expect(result.current.loadStatus).toBe('loading')
+    await waitFor(() => expect(result.current.loadStatus).toBe('ready'))
   })
 
   describe('createTask', () => {
@@ -115,6 +115,19 @@ describe('TasksProvider', () => {
       expect(result.current.tasks).toEqual([task])
     })
 
+    it('undoes only the completion, keeping a newer title (a retry from an older copy)', async () => {
+      const original = await tasksService.createTask({ title: 'Read', taskDate: TODAY })
+      const { result } = await renderTasks()
+      await act(() => result.current.updateTask(original, { title: 'Read more' }))
+      vi.spyOn(tasksService, 'setTaskCompletion').mockRejectedValueOnce(new ServiceError('NETWORK'))
+
+      await act(async () => {
+        await expect(result.current.setTaskCompletion(original, true)).rejects.toMatchObject({ code: 'NETWORK' })
+      })
+
+      expect(result.current.tasks[0]).toMatchObject({ title: 'Read more', status: 'pending', completedAt: null })
+    })
+
     it('removes a task that no longer exists (NOT_FOUND)', async () => {
       const task = await tasksService.createTask({ title: 'Read', taskDate: TODAY })
       const { result } = await renderTasks()
@@ -149,6 +162,22 @@ describe('TasksProvider', () => {
       })
 
       expect(result.current.tasks).toEqual([task])
+    })
+
+    it('puts back the version that was on screen, not an older copy', async () => {
+      const original = await tasksService.createTask({ title: 'Read', taskDate: TODAY })
+      const { result } = await renderTasks()
+      let edited
+      await act(async () => {
+        edited = await result.current.updateTask(original, { title: 'Read more' })
+      })
+      vi.spyOn(tasksService, 'deleteTask').mockRejectedValueOnce(new ServiceError('NETWORK'))
+
+      await act(async () => {
+        await expect(result.current.deleteTask(original)).rejects.toMatchObject({ code: 'NETWORK' })
+      })
+
+      expect(result.current.tasks).toEqual([edited])
     })
 
     it('treats NOT_FOUND as already deleted', async () => {
@@ -215,6 +244,16 @@ describe('TasksProvider', () => {
 
     expect(result.current.tasks).toEqual([])
     expect(result.current.busyIds.size).toBe(0)
+  })
+
+  it('getTask returns the current version of a task, or undefined when it is gone', async () => {
+    const original = await tasksService.createTask({ title: 'Read', taskDate: TODAY })
+    const { result } = await renderTasks()
+
+    await act(() => result.current.updateTask(original, { title: 'Read more' }))
+
+    expect(result.current.getTask(original.id)).toMatchObject({ title: 'Read more' })
+    expect(result.current.getTask('missing')).toBeUndefined()
   })
 
   it('throws a clear error when used outside the provider', () => {

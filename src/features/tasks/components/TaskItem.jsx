@@ -3,7 +3,6 @@ import { useId } from 'react'
 import { Button } from '@/components/ui/Button.jsx'
 import { useI18n } from '@/lib/i18n/useI18n.js'
 import { cx } from '@/lib/cx.js'
-import { isTempTask } from '../lib/taskSelectors.js'
 
 /** The round mark: an empty ring when pending, a filled ring with a check when completed. */
 const markClass = 'grid size-5 shrink-0 place-items-center rounded-full border-2 transition-colors'
@@ -14,14 +13,13 @@ const markClass = 'grid size-5 shrink-0 place-items-center rounded-full border-2
  * Completed tasks also get a strike-through and a check, not only a color (US-10).
  * Edit and Delete appear only when their handlers are passed (the Dashboard
  * shows only the checkbox, PRD F3).
- * While the task is unsaved or `busy` (a request in flight), its controls are locked.
+ * While `locked` (unsaved, or a request in flight; see isTaskLocked), its controls are blocked.
  * The checkbox uses aria-disabled instead of disabled, so keyboard focus stays on it.
  */
-export function TaskItem({ task, meta, action, busy = false, onToggle, onEdit, onDelete }) {
+export function TaskItem({ task, meta, action, locked = false, onToggle, onEdit, onDelete }) {
   const { t } = useI18n()
   const checkboxId = useId()
   const completed = task.status === 'completed'
-  const locked = busy || isTempTask(task)
   const titleClass = completed ? 'text-ink-3 line-through decoration-ink-3/60' : 'text-ink'
   // The title keeps its own direction (dir="auto" on an inline span), while the line
   // stays aligned to the UI's start side next to the checkbox: an English title in

@@ -1,12 +1,11 @@
+import { applyCompletion } from '@/features/tasks/lib/taskCompletion.js'
+import { byDateThenCreation } from '@/features/tasks/lib/taskSelectors.js'
 import { normalizeTitle, validateTaskInput } from '@/features/tasks/lib/taskValidation.js'
 import { todayLocal } from '@/lib/dates.js'
 import { ServiceError } from '../errors.js'
 import { DEMO_USER } from './mockAuthService.js'
 
 export const TASKS_STORAGE_KEY = 'nextu.tasks'
-
-const byDateThenCreation = (a, b) =>
-  a.taskDate.localeCompare(b.taskDate) || a.createdAt.localeCompare(b.createdAt)
 
 /**
  * Tasks service backed by localStorage (D-08, API_CONTRACTS §4). It follows the
@@ -108,12 +107,7 @@ export function createMockTasksService({
       const tasks = read()
       const index = findIndex(tasks, id)
       const timestamp = now().toISOString()
-      const updated = {
-        ...tasks[index],
-        status: completed ? 'completed' : 'pending',
-        completedAt: completed ? timestamp : null,
-        updatedAt: timestamp,
-      }
+      const updated = { ...applyCompletion(tasks[index], completed, timestamp), updatedAt: timestamp }
       tasks[index] = updated
       write(tasks)
       return updated

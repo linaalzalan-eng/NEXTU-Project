@@ -20,13 +20,13 @@ import { useI18n } from '@/lib/i18n/useI18n.js'
  */
 export default function AnalyticsPage() {
   const { t } = useI18n()
-  const { status, error, reload, today, hasTasks, comparison, currentWeek, previousWeek, history, historySummary, best } =
+  const { loadStatus, error, reload, today, hasTasks, comparison, currentWeek, previousWeek, history, historySummary, best } =
     useAnalytics()
 
   let content
-  if (status === 'loading') {
+  if (loadStatus === 'loading') {
     content = <PageLoader />
-  } else if (status === 'error') {
+  } else if (loadStatus === 'error') {
     content = <TasksLoadError error={error} onRetry={reload} />
   } else if (!hasTasks) {
     content = (

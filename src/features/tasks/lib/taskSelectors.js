@@ -10,8 +10,20 @@ export function isTempTask(task) {
   return task.id.startsWith(TEMP_ID_PREFIX)
 }
 
+/**
+ * True when the UI must block actions on the task: it is still being saved, or a
+ * request for it is in flight (`busyIds`, a Set from TasksProvider).
+ */
+export function isTaskLocked(task, busyIds) {
+  return isTempTask(task) || Boolean(busyIds?.has(task.id))
+}
+
 const byCreation = (a, b) => a.createdAt.localeCompare(b.createdAt)
-const byDateThenCreation = (a, b) => a.taskDate.localeCompare(b.taskDate) || byCreation(a, b)
+
+/** The service order (API_CONTRACTS §4): taskDate, then createdAt, then id, so ties are deterministic. */
+export function byDateThenCreation(a, b) {
+  return a.taskDate.localeCompare(b.taskDate) || byCreation(a, b) || a.id.localeCompare(b.id)
+}
 
 export function selectTasksForDate(tasks, date) {
   return tasks.filter((task) => task.taskDate === date)

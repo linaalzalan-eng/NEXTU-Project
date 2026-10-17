@@ -72,7 +72,7 @@ describe('TaskForm', () => {
   })
 
   it('does not confirm another day when saving failed', async () => {
-    const onCreate = vi.fn(async () => undefined)
+    const onCreate = vi.fn(async () => null)
     const { user, title, date } = setup({ onCreate })
 
     await user.clear(date)

@@ -114,6 +114,51 @@ describe('Tasks page (integration)', () => {
     await waitFor(() => expect(screen.getByRole('checkbox', { name: 'Read' })).toBeChecked())
   })
 
+  it('"Try again" uses the current version of the task, not the one from the failed attempt', async () => {
+    await tasksService.createTask({ title: 'Read', taskDate: '2026-10-14' })
+    const { user } = await openTasksPage()
+    vi.spyOn(tasksService, 'setTaskCompletion').mockRejectedValueOnce(new ServiceError('NETWORK'))
+    await user.click(await screen.findByRole('checkbox', { name: 'Read' }))
+    const retry = await screen.findByRole('button', { name: 'Try again' })
+
+    // Rename the task while the failure toast is still open.
+    await user.click(screen.getByRole('button', { name: 'Edit “Read”' }))
+    const dialog = screen.getByRole('dialog', { name: 'Edit task' })
+    await user.type(within(dialog).getByLabelText('Title'), ' more{Enter}')
+    await screen.findByRole('checkbox', { name: 'Read more' })
+
+    await user.click(retry)
+    await waitFor(() => expect(screen.getByRole('checkbox', { name: 'Read more' })).toBeChecked())
+    expect(screen.queryByRole('checkbox', { name: 'Read' })).not.toBeInTheDocument()
+  })
+
+  it('closes the edit dialog with a notice when the task no longer exists', async () => {
+    const task = await tasksService.createTask({ title: 'Read', taskDate: '2026-10-14' })
+    const { user } = await openTasksPage()
+    await tasksService.deleteTask(task.id) // deleted in "another tab"
+
+    await user.click(await screen.findByRole('button', { name: 'Edit “Read”' }))
+    const dialog = screen.getByRole('dialog', { name: 'Edit task' })
+    await user.type(within(dialog).getByLabelText('Title'), ' more{Enter}')
+
+    expect(await screen.findByText('This task no longer exists. The list has been updated.')).toBeInTheDocument()
+    await waitFor(() => expect(dialog).not.toBeVisible())
+    expect(screen.queryByRole('checkbox', { name: /Read/ })).not.toBeInTheDocument()
+  })
+
+  it('keeps an active filter visible on an empty day, so a new task is not hidden silently', async () => {
+    await tasksService.createTask({ title: 'Read', taskDate: '2026-10-14' })
+    const { user } = await openTasksPage()
+
+    await user.click(await screen.findByRole('button', { name: 'Completed' }))
+    await user.click(screen.getByRole('button', { name: 'Next day' }))
+
+    expect(screen.getByRole('button', { name: 'Completed' })).toHaveAttribute('aria-pressed', 'true')
+    await user.click(screen.getByRole('button', { name: 'All' }))
+    await user.type(screen.getByLabelText('New task'), 'Plan{Enter}')
+    expect(await within(dayList()).findByRole('checkbox', { name: 'Plan' })).toBeInTheDocument()
+  })
+
   it('tells the user when a task no longer exists, and drops it (SRS §4)', async () => {
     const task = await tasksService.createTask({ title: 'Read', taskDate: '2026-10-14' })
     const { user } = await openTasksPage()

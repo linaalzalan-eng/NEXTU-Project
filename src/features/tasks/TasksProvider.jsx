@@ -1,30 +1,40 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { tasksService } from '@/services'
-import { normalizeTitle } from './lib/taskValidation.js'
+import { applyCompletion } from './lib/taskCompletion.js'
 import { TEMP_ID_PREFIX } from './lib/taskSelectors.js'
+import { normalizeTitle } from './lib/taskValidation.js'
 import { TasksContext } from './TasksContext.js'
 
 /**
  * Holds the user's full task list (ARCHITECTURE §5) and the actions that change it.
  *
  * Create, toggle, and delete are optimistic (NFR-02): the list changes at once,
- * then the service is called. If the service fails, only the affected task is
- * restored and the error is re-thrown for the caller to report (NFR-21).
+ * then the service is called. If the service fails, only what the action changed
+ * is undone, on the task as it is now, and the error is re-thrown for the caller
+ * to report (NFR-21). So a rollback never overwrites a newer change, even when it
+ * comes from a later "Try again" that started from an older copy of the task.
  * updateTask waits for the service, because the edit dialog shows a loading state.
  * NOT_FOUND means the task is gone (for example, deleted in another tab), so it is
  * removed locally instead of restored (SRS §4).
  *
  * While a request for a task is in flight, its id is in `busyIds` and the UI blocks
- * further actions on that task. So at most one request per task runs at a time,
- * and restoring the copy taken at the start can never overwrite a newer change.
+ * further actions on that task, so at most one request per task runs at a time.
  */
 export function TasksProvider({ children }) {
   const [tasks, setTasks] = useState([])
-  const [status, setStatus] = useState('loading')
+  const [loadStatus, setLoadStatus] = useState('loading')
   const [error, setError] = useState(null)
   const [loadCount, setLoadCount] = useState(0)
   const [busyIds, setBusyIds] = useState(() => new Set())
   const nextTempId = useRef(0)
+  const latestTasks = useRef(tasks)
+
+  useEffect(() => {
+    latestTasks.current = tasks
+  }, [tasks])
+
+  /** The current version of a task, or undefined when it is gone. For retries started from an older copy. */
+  const getTask = useCallback((id) => latestTasks.current.find((task) => task.id === id), [])
 
   /** Runs one request for a task, marking the task busy until it settles. */
   const withBusy = useCallback(async (id, request) => {
@@ -47,12 +57,12 @@ export function TasksProvider({ children }) {
       .then((list) => {
         if (ignore) return
         setTasks(list)
-        setStatus('ready')
+        setLoadStatus('ready')
       })
       .catch((caught) => {
         if (ignore) return
         setError(caught)
-        setStatus('error')
+        setLoadStatus('error')
       })
     // Ignore a slow response that arrives after unmount or after a newer reload.
     return () => {
@@ -61,14 +71,17 @@ export function TasksProvider({ children }) {
   }, [loadCount])
 
   const reload = useCallback(() => {
-    setStatus('loading')
+    setLoadStatus('loading')
     setError(null)
     setLoadCount((count) => count + 1)
   }, [])
 
-  const replaceTask = useCallback((id, task) => {
-    setTasks((current) => current.map((item) => (item.id === id ? task : item)))
+  /** Applies `change(task)` to the current version of one task. */
+  const changeTask = useCallback((id, change) => {
+    setTasks((current) => current.map((item) => (item.id === id ? change(item) : item)))
   }, [])
+
+  const replaceTask = useCallback((id, task) => changeTask(id, () => task), [changeTask])
 
   const removeTask = useCallback((id) => {
     setTasks((current) => current.filter((item) => item.id !== id))
@@ -103,33 +116,32 @@ export function TasksProvider({ children }) {
 
   const setTaskCompletion = useCallback(
     async (task, completed) => {
-      replaceTask(task.id, {
-        ...task,
-        status: completed ? 'completed' : 'pending',
-        completedAt: completed ? new Date().toISOString() : null,
-      })
+      changeTask(task.id, (current) => applyCompletion(current, completed, new Date().toISOString()))
       try {
         const saved = await withBusy(task.id, () => tasksService.setTaskCompletion(task.id, completed))
         replaceTask(task.id, saved)
         return saved
       } catch (caught) {
         if (caught.code === 'NOT_FOUND') removeTask(task.id)
-        else replaceTask(task.id, task)
+        // Undo only the completion fields, so a newer title or date is kept.
+        else changeTask(task.id, (current) => ({ ...current, status: task.status, completedAt: task.completedAt }))
         throw caught
       }
     },
-    [replaceTask, removeTask, withBusy],
+    [changeTask, replaceTask, removeTask, withBusy],
   )
 
   const deleteTask = useCallback(
     async (task) => {
+      // Restore the version that was on screen, not the possibly older argument.
+      const shown = latestTasks.current.find((item) => item.id === task.id) ?? task
       removeTask(task.id)
       try {
         await withBusy(task.id, () => tasksService.deleteTask(task.id))
       } catch (caught) {
         // Already gone: that is the result the user wanted.
         if (caught.code === 'NOT_FOUND') return
-        setTasks((current) => [...current, task])
+        setTasks((current) => [...current, shown])
         throw caught
       }
     },
@@ -151,8 +163,8 @@ export function TasksProvider({ children }) {
   )
 
   const value = useMemo(
-    () => ({ tasks, busyIds, status, error, reload, createTask, updateTask, setTaskCompletion, deleteTask }),
-    [tasks, busyIds, status, error, reload, createTask, updateTask, setTaskCompletion, deleteTask],
+    () => ({ tasks, busyIds, loadStatus, error, reload, getTask, createTask, updateTask, setTaskCompletion, deleteTask }),
+    [tasks, busyIds, loadStatus, error, reload, getTask, createTask, updateTask, setTaskCompletion, deleteTask],
   )
 
   return <TasksContext.Provider value={value}>{children}</TasksContext.Provider>

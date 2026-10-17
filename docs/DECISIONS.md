@@ -226,6 +226,18 @@ Business rules (BR-xx) are defined in `PRD.md`; decisions below reference them i
   - **Tests:** jsdom has no `ResizeObserver`, so `src/test/setup.js` adds a no-op stub and the charts render at their `initialDimension`. Chart drawing is checked in a real browser.
 - **Status:** Approved (2026-10-15). Minor technical decisions within the approved phase.
 
+## D-29 — Task feature refactor after the code smell review (2026-10-17)
+- **Context:** `CODE_SMELL_PHASE_3.md` (project root) reviewed the Phase 3 task feature. The owner approved applying its findings. Behaviour visible to the user is unchanged except for the fixes listed below.
+- **Decision:**
+  - **One action contract:** every action from `useTaskActions()` resolves (never rejects) to the saved task, or to `null` when it failed and the user has been told. The exception is `saveEdit`, used by the edit dialog: it rejects with the `ServiceError` so the dialog can show the message, except for `NOT_FOUND`, which resolves to `null`. The "no longer exists" notice is shown only by `useTaskActions`. Renamed: `toggle` → `setCompleted`, `update` → `saveEdit`.
+  - **Rollback on the current version:** a failed toggle undoes only `status` and `completedAt` on the task as it is now, and a failed delete restores the version that was on screen. "Try again" starts from the current version of the task (`getTask(id)` from `TasksProvider`). An older copy can no longer bring back an old title or date.
+  - **Shared rules:** `applyCompletion()` (`features/tasks/lib/taskCompletion.js`) is BR-12 for both the optimistic update and the mock service. `byDateThenCreation()` (`taskSelectors.js`) is the one service order, with `id` as the last tie-breaker (API_CONTRACTS §4). `isTaskLocked()` decides once, in `TaskList`, whether a row and its extra control are locked.
+  - **Naming:** the list's load state is `loadStatus` (in `useTasks` and `useAnalytics`), so it is not confused with a task's `status`.
+  - **Tasks page:** `DayTasksSection` holds the viewed day (navigation, heading, quick add, filter, list, empty state). `TasksPage` wires data, overdue tasks, and the dialogs. An active status filter stays visible on a day without tasks, so a new task it hides is never a mystery.
+  - **Forms:** the edit dialog clears a field's error as soon as the field is edited, like the create form.
+- **Deferred to Phase 5** (recorded in `IMPLEMENTATION_PLAN.md`): scope `TasksProvider` to the signed-in user, and normalize timestamps in the Supabase mapper.
+- **Status:** Approved by the owner (2026-10-17).
+
 ---
 
 ## Resolved open decisions

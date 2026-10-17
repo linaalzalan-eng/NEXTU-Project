@@ -98,14 +98,26 @@ describe('TaskEditDialog', () => {
     expect(screen.getByLabelText('Title')).toHaveValue('Read')
   })
 
-  it('closes with a notice when the task no longer exists', async () => {
-    const onSave = vi.fn().mockRejectedValue(new ServiceError('NOT_FOUND'))
+  // saveEdit resolves to null when the task is gone; the notice is the action's job (IT in TasksPage.test).
+  it('closes when the save resolves without a task', async () => {
+    const onSave = vi.fn().mockResolvedValue(null)
     const { user, dialog } = await openDialog(onSave)
 
     await user.type(screen.getByLabelText('Title'), ' more{Enter}')
 
     await waitFor(() => expect(dialog).not.toBeVisible())
-    expect(await screen.findByText('This task no longer exists. The list has been updated.')).toBeInTheDocument()
+  })
+
+  it('clears a field error as soon as the field is edited, like the create form', async () => {
+    const { user } = await openDialog()
+    const title = screen.getByLabelText('Title')
+
+    await user.clear(title)
+    await user.click(screen.getByRole('button', { name: 'Save' }))
+    expect(title).toHaveAttribute('aria-invalid', 'true')
+
+    await user.type(title, 'R')
+    expect(title).not.toHaveAttribute('aria-invalid')
   })
 
   it('moves focus to the invalid field', async () => {

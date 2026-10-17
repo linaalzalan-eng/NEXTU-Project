@@ -300,6 +300,7 @@ The owner reviews the analytics with seeded data, confirms that the business rul
   - The owner applies it in the SQL Editor, guided step by step.
 - [ ] **P5-T03 Auth service and context**
   - Create `supabaseAuthService.js`, `AuthContext.jsx`, and `useAuth.js`, with session restore and `onAuthStateChange` (US-04).
+  - Scope `TasksProvider` to the signed-in user: a new task state per user (for example `key={user.id}`), and no loading without a session. Otherwise a second account signed in without a reload would see the first account's tasks (D-29, `CODE_SMELL_PHASE_3.md` M-1).
 - [ ] **P5-T04 Register and login**
   - Create `RegisterForm`, `LoginForm`, and `authValidation.js` (US-01, US-02, D-18).
   - Enable "Confirm email" and set the Site URL and redirect URLs in Supabase Auth (the owner, guided step by step).
@@ -309,6 +310,7 @@ The owner reviews the analytics with seeded data, confirms that the business rul
   - Tests: IT-05.
 - [ ] **P5-T06 Supabase tasks service**
   - Create `supabaseTasksService.js`: mapping, pagination, and error mapping to `ServiceError`.
+  - The mapper returns timestamps in `toISOString()` form, because the sort comparators compare them as strings (D-29, `CODE_SMELL_PHASE_3.md` M-2). Check the real format Supabase returns first.
   - Switch `VITE_DATA_SOURCE` to `supabase`. Keep the mock for tests.
 - [ ] **P5-T07 Password reset**
   - Add `requestPasswordReset` and `updatePassword` to both auth services.

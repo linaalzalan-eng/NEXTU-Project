@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import { makeTask } from '@/test/factories.js'
-import { filterByStatus, selectOverdue, selectTasksForDate, sortTasks } from './taskSelectors.js'
+import {
+  byDateThenCreation,
+  filterByStatus,
+  isTaskLocked,
+  selectOverdue,
+  selectTasksForDate,
+  sortTasks,
+} from './taskSelectors.js'
 
 const TODAY = '2026-10-14'
 const titles = (tasks) => tasks.map((task) => task.title)
@@ -64,6 +71,27 @@ describe('taskSelectors', () => {
       const copy = [...day]
       sortTasks(day)
       expect(day).toEqual(copy)
+    })
+  })
+
+  it('byDateThenCreation breaks a createdAt tie by id (API_CONTRACTS §4)', () => {
+    const createdAt = '2026-10-14T08:00:00.000Z'
+    const b = makeTask({ id: 'b', taskDate: TODAY, createdAt })
+    const a = makeTask({ id: 'a', taskDate: TODAY, createdAt })
+    const earlierDay = makeTask({ id: 'z', taskDate: '2026-10-13', createdAt })
+    expect([b, a, earlierDay].sort(byDateThenCreation).map((task) => task.id)).toEqual(['z', 'a', 'b'])
+  })
+
+  describe('isTaskLocked', () => {
+    it('locks an unsaved task and a task with a request in flight', () => {
+      const saved = makeTask()
+      expect(isTaskLocked(makeTask({ id: 'temp-1' }), new Set())).toBe(true)
+      expect(isTaskLocked(saved, new Set([saved.id]))).toBe(true)
+    })
+
+    it('leaves a saved, idle task unlocked, also without busyIds', () => {
+      expect(isTaskLocked(makeTask(), new Set())).toBe(false)
+      expect(isTaskLocked(makeTask(), undefined)).toBe(false)
     })
   })
 })
