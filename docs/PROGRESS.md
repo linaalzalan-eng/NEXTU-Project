@@ -4,11 +4,14 @@ _Last updated: 2026-10-17_
 
 ## Current Status
 - **Current phase:** Phase 4 — Dashboard & Analytics (mock data). **Complete** and committed (2026-10-15).
-- **Current task:** none. Phase 4 committed (2026-10-15). The task-feature refactor from the code smell review (D-29) is done and not committed yet. Waiting for approval of Phase 5.
+- **Current task:** none. Phase 4 committed (2026-10-15). The task-feature refactor from the code smell review (D-29) and its review fixes are committed (2026-10-17). Waiting for approval of Phase 5.
 - **Where task data lives now:** the browser's localStorage, key `nextu.tasks`, written only by `src/services/mock/mockTasksService.js` (one demo user, this browser only). Phase 5 adds `supabaseTasksService` behind the same `tasksService` contract and switches `VITE_DATA_SOURCE` to `supabase`; UI code does not change. Local mock data is not migrated (development data only). See `PHASE_3_EXPLAINED.md` §4.9.
-- **Branch:** `phase/04-dashboard-analytics` (local, created from `phase/03-task-management`, not pushed).
+- **Branch:** `phase/04-dashboard-analytics` (created from `phase/03-task-management`). Push to `origin` approved by the owner (2026-10-17).
 - **Workflow:** phase-level approval (D-14). Every phase ends with an Arabic explanation file in `docs/phase-reports/` (D-25).
-- **Last commit:** `89f1464 feat: phase 4 dashboard and analytics with calculations, charts, tests, and explanation` (2026-10-15, approved by the owner).
+- **Last code commits:**
+  - `52829bb fix: guard task retries while busy and test the task action contract` (2026-10-17, approved by the owner).
+  - Before it: `6d763cb refactor: …(D-29)`.
+  - Phase 4: `89f1464`.
 
 ## Completed
 - [x] Phase 1: P1-T01 to P1-T16. See `IMPLEMENTATION_PLAN.md`. Explanation: `docs/phase-reports/PHASE_1_EXPLAINED.md`.
@@ -50,7 +53,7 @@ _Last updated: 2026-10-17_
   - Shared `applyCompletion` (BR-12), `byDateThenCreation` (with `id`), `isTaskLocked`; `loadStatus` naming.
   - `DayTasksSection` extracted from `TasksPage`; an active filter stays visible on an empty day; the edit dialog clears field errors on edit.
   - M-1 and M-2 are Phase 5 tasks in `IMPLEMENTATION_PLAN.md` (P5-T03, P5-T06).
-  - Committed as `6d763cb`. The `code-reviewer` then found nothing critical. Its important findings are fixed but not committed yet:
+  - Committed as `6d763cb`. The `code-reviewer` then found nothing critical. Its important findings are fixed in `52829bb`:
     - "Try again" waits while a request for the task is in flight (`isBusy`).
     - A stronger retry test.
     - A new `useTaskActions.test.jsx`.
@@ -173,5 +176,4 @@ _Last updated: 2026-10-17_
 - Optional, the owner's choice: add `@vitest/coverage-v8` to measure the 90% coverage target (D-26).
 
 ## Next Recommended Action
-1. The owner approves a commit for the review fixes to the D-29 refactor (proposed: `fix: guard task retries while busy and test the task action contract`).
-2. The owner approves Phase 5 (P5-T03 and P5-T06 include the deferred M-1 and M-2 items from `CODE_SMELL_PHASE_3.md`).
+1. The owner approves Phase 5 (P5-T03 and P5-T06 include the deferred M-1 and M-2 items from `CODE_SMELL_PHASE_3.md`).
