@@ -235,6 +235,8 @@ Business rules (BR-xx) are defined in `PRD.md`; decisions below reference them i
   - **Naming:** the list's load state is `loadStatus` (in `useTasks` and `useAnalytics`), so it is not confused with a task's `status`.
   - **Tasks page:** `DayTasksSection` holds the viewed day (navigation, heading, quick add, filter, list, empty state). `TasksPage` wires data, overdue tasks, and the dialogs. An active status filter stays visible on a day without tasks, so a new task it hides is never a mystery.
   - **Forms:** the edit dialog clears a field's error as soon as the field is edited, like the create form.
+  - **One request per task, also for "Try again":** a toast sits outside the locked UI, so its retry first checks `isBusy(id)` from `TasksProvider` (a ref updated at once, unlike the `busyIds` state) and does nothing while a request for that task is in flight. That request reports its own result. Found by the `code-reviewer` after the refactor.
+  - **Services importing feature rules:** the mock service now also imports `applyCompletion` and `byDateThenCreation` from `features/tasks/lib/`, not only the validators (API_CONTRACTS §4 notes). These are pure rules shared by the service and the UI. They stay in the feature folder while the tasks feature is their only user.
 - **Deferred to Phase 5** (recorded in `IMPLEMENTATION_PLAN.md`): scope `TasksProvider` to the signed-in user, and normalize timestamps in the Supabase mapper.
 - **Status:** Approved by the owner (2026-10-17).
 

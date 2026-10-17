@@ -2,10 +2,11 @@ import { useContext } from 'react'
 import { TasksContext } from './TasksContext.js'
 
 /**
- * The task state: { tasks, busyIds, loadStatus, error, reload, getTask } plus the raw
- * actions { createTask, updateTask, setTaskCompletion, deleteTask }.
+ * The task state: { tasks, busyIds, loadStatus, error, reload, getTask, isBusy } plus
+ * the raw actions { createTask, updateTask, setTaskCompletion, deleteTask }.
  * `loadStatus` is 'loading' | 'ready' | 'error' (the list, not a task's status).
- * `busyIds` is a Set of task ids with a request in flight. `getTask(id)` returns the
+ * `busyIds` is a Set of task ids with a request in flight (for rendering); `isBusy(id)`
+ * answers the same question at once, for event handlers. `getTask(id)` returns the
  * current version of a task.
  *
  * The raw actions reject with a ServiceError and show nothing to the user.

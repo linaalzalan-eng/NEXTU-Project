@@ -1,5 +1,5 @@
 import { render, screen, waitFor, within } from '@testing-library/react'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import App from '@/app/App.jsx'
 import { TASKS_STORAGE_KEY } from '@/services/mock/mockTasksService.js'
 import { makeTask } from '@/test/factories.js'
@@ -56,6 +56,12 @@ const comparison = () => screen.getByRole('region', { name: 'This week so far' }
 const term = (container, label) => within(container).getByText(label, { selector: 'dt' }).nextElementSibling
 
 describe('Analytics (integration)', () => {
+  // The page is lazy-loaded with Recharts (NFR-03). Loading it once up front keeps the
+  // first test from spending its 3 s findBy budget on the import when the machine is busy.
+  beforeAll(async () => {
+    await import('@/pages/AnalyticsPage.jsx')
+  })
+
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ['Date'] })
     vi.setSystemTime(new Date(2026, 9, 14, 9, 0))

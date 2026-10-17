@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { tasksService } from '@/services'
 import { applyCompletion } from './lib/taskCompletion.js'
 import { TEMP_ID_PREFIX } from './lib/taskSelectors.js'
@@ -19,6 +19,7 @@ import { TasksContext } from './TasksContext.js'
  *
  * While a request for a task is in flight, its id is in `busyIds` and the UI blocks
  * further actions on that task, so at most one request per task runs at a time.
+ * A toast's "Try again" is outside that locked UI, so useTaskActions checks `isBusy` first.
  */
 export function TasksProvider({ children }) {
   const [tasks, setTasks] = useState([])
@@ -28,25 +29,29 @@ export function TasksProvider({ children }) {
   const [busyIds, setBusyIds] = useState(() => new Set())
   const nextTempId = useRef(0)
   const latestTasks = useRef(tasks)
+  // Updated synchronously, so a check in the same tick (isBusy) already sees a new request.
+  const busyRef = useRef(new Set())
 
-  useEffect(() => {
+  // A layout effect, so the ref is current before any event handler of the next render runs.
+  useLayoutEffect(() => {
     latestTasks.current = tasks
   }, [tasks])
 
   /** The current version of a task, or undefined when it is gone. For retries started from an older copy. */
   const getTask = useCallback((id) => latestTasks.current.find((task) => task.id === id), [])
 
+  /** True while a request for the task is in flight. Lets callers outside the locked UI (a toast's "Try again") wait their turn. */
+  const isBusy = useCallback((id) => busyRef.current.has(id), [])
+
   /** Runs one request for a task, marking the task busy until it settles. */
   const withBusy = useCallback(async (id, request) => {
-    setBusyIds((current) => new Set(current).add(id))
+    busyRef.current.add(id)
+    setBusyIds(new Set(busyRef.current))
     try {
       return await request()
     } finally {
-      setBusyIds((current) => {
-        const next = new Set(current)
-        next.delete(id)
-        return next
-      })
+      busyRef.current.delete(id)
+      setBusyIds(new Set(busyRef.current))
     }
   }, [])
 
@@ -163,8 +168,20 @@ export function TasksProvider({ children }) {
   )
 
   const value = useMemo(
-    () => ({ tasks, busyIds, loadStatus, error, reload, getTask, createTask, updateTask, setTaskCompletion, deleteTask }),
-    [tasks, busyIds, loadStatus, error, reload, getTask, createTask, updateTask, setTaskCompletion, deleteTask],
+    () => ({
+      tasks,
+      busyIds,
+      loadStatus,
+      error,
+      reload,
+      getTask,
+      isBusy,
+      createTask,
+      updateTask,
+      setTaskCompletion,
+      deleteTask,
+    }),
+    [tasks, busyIds, loadStatus, error, reload, getTask, isBusy, createTask, updateTask, setTaskCompletion, deleteTask],
   )
 
   return <TasksContext.Provider value={value}>{children}</TasksContext.Provider>

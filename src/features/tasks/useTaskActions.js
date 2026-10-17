@@ -11,15 +11,19 @@ import { useTasks } from './useTasks.js'
  * short notice instead (SRS §4), always from here.
  *
  * One contract for all of them: the promise never rejects. It resolves to the
- * saved task, or to null when the action failed and the user has been told.
- * The one exception is `saveEdit`: the edit dialog shows its own error message,
- * so any failure other than "no longer exists" rejects with the ServiceError.
+ * task (the saved one; for `remove`, the task that was deleted), or to null when
+ * the action failed and the user has been told. Deleting a task that was already
+ * gone counts as success. The one exception is `saveEdit`: the edit dialog shows
+ * its own error message, so any failure other than "no longer exists" rejects
+ * with the ServiceError.
  *
  * "Try again" starts from the current version of the task (`getTask`), not the
  * copy from the first attempt, so it cannot bring back an older title or date.
+ * It does nothing while another request for that task is in flight (`isBusy`):
+ * that request reports its own result, and one request per task stays the rule.
  */
 export function useTaskActions() {
-  const { getTask, createTask, updateTask, setTaskCompletion, deleteTask } = useTasks()
+  const { getTask, isBusy, createTask, updateTask, setTaskCompletion, deleteTask } = useTasks()
   const { t, formatDay } = useI18n()
   const { showToast } = useToast()
 
@@ -48,6 +52,7 @@ export function useTaskActions() {
     /** Runs `action` again on the current version of the task; tells the user if it is gone. */
     function retryWithLatest(task, action) {
       return () => {
+        if (isBusy(task.id)) return
         const latest = getTask(task.id)
         if (latest) action(latest)
         else notifyGone()
@@ -102,5 +107,5 @@ export function useTaskActions() {
     }
 
     return { create, setCompleted, remove, moveToToday, saveEdit }
-  }, [getTask, createTask, updateTask, setTaskCompletion, deleteTask, notifyGone, reportFailure, showToast, t, formatDay])
+  }, [getTask, isBusy, createTask, updateTask, setTaskCompletion, deleteTask, notifyGone, reportFailure, showToast, t, formatDay])
 }

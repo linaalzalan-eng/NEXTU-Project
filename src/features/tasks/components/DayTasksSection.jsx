@@ -1,5 +1,5 @@
 import { CalendarDays, CircleCheckBig, ListTodo } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useId, useMemo, useState } from 'react'
 import { EmptyState } from '@/components/ui/EmptyState.jsx'
 import { useI18n } from '@/lib/i18n/useI18n.js'
 import { filterByStatus } from '../lib/taskSelectors.js'
@@ -35,6 +35,7 @@ export function DayTasksSection({
   className,
 }) {
   const { t, formatDay } = useI18n()
+  const headingId = useId()
   const [filter, setFilter] = useState('all')
   const visibleTasks = useMemo(() => filterByStatus(tasks, filter), [tasks, filter])
 
@@ -50,10 +51,10 @@ export function DayTasksSection({
   }
 
   return (
-    <section aria-labelledby="day-heading" className={className}>
+    <section aria-labelledby={headingId} className={className}>
       <DateNavigator date={date} today={today} onChange={onDateChange} />
       <div className="flex flex-wrap items-center gap-3">
-        <h2 id="day-heading" ref={headingRef} tabIndex={-1} className="text-xl font-semibold text-ink">
+        <h2 id={headingId} ref={headingRef} tabIndex={-1} className="text-xl font-semibold text-ink">
           {dayLabel}
         </h2>
         {date === today && (

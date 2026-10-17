@@ -117,7 +117,7 @@ describe('Tasks page (integration)', () => {
   it('"Try again" uses the current version of the task, not the one from the failed attempt', async () => {
     await tasksService.createTask({ title: 'Read', taskDate: '2026-10-14' })
     const { user } = await openTasksPage()
-    vi.spyOn(tasksService, 'setTaskCompletion').mockRejectedValueOnce(new ServiceError('NETWORK'))
+    const save = vi.spyOn(tasksService, 'setTaskCompletion').mockRejectedValueOnce(new ServiceError('NETWORK'))
     await user.click(await screen.findByRole('checkbox', { name: 'Read' }))
     const retry = await screen.findByRole('button', { name: 'Try again' })
 
@@ -127,8 +127,16 @@ describe('Tasks page (integration)', () => {
     await user.type(within(dialog).getByLabelText('Title'), ' more{Enter}')
     await screen.findByRole('checkbox', { name: 'Read more' })
 
+    // The retry is held, then fails too: neither the optimistic state nor the
+    // rollback may bring back the old title (the old code showed "Read" in both).
+    let failRetry
+    save.mockImplementationOnce(() => new Promise((_, reject) => (failRetry = reject)))
     await user.click(retry)
-    await waitFor(() => expect(screen.getByRole('checkbox', { name: 'Read more' })).toBeChecked())
+    expect(screen.getByRole('checkbox', { name: 'Read more' })).toBeChecked()
+    expect(screen.queryByRole('checkbox', { name: 'Read' })).not.toBeInTheDocument()
+
+    failRetry(new ServiceError('NETWORK'))
+    await waitFor(() => expect(screen.getByRole('checkbox', { name: 'Read more' })).not.toBeChecked())
     expect(screen.queryByRole('checkbox', { name: 'Read' })).not.toBeInTheDocument()
   })
 

@@ -67,14 +67,17 @@ src/
       lib/authValidation.js    # VR-01, VR-02, VR-05
     tasks/
       TasksContext.js          # The context object only (keeps React Fast Refresh working)
-      TasksProvider.jsx        # Task state + actions with optimistic updates and rollback (D-27)
+      TasksProvider.jsx        # Task state + actions with optimistic updates and rollback (D-27, D-29)
       useTasks.js
-      useTaskActions.js        # Actions + user feedback (toasts with Retry) for the UI
-      components/              # TaskForm, TaskList, TaskItem, TaskEditDialog, DeleteTaskDialog,
-                               # DateNavigator, StatusFilter, OverdueSection, TaskListSkeleton,
+      useTaskActions.js        # Actions + user feedback (toasts with Retry) for the UI; one contract (D-29)
+      components/              # DayTasksSection (the viewed day on the Tasks page), TaskForm, TaskList,
+                               # TaskItem, TaskEditDialog, DeleteTaskDialog, DateNavigator, StatusFilter,
+                               # OverdueSection, TaskListSkeleton,
                                # TasksLoadError (error state shared by Tasks, Dashboard, Analytics)
       lib/taskValidation.js    # VR-03, VR-04, BR-14
-      lib/taskSelectors.js     # selectTasksForDate, filterByStatus, selectOverdue (BR-09), sortTasks
+      lib/taskCompletion.js    # applyCompletion (BR-12), shared by the provider and the mock service
+      lib/taskSelectors.js     # selectTasksForDate, filterByStatus, selectOverdue (BR-09), sortTasks,
+                               # byDateThenCreation (service order), isTaskLocked
     dashboard/
       components/              # TodaySummary (rate, progress bar, counts; D-28), TodaySummarySkeleton,
                                # MotivationMessage, OverdueBanner

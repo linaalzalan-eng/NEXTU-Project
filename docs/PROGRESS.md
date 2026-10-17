@@ -50,6 +50,11 @@ _Last updated: 2026-10-17_
   - Shared `applyCompletion` (BR-12), `byDateThenCreation` (with `id`), `isTaskLocked`; `loadStatus` naming.
   - `DayTasksSection` extracted from `TasksPage`; an active filter stays visible on an empty day; the edit dialog clears field errors on edit.
   - M-1 and M-2 are Phase 5 tasks in `IMPLEMENTATION_PLAN.md` (P5-T03, P5-T06).
+  - Committed as `6d763cb`. The `code-reviewer` then found nothing critical. Its important findings are fixed but not committed yet:
+    - "Try again" waits while a request for the task is in flight (`isBusy`).
+    - A stronger retry test.
+    - A new `useTaskActions.test.jsx`.
+  - Also fixed: ARCHITECTURE §3, D-29 notes, comments, the `useId` heading, and this file.
 
 ## Pending
 - Phase 5 — Supabase & Authentication (P5-T01 onward). It starts after the owner's approval.
@@ -58,6 +63,12 @@ _Last updated: 2026-10-17_
 - None.
 
 ## Test Results
+- 2026-10-17, review fixes to the D-29 refactor, run in this session:
+  - `npm run test:run`: **31 files, 250 tests passed**, three full runs in a row.
+    - 8 new tests in `useTaskActions.test.jsx`, covering the contract, retry on the current version, the busy guard, and `saveEdit`.
+    - The Tasks page retry test now holds and fails the retry, so it would catch the old behaviour.
+  - Fixed a timing-dependent failure in `AnalyticsPage.test.jsx`: the lazy page is now imported once in `beforeAll`, so the first test's 3 s `findBy` is not spent loading Recharts. The assertions are unchanged.
+  - `npm run lint`: 0 errors, 0 warnings. `npm run build`: succeeds (main JS 331.17 kB, 104.69 kB gzip).
 - 2026-10-17, task-feature refactor (D-29), run in this session:
   - `npm run test:run`: **30 files, 242 tests passed** (12 more than Phase 4; the two `TaskItem` lock tests became one `locked` test. New: `applyCompletion`, `byDateThenCreation` tie, `isTaskLocked`, rollback on the current version, `getTask`, edit-dialog error clearing, and three Tasks page integration tests). One earlier full run had a single timeout in `AnalyticsPage.test.jsx` (the lazy page took over 3 s to open under load); that file passed alone, and the next full run passed completely.
   - `npm run lint`: 0 errors, 0 warnings.
@@ -162,6 +173,5 @@ _Last updated: 2026-10-17_
 - Optional, the owner's choice: add `@vitest/coverage-v8` to measure the 90% coverage target (D-26).
 
 ## Next Recommended Action
-1. The owner reads `docs/phase-reports/PHASE_3_EXPLAINED.md`, runs `npm install`, `npm run dev`, and `npm run test:run`, and tries `/tasks` (section 7 of the explanation).
-2. The owner approves a Phase 3 commit (proposed: `feat: phase 3 task management with mock service and tests`).
-3. The owner approves Phase 4.
+1. The owner approves a commit for the review fixes to the D-29 refactor (proposed: `fix: guard task retries while busy and test the task action contract`).
+2. The owner approves Phase 5 (P5-T03 and P5-T06 include the deferred M-1 and M-2 items from `CODE_SMELL_PHASE_3.md`).
