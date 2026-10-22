@@ -1,11 +1,11 @@
 # Progress
 
-_Last updated: 2026-10-17_
+_Last updated: 2026-10-22_
 
 ## Current Status
-- **Current phase:** Phase 4 — Dashboard & Analytics (mock data). **Complete** and committed (2026-10-15).
-- **Current task:** none. Phase 4 committed (2026-10-15). The task-feature refactor from the code smell review (D-29) and its review fixes are committed (2026-10-17). Waiting for approval of Phase 5.
-- **Where task data lives now:** the browser's localStorage, key `nextu.tasks`, written only by `src/services/mock/mockTasksService.js` (one demo user, this browser only). Phase 5 adds `supabaseTasksService` behind the same `tasksService` contract and switches `VITE_DATA_SOURCE` to `supabase`; UI code does not change. Local mock data is not migrated (development data only). See `PHASE_3_EXPLAINED.md` §4.9.
+- **Current phase:** Phase 5 closed with owner-approved external-check deferrals (D-31). Phase 6 authorized and next: final MVP validation and deployment preparation.
+- **Current task:** commit Phase 5 after staged secret scan, then execute Phase 6. Retain successful test evidence; do not repeat unchanged checks.
+- **Where task data lives now:** VITE_DATA_SOURCE=supabase verified locally; production build includes Supabase and excludes mock services. Tests continue to use the mock/fake clients (D-30). Existing mock data is not migrated.
 - **Branch:** `phase/04-dashboard-analytics` (created from `phase/03-task-management`). Push to `origin` approved by the owner (2026-10-17).
 - **Workflow:** phase-level approval (D-14). Every phase ends with an Arabic explanation file in `docs/phase-reports/` (D-25).
 - **Last code commits:**
@@ -46,7 +46,7 @@ _Last updated: 2026-10-17_
   - P4-T06: Recharts 3.10.1 (+ `react-is` 19.3.0). `DailyChart` and `TrendChart` in `ChartFigure` (summary + "Show as table"), RTL through `ChartCanvas` and `directionProps`.
   - P4-T07: Analytics on real data through `useAnalytics`: `WeekComparison`, `PersonalBest` (highlight and empty state), charts, `CalculationInfo` (+ full-week note). Lazy route kept (NFR-03).
   - P4-T08: tests, manual script step 6, NFR-04 check, review, docs, explanation.
-  - Removed the Phase 2 preview files `PreviewNotice.jsx`, `sampleData.js`, `usePreviewState.js`, their strings, and `TaskItem`'s read-only mode. `usePreviewSubmit.js` stays for the auth pages (Phase 5).
+  - Removed the Phase 2 preview files `PreviewNotice.jsx`, `sampleData.js`, `usePreviewState.js`, their strings, and `TaskItem`'s read-only mode. `usePreviewSubmit.js` stayed for the auth pages until Phase 5 removed it.
 - [x] 2026-10-17, task-feature refactor (D-29), approved by the owner after the review in `CODE_SMELL_PHASE_3.md`:
   - One `useTaskActions` contract (`setCompleted`, `saveEdit`); the "no longer exists" notice comes from one place.
   - Rollbacks and "Try again" work on the current version of a task (`getTask`).
@@ -59,13 +59,30 @@ _Last updated: 2026-10-17_
     - A new `useTaskActions.test.jsx`.
   - Also fixed: ARCHITECTURE §3, D-29 notes, comments, the `useId` heading, and this file.
 
+- [x] Phase 5 (closed 2026-10-22 with accepted deferrals, D-31). Explanation: `docs/phase-reports/PHASE_5_EXPLAINED.md` (written; to be updated after P5-T08). Decisions: D-30.
+  - Done: P5-T03 (auth service and context), P5-T05 (guards and logout), P5-T07 (password reset).
+  - Code and tests done, owner step pending: P5-T01 (`@supabase/supabase-js` 2.117.2, `supabaseClient.js`, `.env.example`), P5-T02 (`supabase/migrations/0001_create_tasks.sql`, reviewed against current docs; grants added), P5-T04 (login and register forms), P5-T06 (`supabaseTasksService.js`; the real timestamp format is checked once the project exists).
+  - Also: `TasksProvider` moved inside `ProtectedRoute` with `key={user.id}` (D-29 M-1); timestamps normalized in the mapper (M-2); `usePreviewSubmit` and the "Log in" nav link removed; `scripts/security-tests.mjs` (`npm run test:security`) for ST-01 to ST-07.
+
 ## Pending
-- Phase 5 — Supabase & Authentication (P5-T01 onward). It starts after the owner's approval.
+- Owner: two confirmed test accounts in .env.local; confirm Site URL / redirect URLs and real email flows. Project, source selection and connectivity verified; SQL execution confirmed by owner. Guide: PHASE_5_EXPLAINED.md §5-ب.
+- Then P5-T08: ST-01 to ST-07 (`npm run test:security`, run by the owner), ST-08 (secret scan), ST-09 (Security Advisor), ST-10 (real email flows), manual script steps 7–8, cross-browser persistence (US-06, US-25).
 
 ## Blockers
 - None.
 
 ## Test Results
+- 2026-10-17, Phase 5 (code part), run in this session:
+  - `npm run test:run`: **40 files, 363 tests passed** (113 new in 9 files). IDs covered: UT-07, CT-10, CT-11, IT-05 (Phase 5 part), plus the Supabase services against a fake client (mapping, pagination, error mapping, recovery session) and the mock auth service.
+  - With `VITE_DATA_SOURCE=supabase` in the environment, the suite still runs on the mock (`test.env`, D-30).
+  - `npm run lint`: 0 errors, 0 warnings (now also covers `.mjs` scripts).
+  - `npm run build` (mock): succeeds; main JS 277.79 kB (86.67 kB gzip), no Supabase code in `dist/`. A Supabase build with placeholder values also succeeds and contains no mock code (Supabase chunk 219 kB, 57 kB gzip).
+  - Secret scan: no `service_role`, `sb_secret`, or secret key in `src/`, `supabase/`, or `scripts/`; only `services/supabase/supabaseClient.js` imports `@supabase/supabase-js`.
+  - Chrome (headless, DevTools Protocol, against `vite preview` on port 4183, because 4173 is used by another app on this machine): **20/20 passed** with the mock: logout, guards and return-to-page, public-only redirects, `/reset-password` states, Back after logout, forgot "sent" screen, mobile 44×44 logout, no horizontal scroll on 4 auth screens × 360/768/1440 × ar/en.
+  - Found and fixed in Chrome: Back after logging out on another page restored the old signed-in page from the back/forward cache. `AuthProvider` now re-reads the session on `pageshow` with `persisted` (test added).
+- 2026-10-17, code-reviewer review of Phase 5 (code part): 0 critical, 6 important, 12 minor.
+  - All important findings fixed, with tests: a typed `#type=recovery` could open the password form in a signed-in browser (now the link's token must match); tests would have switched to Supabase via `.env.local` (`test.env`); `RATE_LIMITED` on the forgot form revealed registered emails; the M-1 test did not prove `key={user.id}` (rewritten; verified it fails without the key); this file was not updated; ST-05 could pass on a network error.
+  - Minor findings fixed: offline logout, pagination under a lower "Max rows", the injected clock in validation, an empty update, error message labels, the Arabic password-length message, missing tests, and doc alignment (ARCHITECTURE §9, IMPLEMENTATION_PLAN file name, API_CONTRACTS throws, DATABASE_SCHEMA §4 now references the migration file instead of copying it, TESTING_PLAN §8). The rest are recorded as known limitations in D-30.
 - 2026-10-17, review fixes to the D-29 refactor, run in this session:
   - `npm run test:run`: **31 files, 250 tests passed**, three full runs in a row.
     - 8 new tests in `useTaskActions.test.jsx`, covering the contract, retry on the current version, the busy guard, and `saveEdit`.
@@ -166,14 +183,73 @@ _Last updated: 2026-10-17_
 ## Notes for Later Phases
 - Phase 5: with real network latency, consider blocking Escape while the edit dialog saves, and adding a spinner to "Move to today" (review minors).
 - Owner decision, any time: rename the language storage key `mind.lang` (D-24 naming). Renaming resets each browser's saved language once, unless the old key is migrated.
-- Phase 5: replace `usePreviewSubmit` with real auth handlers. Replace the sidebar's "Log in" link with "Log out".
 
 ## Migrations Applied
-- None yet (Phase 5).
+- 2026-10-21: owner confirmed applying supabase/migrations/0001_create_tasks.sql and observing public.tasks with four RLS policies. Anonymous API read was independently denied with HTTP 401 / PostgreSQL code 42501. Authenticated policies await two-account tests.
 
 ## Decisions Requiring Approval
 - None required. D-26 (testing setup) and D-27 (task state and page details) were recorded as minor decisions within Phase 3.
 - Optional, the owner's choice: add `@vitest/coverage-v8` to measure the 90% coverage target (D-26).
 
 ## Next Recommended Action
-1. The owner approves Phase 5 (P5-T03 and P5-T06 include the deferred M-1 and M-2 items from `CODE_SMELL_PHASE_3.md`).
+1. The owner follows `PHASE_5_EXPLAINED.md` §5-ب and runs `! npm run test:security`.
+2. Claude then runs ST-08, and together we check ST-09, ST-10, and manual steps 7–8. Then the explanation file and this file are updated, and a Phase 5 commit is proposed.
+
+## Phase 5 continuation — 2026-10-21
+- Reviewed CLAUDE.md, IMPLEMENTATION_PLAN.md, DATABASE_SCHEMA.md, API_CONTRACTS.md and the existing Phase 5 services, guards and migration. No implementation rebuilt.
+- Presence-only environment check: Supabase URL and publishable-key variables are populated; values were not displayed. VITE_DATA_SOURCE does not equal supabase. ST_A_EMAIL, ST_A_PASSWORD, ST_B_EMAIL and ST_B_PASSWORD are missing.
+- git check-ignore confirms .env.local is ignored; git ls-files confirms it is not tracked.
+- Fresh checks: npm run test:run passed 40 files / 363 tests; npm run lint exited 0; npm run build exited 0. Current build selects mock. The earlier Analytics import timeout did not reproduce in this run.
+- Dashboard and Analytics consume the shared tasks state. ProtectedRoute already scopes TasksProvider with key={user.id}; its account-switch regression test passes.
+- Existing apply-once SQL: supabase/migrations/0001_create_tasks.sql. Awaiting explicit owner confirmation of SQL execution and Auth configuration before database readiness or real-account verification can be claimed.
+- Real registration/email recovery, CRUD, cross-browser persistence and RLS tests remain pending. Phase 5 remains open; Phase 6 has not started. No commit or push performed.
+
+## Live Supabase verification — 2026-10-21
+- Environment presence check: URL/key populated; VITE_DATA_SOURCE=supabase. Values were not displayed. .env.local is ignored and untracked.
+- Owner confirmed public.tasks and four policies after applying the migration. P5-T01 and P5-T02 are now checked in the implementation plan.
+- Live GET /auth/v1/settings: HTTP 200, Email enabled, email autoconfirm false (confirmation required).
+- Live anonymous GET /rest/v1/tasks: HTTP 401 and error code 42501. This proves anonymous access denial only; it does not prove authenticated ownership isolation.
+- Fresh npm run test:run: 40 files / 363 tests passed. npm run lint: exit 0. npm run build: exit 0, actual Supabase chunk 219.39 kB (56.98 kB gzip); no mock-service names in build assets.
+- Pattern scan found no sb_secret key or JWT-shaped literals in src, scripts or supabase. This is a limited pattern scan, not a full credential audit.
+- ST_A_EMAIL, ST_A_PASSWORD, ST_B_EMAIL and ST_B_PASSWORD are absent. Real login/logout, CRUD, timestamp verification and two-user RLS checks cannot yet run. No synthetic email accounts created.
+- Registration confirmation, recovery emails and cross-browser persistence still require owner participation. Auth redirect allowlist cannot be inspected using the public key.
+- Existing implementation reused; no design or application-code changes. Phase 5 remains open. No commit, push or Phase 6 work.
+## Live account testing — 2026-10-22
+- Initial direct login: A passed, B returned invalid_credentials. A was tested through the actual Supabase auth/tasks service modules against the live project: 11/11 checks passed (login, create/owner, ISO timestamp mapping, edit, complete, reopen, list, logout, unauthenticated rejection, persistence after re-login, delete). The probe was deleted.
+- Owner then updated test credentials. Latest independent direct login: B passed, A returned invalid_credentials. Therefore ST-01 to ST-07 did not execute: npm run test:security stopped at login. No claim of verified two-user RLS isolation.
+- A live two-account service run also stopped before task creation when the latest A credentials were rejected. No credentials were printed or modified by the agent.
+- Local suite initially failed at Analytics beforeAll: default 10 s cold import timeout, with 360 passed / 3 skipped. The isolated test also reproduced that timeout before the fix. Set only that hook to 30_000 ms, matching the existing test budget; assertion timeouts and production behavior are unchanged.
+- After the change: npm run test:run passed 40 files / 363 tests; npm run lint exited 0. npm run build succeeded in Supabase mode in this session (219.39 kB Supabase chunk, 56.98 kB gzip). The later change affects tests only.
+- Pending: correct account A locally, rerun both accounts and ST checks; real email confirmation/reset, Auth redirect confirmation, Security Advisor and browser persistence. No Phase 6 work or commit.
+## Credential recheck — 2026-10-22
+- After the owner reviewed A credentials, npm run test:security again stopped at A sign-in with invalid_credentials, before any RLS probes or task creation.
+- Independent login using values parsed directly from the saved .env.local: A invalid_credentials, B PASS.
+- Verified without printing values: each required variable has one definition, all are populated, no inherited environment override differs from the file, account emails are distinct and have no surrounding whitespace.
+- RLS isolation remains unverified. Necessary owner action: set a new password for the intended confirmed A test user in the same Supabase project, save the matching ST_A_EMAIL/ST_A_PASSWORD locally, then retry. No application change can correct rejected account credentials.
+- No code change, commit, push or Phase 6 work. Earlier successful local tests/build and A-only CRUD are historical results, not new RLS evidence.
+
+## Successful live RLS verification — 2026-10-22
+- After the owner corrected credentials, npm run test:security exited 0: 11/11 checks passed (ST-01 through ST-07 including five constraints).
+- Independent live API checks exited 0: 19/19 passed. Both distinct accounts signed in, created their own probes, edited/completed/reopened them, read only their own probe, could not update/delete the other account's probe, deleted their own probe, and signed out with no session remaining.
+- Both directions A→B and B→A were tested. Test probes were deleted. No credentials were printed or changed by the agent.
+- This supersedes the prior invalid_credentials blocker. Local suite/lint/build were not rerun in this credential-only retry; previous 2026-10-22 results remain 363 passed and lint/build successful.
+- Still pending before Phase 5 closure: real registration confirmation and reset-email flows, redirect allowlist confirmation, Security Advisor (ST-09) and cross-browser persistence. No Phase 6, commit or push.
+## Phase 5 closure checks — 2026-10-22
+- Fresh npm run test:run: 40 files / 363 tests passed. Fresh npm run lint and npm run build exited 0; build uses Supabase.
+- Auth public settings returned HTTP 200: Email enabled, signup enabled, email confirmation required, anonymous sign-in disabled. Public settings do not expose Site URL, redirect allowlist or Security Advisor results.
+- Reviewed auth code: confirmation redirect is origin + /dashboard, password recovery redirect is origin + /reset-password; contract tests cover both. Dashboard URL configuration still requires owner verification.
+- Real headless Chrome against vite preview on http://127.0.0.1:4188 using the existing A test account: 6/6 passed (UI login, browser storage, hard reload retains authentication, direct /tasks navigation restores session, UI logout, reload remains signed out). No credentials/tokens printed. Temporary profile removed; browser/server closed. No app code changed.
+- Browser checks did not send confirmation/recovery mail, verify the email redirect allowlist, or prove cross-browser task persistence.
+- Owner instructions sent: Authentication → URL Configuration: Site URL http://localhost:5173; allow http://localhost:5173/dashboard and http://localhost:5173/reset-password. Advisors → Security Advisor: refresh and report finding names/severities. No dashboard access or changes claimed.
+- P5-T06 checked: real timestamp mapping and actual Supabase source now verified. P5-T04 and P5-T08 stay open for dashboard/email/remaining checks. No Phase 6, commit or push.
+## Free-plan security limitation and fresh Auth checks — 2026-10-22
+- Owner reports Security Advisor has one warning: Leaked Password Protection Disabled. Owner attempted activation and Supabase required Pro. Official docs confirm Pro and above: https://supabase.com/docs/guides/auth/password-security . Recorded as an owner-accepted Free-plan limitation, not a fixed warning. No paid features, upgrade, workaround service or configuration changes attempted.
+- Consequence: the built-in leaked-password rejection is unavailable. Existing password validation, email confirmation, sessions and RLS still apply; these do not replace leaked-password screening. No claim that Security Advisor is warning-free. Dashboard results are owner-reported.
+- Fresh verification in this turn: npm run test:run 40 files / 363 tests passed; npm run lint exit 0; npm run build exit 0 in Supabase mode; npm run test:security 11/11 passed.
+- Repeated real Chrome checks: 6/6 passed (UI login, local session storage, authenticated after hard reload, session restored on direct protected navigation, logout, signed out after reload). Browser and temporary profile cleaned up.
+- Phase 5 remains open for owner confirmation of Site URL and redirect allowlist, ST-10 actual signup confirmation/recovery email flow including old password and link reuse, and cross-browser task persistence. Asked owner for results without credentials or token-bearing URLs. No commit, push or Phase 6.
+
+## Phase 5 closure — 2026-10-22
+- Owner explicitly authorized closure, separate commits and Phase 6. Latest successful evidence remains 363 tests, lint/build, 11 security checks, 19 bidirectional CRUD/RLS checks and 6 real Chrome auth/session checks. No rerun for documentation-only closure.
+- Final reviewer: no critical/security findings. External email, dashboard URL confirmation and remaining cross-browser manual checks are deferred rather than passed. Free-plan leaked-password warning accepted. See D-31.
+- Work continues in the existing feature checkout to preserve local work and avoid duplicating setup. project-presentation is unrelated and excluded from the commit.

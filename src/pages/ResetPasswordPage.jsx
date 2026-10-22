@@ -1,40 +1,43 @@
+import { useState } from 'react'
+import { Link, Navigate } from 'react-router'
 import { AuthHeader } from '@/components/layout/AuthHeader.jsx'
-import { Button } from '@/components/ui/Button.jsx'
-import { Input } from '@/components/ui/Input.jsx'
+import { PageLoader } from '@/components/layout/PageLoader.jsx'
+import { buttonStyles } from '@/components/ui/buttonStyles.js'
+import { ResetPasswordForm } from '@/features/auth/components/ResetPasswordForm.jsx'
+import { useAuth } from '@/features/auth/useAuth.js'
 import { useI18n } from '@/lib/i18n/useI18n.js'
-import { usePreviewSubmit } from './preview/usePreviewSubmit.js'
 
 /**
- * Layout only in Phase 2. Phase 5 adds the recovery-session check (isRecovery),
- * VR-02/VR-05 validation, and updatePassword (US-26, D-19).
+ * /reset-password (US-26, D-19, ARCHITECTURE §9). Neither public-only nor protected:
+ * - a recovery session from the email link → the new-password form;
+ * - a normal session → /dashboard, so an unattended signed-in browser cannot be used
+ *   to change the password without the email link (also where a saved password leads);
+ * - no session, or a recovery session that has ended → "link invalid or expired".
  */
 export default function ResetPasswordPage() {
   const { t } = useI18n()
-  const handleSubmit = usePreviewSubmit()
+  const { status, isRecovery } = useAuth()
+  const [expired, setExpired] = useState(false)
+
+  if (status === 'loading') return <PageLoader />
+
+  if (isRecovery && !expired) {
+    return (
+      <>
+        <AuthHeader title={t('auth.reset.title')} lede={t('auth.reset.lede')} />
+        <ResetPasswordForm onExpired={() => setExpired(true)} />
+      </>
+    )
+  }
+
+  if (status === 'authenticated' && !expired) return <Navigate to="/dashboard" replace />
 
   return (
     <>
-      <AuthHeader title={t('auth.reset.title')} lede={t('auth.reset.lede')} />
-      <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
-        <Input
-          label={t('auth.reset.newPassword')}
-          hint={t('auth.register.passwordHint')}
-          name="password"
-          type="password"
-          autoComplete="new-password"
-          dir="ltr"
-        />
-        <Input
-          label={t('auth.reset.confirmPassword')}
-          name="confirmPassword"
-          type="password"
-          autoComplete="new-password"
-          dir="ltr"
-        />
-        <Button type="submit" className="mt-2 w-full">
-          {t('auth.reset.submit')}
-        </Button>
-      </form>
+      <AuthHeader title={t('auth.reset.invalidTitle')} lede={t('auth.reset.invalidBody')} />
+      <Link to="/forgot-password" className={buttonStyles({ className: 'w-full' })}>
+        {t('auth.reset.invalidAction')}
+      </Link>
     </>
   )
 }

@@ -39,7 +39,7 @@ src/
     App.jsx                    # Providers + router
     AppRoutes.jsx              # Route table (public / protected)
     AppProviders.jsx           # I18nProvider, ErrorBoundary, BrowserRouter, ToastProvider
-                               # (+ TasksProvider in Phase 3, AuthProvider in Phase 5)
+                               # + AuthProvider (TasksProvider lives in ProtectedRoute, D-30)
     ErrorBoundary.jsx
   pages/                       # Thin route screens: compose feature components
     DashboardPage.jsx
@@ -51,7 +51,6 @@ src/
     ResetPasswordPage.jsx
     NotFoundPage.jsx
     UiGalleryPage.jsx          # Development-only /ui route (D-22)
-    preview/                   # usePreviewSubmit for the auth forms until Phase 5 (D-22)
   components/                  # Shared, feature-agnostic UI
     ui/                        # Button (+ buttonStyles), Input, Card, Dialog, ProgressBar, EmptyState,
                                # Spinner, Alert, ToastProvider/useToast, textLink
@@ -59,11 +58,14 @@ src/
                                # PageHeader, AuthHeader, SkipLink, PageLoader, ScrollToTop, navItems
   features/
     auth/
-      AuthContext.jsx          # Provides { user, session, status, signIn, signUp, signOut,
-                               #   isRecovery, requestPasswordReset, updatePassword }
+      AuthContext.js           # The context object only (same split as tasks, D-27)
+      AuthProvider.jsx         # { user, session, status, isRecovery, signIn, signUp, signOut,
+                               #   requestPasswordReset, updatePassword } (D-30)
       useAuth.js
-      ProtectedRoute.jsx       # Also PublicOnlyRoute
-      components/              # LoginForm, RegisterForm, ForgotPasswordForm, ResetPasswordForm
+      useAuthForm.js           # Shared mechanics of the four account forms
+      ProtectedRoute.jsx       # Also PublicOnlyRoute; holds TasksProvider key={user.id}
+      components/              # LoginForm, RegisterForm, ForgotPasswordForm, ResetPasswordForm,
+                               # EmailSent ("check your email"), LogoutButton
       lib/authValidation.js    # VR-01, VR-02, VR-05
     tasks/
       TasksContext.js          # The context object only (keeps React Fast Refresh working)
@@ -89,16 +91,18 @@ src/
       lib/weeklyStats.js       # BR-02, BR-03, BR-04
       lib/personalBest.js      # BR-05
   services/
-    index.js                   # Selects mock or supabase implementation (VITE_DATA_SOURCE)
+    index.js                   # Loads the mock or supabase implementation (VITE_DATA_SOURCE, D-30)
     errors.js                  # ServiceError + error codes
     mock/
       mockAuthService.js
       mockTasksService.js      # localStorage persistence
       devSeed.js               # Development-only seed data (nextu.seed() in the console; P4-T01)
     supabase/                  # Phase 5
-      supabaseClient.js
-      supabaseAuthService.js
+      index.js                 # The two services on one client
+      supabaseClient.js        # The only createClient() call
+      supabaseAuthService.js   # Session mapping, recovery flag (D-30)
       supabaseTasksService.js  # Row <-> object mapping, pagination
+      supabaseErrors.js        # Supabase / PostgreSQL error codes -> ServiceError
   lib/
     cx.js                      # Class-name join helper
     errorMessageKey.js         # ServiceError code -> translated message key (NFR-14)
@@ -117,6 +121,8 @@ src/
                                # ResizeObserver stub for Recharts (D-28)
     factories.js               # makeTask() helpers for tests
     renderWithProviders.jsx    # Renders a component with i18n, router, and toasts
+    renderApp.jsx              # Renders the whole app at a path, signed in or out (mock)
+    fakeSupabase.js            # A Supabase client stand-in for the services' unit tests
 supabase/
   migrations/                  # Numbered SQL files (D-17)
 ```
@@ -166,9 +172,9 @@ Task loading strategy (MVP):
 
 ## 7. Supabase Integration Strategy (Phase 5)
 
-- Environment variables: `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (public, protected by RLS), plus `VITE_DATA_SOURCE`.
+- Environment variables: `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` (public, protected by RLS; the legacy anon key also works there, D-30), plus `VITE_DATA_SOURCE`.
 - One client instance, created in `services/supabase/supabaseClient.js`. The service-role key is never used (NFR-11).
-- Auth: `supabase.auth` handles sessions, stored by `supabase-js` in localStorage. `AuthContext` subscribes to `onAuthStateChange`.
+- Auth: `supabase.auth` handles sessions, stored by `supabase-js` in localStorage. `AuthProvider` restores the session with `getSession()` and subscribes to `onAuthStateChange`.
 - Data: `supabaseTasksService` maps snake_case rows to camelCase objects, sets no `user_id` itself (the database default `auth.uid()` and RLS ensure ownership), and paginates history reads.
 - The schema and policies are in `DATABASE_SCHEMA.md`, applied from `supabase/migrations/`.
 
@@ -182,8 +188,8 @@ If a custom API (for example Node or Express) replaces or complements Supabase l
 ## 9. Routing
 
 - Public-only routes: `/login`, `/register`, `/forgot-password`.
-- `/reset-password` is neither public-only nor protected. The recovery link signs the user in and sets `isRecovery` (from the `PASSWORD_RECOVERY` event). The page shows the form only when `isRecovery` is true. A normal session is redirected to `/dashboard`, and no session shows "Link invalid or expired" (D-19).
-- Protected routes: `/dashboard`, `/tasks`, `/analytics`. They render inside `AppLayout` and are wrapped by `ProtectedRoute` from Phase 5.
-- `/` redirects to `/dashboard`. `*` shows `NotFoundPage`.
+- `/reset-password` is neither public-only nor protected. The recovery link signs the user in and sets `isRecovery` (from the link's own token, read when the service starts, or the `PASSWORD_RECOVERY` event; D-30). The page shows the form only when `isRecovery` is true. A normal session is redirected to `/dashboard`, and no session shows "Link invalid or expired" (D-19).
+- Protected routes: `/dashboard`, `/tasks`, `/analytics`, and also `/` and unknown paths. They render inside `AppLayout`, wrapped by `ProtectedRoute`. After login the user returns to the page first requested.
+- `/` redirects to `/dashboard`. `*` shows `NotFoundPage` (after login).
 - `/ui` (component gallery) exists only in development builds (D-22).
 - Vercel needs a SPA rewrite so that deep links work (`vercel.json`, Phase 6).

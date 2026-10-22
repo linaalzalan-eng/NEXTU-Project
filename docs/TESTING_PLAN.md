@@ -67,7 +67,7 @@ Query the way a user would (by role, label, or text). Avoid testing implementati
 - **CT-11 Forgot and Reset password forms (US-26):**
   - Forgot: VR-01 errors; the same success message is shown after any valid submission; network error with Retry.
   - Reset: VR-02 and VR-05 errors; loading state; the form is shown only when `isRecovery` is true; the "Link invalid or expired" state when there is no session; `UNAUTHENTICATED` from `updatePassword` shows the same state.
-  - `RATE_LIMITED` shows the "try again later" message.
+  - `RATE_LIMITED` shows the "try again later" message on login. On the forgot form it shows the same success message, because Supabase rate-limits only registered addresses (D-30).
 
 ## 3. Integration Tests (feature level, with the mock service)
 
@@ -75,7 +75,7 @@ Query the way a user would (by role, label, or text). Avoid testing implementati
 - **IT-02 Dashboard reacts:** toggling a task on the Dashboard updates the counts, rate, progress bar, and message.
 - **IT-03 Analytics from seeded data:** a known dataset produces the expected comparison and personal-best values, computed by hand in the test. Editing or deleting a past task then changes past statistics immediately (BR-11).
 - **IT-04 Service failure:** the mock is made to throw `NETWORK`, so the optimistic change rolls back and the error message is shown (NFR-21).
-- **IT-05 Routing:** an unknown route shows Not Found and `/` redirects to `/dashboard`. From Phase 5, protected routes redirect to `/login` when there is no session, a logged-in user visiting `/forgot-password` is redirected to `/dashboard`, and `/reset-password` shows the form for a recovery session but redirects a normal session to `/dashboard`.
+- **IT-05 Routing:** an unknown route shows Not Found (after login) and `/` redirects to `/dashboard`. From Phase 5, protected routes redirect to `/login` when there is no session and return to the requested page after login, logging out drops the tasks and Back does not show them, a logged-in user visiting `/forgot-password` is redirected to `/dashboard`, and `/reset-password` shows the form for a recovery session but redirects a normal session to `/dashboard`.
 - **IT-06 Day rollover:** with fake timers, advancing past local midnight (or firing a `visibilitychange` event) updates "today", the Dashboard statistics, and the overdue list (BR-10).
 
 ## 4. Security Tests (Phase 5, against a real Supabase project)
@@ -86,7 +86,7 @@ Use two test accounts, A and B. Each test is run with `supabase-js` from a small
 - **ST-02** A tries to `update` B's task by id: 0 rows are affected.
 - **ST-03** A tries to `delete` B's task by id: 0 rows are affected, and B's task still exists.
 - **ST-04** A tries to `insert` with `user_id = B`: rejected by RLS.
-- **ST-05** Without logging in (anon), a select returns no rows.
+- **ST-05** Without logging in (anon), a select returns no rows: a permission error, because `anon` has no privilege on the table (D-30).
 - **ST-06** A tries to change a task's `user_id` to B through `update`: rejected by `WITH CHECK`.
 - **ST-07** Constraint checks: inserting an empty title, an invalid status, or `completed` without `completed_at` fails.
 - **ST-08** Secret scan:
@@ -136,7 +136,7 @@ Check every page in the browser's device toolbar at **360**, **390**, **768**, *
 - [ ] ST-01 to ST-10 pass on the production Supabase project.
 - [ ] Sections 5 and 6 are checked on the deployed URL.
 - [ ] Supabase Auth URL configuration (Site URL and redirect URLs, including `/reset-password`) points to the production domain.
-- [ ] Vercel environment variables are set, with no secrets in the client.
+- [ ] Vercel environment variables are set (`VITE_DATA_SOURCE=supabase`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`), with no secrets in the client. Without them a Supabase build shows a blank page (D-30).
 - [ ] Deep links (`/tasks` opened directly) work on Vercel.
 - [ ] "Confirm email" is enabled in Supabase Auth (D-18), and the password reset flow works end to end (D-19, US-26).
 - [ ] README has setup and deployment instructions.

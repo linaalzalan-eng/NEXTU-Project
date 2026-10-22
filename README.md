@@ -6,7 +6,7 @@ NEXTU combines *Next* + *You*: the next, better version of you. Philosophy: "You
 
 A personal productivity and achievement-tracking web app. Plan your daily tasks, complete them, and see how you are progressing compared with **your own** past performance: today's progress, this week vs. last week, and your personal bests.
 
-**Status:** Phase 4 (Dashboard and Analytics with mock data) complete, awaiting review. See [`docs/PROGRESS.md`](docs/PROGRESS.md).
+**Status:** Phase 5 complete with documented external email checks deferred (D-31); Phase 6 final MVP validation and deployment preparation underway. Real Supabase authentication, task CRUD, two-user isolation and browser session persistence verified. See [progress](docs/PROGRESS.md).
 
 ## MVP Features
 - Email/password authentication with email confirmation, password reset, and private, per-user data.
@@ -38,11 +38,13 @@ npm run test:run   # run all tests once
 ```
 
 While developing:
-- `/tasks` is fully working with **real data** saved in your browser (localStorage, mock service until Phase 5): add, complete, edit, reschedule, delete, browse dates, filter, and move overdue tasks to today.
+- Two data sources (`VITE_DATA_SOURCE`, D-08):
+  - `mock` (the default, and what the tests use): tasks are saved in this browser's localStorage, and a demo user is signed in. Logging out and in works with any email and password.
+  - `supabase`: real accounts and the real database. Copy `.env.example` to `.env.local`, fill in your project's URL and **publishable** key, and set `VITE_DATA_SOURCE=supabase`. The database is created from `supabase/migrations/` in the Supabase SQL Editor. Step-by-step guide: [`docs/phase-reports/PHASE_5_EXPLAINED.md`](docs/phase-reports/PHASE_5_EXPLAINED.md).
+- `/tasks` is fully working: add, complete, edit, reschedule, delete, browse dates, filter, and move overdue tasks to today.
 - `/dashboard` and `/analytics` are calculated from the same real tasks: today's rate and message, this week vs. last week, personal bests, and charts.
-- Development data (only in `npm run dev`): open the browser console and run `nextu.seed()` for about 10 weeks of realistic tasks, `nextu.seed({ count: 5000 })` for a performance check, or `nextu.clear()` to start empty. Seeding **replaces** the tasks saved in this browser.
-- Optional: copy `.env.example` to `.env.local`. The default data source is `mock`.
-- `/login`, `/register`, `/forgot-password`, and `/reset-password` show the account screens. They are not connected yet (Phase 5).
+- Development data (only in `npm run dev` with the mock): open the browser console and run `nextu.seed()` for about 10 weeks of realistic tasks, `nextu.seed({ count: 5000 })` for a performance check, or `nextu.clear()` to start empty. Seeding **replaces** the tasks saved in this browser.
+- `/login`, `/register`, `/forgot-password`, and `/reset-password` are connected to the auth service. The app pages need a session; without one they open `/login`.
 - `/ui` is a development-only gallery of every UI component and state.
 - The language switch (العربية / English) is in the sidebar on desktop and in the top bar on mobile. The choice is remembered.
 

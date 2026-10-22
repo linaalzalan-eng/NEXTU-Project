@@ -7,7 +7,7 @@ import globals from 'globals'
 export default defineConfig([
   globalIgnores(['dist', 'coverage']),
   {
-    files: ['**/*.{js,jsx}'],
+    files: ['**/*.{js,jsx,mjs}'],
     extends: [
       js.configs.recommended,
       reactHooks.configs.flat['recommended-latest'],
@@ -24,7 +24,7 @@ export default defineConfig([
     },
   },
   {
-    files: ['*.config.js'],
+    files: ['*.config.js', 'scripts/**'],
     languageOptions: { globals: globals.node },
   },
   {

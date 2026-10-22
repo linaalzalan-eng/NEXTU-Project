@@ -290,33 +290,33 @@ The owner reviews the analytics with seeded data, confirms that the business rul
 - **Estimated effort:** 5–7 sessions.
 
 ### Tasks
-- [ ] **P5-T01 Supabase fundamentals and client**
+- [x] **P5-T01 Supabase fundamentals and client** (2026-10-21: environment presence, Supabase selection, live Auth connectivity and Supabase build verified)
   - Lesson.
   - Install `@supabase/supabase-js`.
   - Create `services/supabase/supabaseClient.js` and update `.env.example`. The owner creates `.env.local` from `.env.example` and fills in the values; Claude never reads it (D-20).
-- [ ] **P5-T02 Database migration**
+- [x] **P5-T02 Database migration** (2026-10-21: owner confirmed applying SQL and four RLS policies; anonymous access independently denied; authenticated RLS checks remain in P5-T08)
   - Lesson: PostgreSQL basics.
   - Create `supabase/migrations/0001_create_tasks.sql` from `DATABASE_SCHEMA.md`, checked against the current Supabase docs.
   - The owner applies it in the SQL Editor, guided step by step.
-- [ ] **P5-T03 Auth service and context**
-  - Create `supabaseAuthService.js`, `AuthContext.jsx`, and `useAuth.js`, with session restore and `onAuthStateChange` (US-04).
+- [x] **P5-T03 Auth service and context** (2026-10-17; `AuthContext.js` + `AuthProvider.jsx`, D-30)
+  - Create `supabaseAuthService.js`, `AuthContext.js` + `AuthProvider.jsx`, and `useAuth.js`, with session restore and `onAuthStateChange` (US-04).
   - Scope `TasksProvider` to the signed-in user: a new task state per user (for example `key={user.id}`), and no loading without a session. Otherwise a second account signed in without a reload would see the first account's tasks (D-29, `CODE_SMELL_PHASE_3.md` M-1).
-- [ ] **P5-T04 Register and login**
+- [x] **P5-T04 Register and login** (2026-10-22: code, automated and real login verified; external email/URL checks deferred by owner, D-31)
   - Create `RegisterForm`, `LoginForm`, and `authValidation.js` (US-01, US-02, D-18).
   - Enable "Confirm email" and set the Site URL and redirect URLs in Supabase Auth (the owner, guided step by step).
   - Tests: UT-07, CT-10.
-- [ ] **P5-T05 Protected routes and logout**
+- [x] **P5-T05 Protected routes and logout** (2026-10-17)
   - Create `ProtectedRoute` and `PublicOnlyRoute`, and add logout to the layout (US-03, US-05).
   - Tests: IT-05.
-- [ ] **P5-T06 Supabase tasks service**
+- [x] **P5-T06 Supabase tasks service** (2026-10-22: real service CRUD and ISO timestamp mapping verified; Supabase source and production build verified)
   - Create `supabaseTasksService.js`: mapping, pagination, and error mapping to `ServiceError`.
   - The mapper returns timestamps in `toISOString()` form, because the sort comparators compare them as strings (D-29, `CODE_SMELL_PHASE_3.md` M-2). Check the real format Supabase returns first.
   - Switch `VITE_DATA_SOURCE` to `supabase`. Keep the mock for tests.
-- [ ] **P5-T07 Password reset**
+- [x] **P5-T07 Password reset** (2026-10-17; the real email link is checked in ST-10)
   - Add `requestPasswordReset` and `updatePassword` to both auth services.
   - Create `ForgotPasswordPage`, `ResetPasswordPage`, `ForgotPasswordForm`, and `ResetPasswordForm` (US-26, D-19).
   - Tests: UT-07 (VR-05), CT-11, IT-05 (new routes).
-- [ ] **P5-T08 Verification**
+- [x] **P5-T08 Verification** (2026-10-22: accepted closure with documented external checks deferred, D-31)
   - Run ST-01 to ST-10 with two accounts.
   - Check persistence across browsers (US-06, US-25).
   - Run the review, write `PHASE_5_EXPLAINED.md`, and write the report.
@@ -348,6 +348,8 @@ A functional multi-user MVP connected to a real database.
 The owner tests with two accounts and approves Phase 6.
 
 ---
+
+> Phase 5 closed by owner instruction on 2026-10-22 (D-31): verified checks retained; ST-10 real email and remaining external manual checks deferred, not marked passed. Free-plan security limitation accepted. Phase 6 authorized in the same instruction.
 
 ## PHASE 6 — Testing & Deployment
 

@@ -2,6 +2,11 @@ const KEYS = {
   VALIDATION: 'errors.validation',
   NOT_FOUND: 'errors.notFound',
   NETWORK: 'errors.network',
+  INVALID_CREDENTIALS: 'errors.invalidCredentials',
+  EMAIL_NOT_CONFIRMED: 'errors.emailNotConfirmed',
+  EMAIL_TAKEN: 'errors.emailTaken',
+  RATE_LIMITED: 'errors.rateLimited',
+  UNAUTHENTICATED: 'errors.unauthenticated',
 }
 
 /**

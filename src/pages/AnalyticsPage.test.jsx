@@ -58,9 +58,11 @@ const term = (container, label) => within(container).getByText(label, { selector
 describe('Analytics (integration)', () => {
   // The page is lazy-loaded with Recharts (NFR-03). Loading it once up front keeps the
   // first test from spending its 3 s findBy budget on the import when the machine is busy.
+  // Cold Recharts imports exceeded the default 10 s hook timeout under load.
+  // Match the existing 30 s test budget without changing assertion timeouts.
   beforeAll(async () => {
     await import('@/pages/AnalyticsPage.jsx')
-  })
+  }, 30_000)
 
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ['Date'] })

@@ -25,6 +25,7 @@ Every function is `async` unless it is marked as pure. On failure, a function **
  *
  * @typedef {Object} Session
  * @property {User} user
+ * @property {boolean} [isRecovery]  true only for the temporary session from a password reset link (D-19, D-30)
  */
 ```
 
@@ -60,7 +61,7 @@ signUp(input)
 
 /** @param {{email: string, password: string}} input
  *  @returns {Promise<Session>}
- *  @throws VALIDATION | INVALID_CREDENTIALS | EMAIL_NOT_CONFIRMED | NETWORK | UNKNOWN */
+ *  @throws VALIDATION | INVALID_CREDENTIALS | EMAIL_NOT_CONFIRMED | RATE_LIMITED | NETWORK | UNKNOWN */
 signIn(input)
 
 /** @returns {Promise<void>}  @throws NETWORK | UNKNOWN */
@@ -85,11 +86,11 @@ requestPasswordReset(input)
 /** D-19. Sets a new password. The UI calls it only during a recovery session (`isRecovery` in AuthContext).
  *  @param {{password: string}} input
  *  @returns {Promise<void>}
- *  @throws VALIDATION | UNAUTHENTICATED (missing or expired recovery session) | NETWORK | UNKNOWN */
+ *  @throws VALIDATION (also when Supabase refuses the password, e.g. the current one) | UNAUTHENTICATED (missing or expired recovery session) | RATE_LIMITED | NETWORK | UNKNOWN */
 updatePassword(input)
 ```
 
-Mock behavior (Phases 3–4): there is always one fixed demo user (`id: 'local-user'`). `signIn`, `signUp`, `requestPasswordReset`, and `updatePassword` resolve immediately. This keeps the shapes identical to the real service.
+Mock behavior: there is one fixed demo user (`id: 'local-user'`), signed in by default. `signIn` and `signUp` accept any input and sign the demo user in; `signOut` signs out and is remembered in localStorage until the next login. `onAuthStateChange` reports `SIGNED_IN` and `SIGNED_OUT`. `requestPasswordReset` and `updatePassword` resolve immediately. This keeps the shapes identical to the real service (D-30).
 
 ## 4. Tasks Service — `tasksService`
 

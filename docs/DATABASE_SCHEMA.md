@@ -44,7 +44,11 @@ erDiagram
 ### Indexes
 - `tasks_user_id_task_date_idx` on `(user_id, task_date)`. It serves every query pattern: tasks for a date, a date range, overdue tasks, and the full history ordered by date. It also speeds up RLS checks on `user_id`.
 
-## 3. Row Level Security
+## 3. Privileges and Row Level Security
+
+Two layers decide what a request may do:
+1. **Table privileges (`grant`)** decide whether a role may reach the table through the Data API at all. Supabase no longer grants them automatically on new tables (D-30), so the migration grants `select, insert, update, delete` to `authenticated` and revokes everything from `anon`.
+2. **RLS policies** decide which rows a permitted role sees and changes.
 
 RLS is **enabled**, and each operation has its own policy for the `authenticated` role. The `anon` role has no policy and therefore no access.
 `(select auth.uid())` is used instead of `auth.uid()` because Supabase recommends this form for better performance (the value is computed once per query).
@@ -54,66 +58,16 @@ RLS is **enabled**, and each operation has its own policy for the `authenticated
 - **update:** `USING ((select auth.uid()) = user_id)` and `WITH CHECK ((select auth.uid()) = user_id)`. The user cannot move a task to another owner.
 - **delete:** `USING ((select auth.uid()) = user_id)`.
 
-## 4. Planned Migration `0001_create_tasks.sql`
+## 4. Migration `0001_create_tasks.sql`
 
-```sql
--- Table
-create table public.tasks (
-  id           uuid primary key default gen_random_uuid(),
-  user_id      uuid not null default auth.uid()
-               references auth.users (id) on delete cascade,
-  title        text not null,
-  status       text not null default 'pending',
-  task_date    date not null,
-  created_at   timestamptz not null default now(),
-  updated_at   timestamptz not null default now(),
-  completed_at timestamptz,
-  constraint tasks_title_length check (char_length(btrim(title)) between 1 and 200),
-  constraint tasks_status_valid check (status in ('pending', 'completed')),
-  constraint tasks_completed_at_consistent
-    check ((status = 'completed') = (completed_at is not null))
-);
+The SQL lives in one place: `supabase/migrations/0001_create_tasks.sql` (P5-T02). It creates, in order:
+1. The table and its three constraints (§2).
+2. The index `tasks_user_id_task_date_idx`.
+3. The function `set_updated_at()` (with `set search_path = ''`) and the trigger `tasks_set_updated_at`.
+4. The privileges (§3): `revoke all ... from anon`, `grant select, insert, update, delete ... to authenticated`.
+5. RLS enabled, and the four policies (§3).
 
-create index tasks_user_id_task_date_idx on public.tasks (user_id, task_date);
-
--- Keep updated_at current
-create or replace function public.set_updated_at()
-returns trigger
-language plpgsql
-set search_path = ''
-as $$
-begin
-  new.updated_at = now();
-  return new;
-end;
-$$;
-
-create trigger tasks_set_updated_at
-before update on public.tasks
-for each row execute function public.set_updated_at();
-
--- Row Level Security
-alter table public.tasks enable row level security;
-
-create policy "Users can read own tasks"
-  on public.tasks for select to authenticated
-  using ((select auth.uid()) = user_id);
-
-create policy "Users can insert own tasks"
-  on public.tasks for insert to authenticated
-  with check ((select auth.uid()) = user_id);
-
-create policy "Users can update own tasks"
-  on public.tasks for update to authenticated
-  using ((select auth.uid()) = user_id)
-  with check ((select auth.uid()) = user_id);
-
-create policy "Users can delete own tasks"
-  on public.tasks for delete to authenticated
-  using ((select auth.uid()) = user_id);
-```
-
-This migration is **apply once** (plain `create` statements). This SQL is a plan. In Phase 5 it is reviewed against the current Supabase documentation before it is applied.
+It is **apply once** (plain `create` statements). It was reviewed against the current Supabase documentation on 2026-10-17; the privileges block was added then (D-30).
 
 ## 5. Migration Strategy
 

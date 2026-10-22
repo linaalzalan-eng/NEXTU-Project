@@ -16,7 +16,7 @@ const en = {
     today: 'Today',
     tasks: 'Tasks',
     analytics: 'Analytics',
-    login: 'Log in',
+    logout: 'Log out',
   },
   language: {
     change: 'Change language to Arabic',
@@ -110,12 +110,31 @@ const en = {
       invalid: 'Enter a valid date.',
       outOfRange: 'Choose a date between 1 January 2000 and one year from today.',
     },
+    email: {
+      required: 'Enter your email.',
+      invalid: 'Enter a valid email, like name@example.com.',
+      tooLong: 'The email can be up to 254 characters.',
+    },
+    password: {
+      required: 'Enter a password.',
+      tooShort: 'Use at least 8 characters.',
+      tooLong: 'The password is too long. Use up to 72 characters (an Arabic letter counts as two).',
+    },
+    confirmPassword: {
+      required: 'Enter the new password again.',
+      mismatch: 'The passwords don’t match.',
+    },
   },
   errors: {
     network: 'We couldn’t reach the server. Check your connection and try again.',
     validation: 'Some details aren’t valid. Check them and try again.',
     notFound: 'This task no longer exists. The list has been updated.',
     unknown: 'Something went wrong. Try again.',
+    invalidCredentials: 'The email or password is incorrect.',
+    emailNotConfirmed: 'Confirm your email first: open the link we sent you, then log in.',
+    emailTaken: 'An account with this email already exists. Log in instead.',
+    rateLimited: 'Too many attempts. Wait a few minutes and try again.',
+    unauthenticated: 'Your session has ended. Log in again.',
   },
   analytics: {
     eyebrow: 'You vs. your previous self',
@@ -179,7 +198,6 @@ const en = {
     quoteNote: 'Plan the day. Finish what you can. See how you grow.',
     email: 'Email',
     password: 'Password',
-    previewToast: 'Accounts are connected in Phase 5. This form is a preview.',
     login: {
       title: 'Welcome back',
       lede: 'Log in to continue where you left off.',
@@ -195,12 +213,16 @@ const en = {
       passwordHint: '8 to 72 characters.',
       haveAccount: 'Already have an account?',
       login: 'Log in',
+      checkTitle: 'Check your email',
+      checkBody: 'If {email} can be used for a new account, we sent a confirmation link to it. Open the link to finish, then log in.',
     },
     forgot: {
       title: 'Reset your password',
       lede: 'Enter your email and we will send you a link to set a new password.',
       submit: 'Send reset link',
       back: 'Back to log in',
+      sentTitle: 'Check your inbox',
+      sentBody: 'If an account exists for {email}, we sent it a link to set a new password. The link works once.',
     },
     reset: {
       title: 'Set a new password',
@@ -208,6 +230,11 @@ const en = {
       newPassword: 'New password',
       confirmPassword: 'Confirm new password',
       submit: 'Save password',
+      rejected: 'This password can’t be used. Choose a different one, not your current password.',
+      done: 'Password updated. You are logged in.',
+      invalidTitle: 'Link invalid or expired',
+      invalidBody: 'A reset link works once and expires after a while. Request a new one.',
+      invalidAction: 'Request a new link',
     },
   },
   notFound: {

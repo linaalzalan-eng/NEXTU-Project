@@ -1,5 +1,5 @@
-import { LogIn } from 'lucide-react'
 import { NavLink } from 'react-router'
+import { LogoutButton } from '@/features/auth/components/LogoutButton.jsx'
 import { useI18n } from '@/lib/i18n/useI18n.js'
 import { cx } from '@/lib/cx.js'
 import { BrandMark } from './BrandMark.jsx'
@@ -38,11 +38,7 @@ export function SideNav() {
       </nav>
 
       <div className="mt-auto flex flex-col gap-1 border-t border-line pt-4">
-        {/* Phase 2 entry to the auth screens; becomes "Log out" in Phase 5. */}
-        <NavLink to="/login" className={sideLinkClass}>
-          <LogIn aria-hidden="true" className="size-[1.15rem] shrink-0 rtl:-scale-x-100" />
-          {t('nav.login')}
-        </NavLink>
+        <LogoutButton className={cx(sideLinkClass({ isActive: false }), 'w-full')} />
         <LanguageSwitch className="justify-start" />
       </div>
     </aside>

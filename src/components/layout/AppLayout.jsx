@@ -1,8 +1,6 @@
-import { LogIn } from 'lucide-react'
 import { Suspense } from 'react'
-import { Link, Outlet } from 'react-router'
-import { buttonStyles } from '@/components/ui/buttonStyles.js'
-import { useI18n } from '@/lib/i18n/useI18n.js'
+import { Outlet } from 'react-router'
+import { LogoutButton } from '@/features/auth/components/LogoutButton.jsx'
 import { BottomNav } from './BottomNav.jsx'
 import { BrandMark } from './BrandMark.jsx'
 import { LanguageSwitch } from './LanguageSwitch.jsx'
@@ -12,8 +10,6 @@ import { SkipLink } from './SkipLink.jsx'
 
 /** Shell for the app pages: side navigation on desktop, top bar + bottom navigation on mobile. */
 export function AppLayout() {
-  const { t } = useI18n()
-
   return (
     <div className="min-h-dvh">
       <SkipLink />
@@ -23,13 +19,7 @@ export function AppLayout() {
         <BrandMark />
         <div className="flex items-center gap-1">
           <LanguageSwitch />
-          <Link
-            to="/login"
-            aria-label={t('nav.login')}
-            className={buttonStyles({ variant: 'ghost', iconOnly: true })}
-          >
-            <LogIn aria-hidden="true" className="size-[1.15rem] rtl:-scale-x-100" />
-          </Link>
+          <LogoutButton iconOnly />
         </div>
       </header>
 

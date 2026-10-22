@@ -240,6 +240,32 @@ Business rules (BR-xx) are defined in `PRD.md`; decisions below reference them i
 - **Deferred to Phase 5** (recorded in `IMPLEMENTATION_PLAN.md`): scope `TasksProvider` to the signed-in user, and normalize timestamps in the Supabase mapper.
 - **Status:** Approved by the owner (2026-10-17).
 
+## D-30 — Supabase connection and authentication details (Phase 5)
+- **Decision:**
+  - **Library:** `@supabase/supabase-js` 2.117.2, the newest release at least two weeks old. It is the backend client named in ARCHITECTURE §1. Client defaults are kept: the session is stored in localStorage and refreshed automatically, and links from emails are read from the address (implicit flow).
+  - **Publishable key:** the frontend uses `VITE_SUPABASE_PUBLISHABLE_KEY`, not `VITE_SUPABASE_ANON_KEY` as first planned. Supabase now issues publishable keys (`sb_publishable_...`) as the replacement for the legacy `anon` key, which it is phasing out. Either value works in the variable. The secret / service-role key is never used (NFR-11).
+  - **Selecting the implementation:** `services/index.js` loads the chosen implementation with a dynamic `import()` behind a build-time constant (`VITE_DATA_SOURCE`). The production build of one source contains nothing of the other (verified: the mock build has no Supabase code, the Supabase build no mock).
+  - **Table privileges:** the migration grants `select, insert, update, delete` on `tasks` to `authenticated` and revokes everything from `anon`. Supabase no longer exposes new tables to its Data API automatically (new projects since 2026-05-30; existing projects from 2026-10-30), so without the grant every query would fail. RLS still decides which rows. With no grant, `anon` gets a permission error instead of an empty list (ST-05).
+  - **Auth state:** `AuthContext.js` + `AuthProvider.jsx` + `useAuth.js`, the same split as tasks (D-27). `status` is `'loading' | 'authenticated' | 'unauthenticated'`. The actions apply their returned session at once, so the route guards see it without waiting for an event. When the browser restores a page from its back/forward cache, the provider reads the saved session again; otherwise Back after logging out on another page could show the old signed-in page (found in the Chrome check, US-03).
+  - **Recovery session:** a session from a reset link carries `isRecovery: true` (`Session` in API_CONTRACTS §1). Supabase announces it only once (`PASSWORD_RECOVERY`), possibly after the app has already read the session, which would make `/reset-password` redirect a recovery session to `/dashboard`. The Supabase auth service therefore also reads the link's `access_token` (with `type=recovery`) from the address when it is created, right after the client and before the client clears it. A session counts as recovery only when it carries exactly that token, so typing `#type=recovery` (or a forged token) into a signed-in browser cannot open the password form; found by the `code-reviewer`. The flag ends when the new password is saved, on `USER_UPDATED`, on logout, or on a password login.
+  - **Secure password change (optional backstop):** Supabase Auth's "Secure password change" setting makes the server itself require a recent login for a password change. Recommended in the setup steps; the app does not depend on it.
+  - **Tests never use Supabase:** Vite loads `.env.local` in every mode, so `vite.config.js` sets `test.env.VITE_DATA_SOURCE = 'mock'`. With `VITE_DATA_SOURCE=supabase` in the environment the suite still runs on the mock (verified).
+  - **Rate limits on the forgot form:** Supabase limits repeated emails only for addresses that have an account, so a `RATE_LIMITED` answer would reveal a registered email. The forgot form shows the same "check your inbox" screen for it. Known limitation: on sign-up with confirmation on, a repeated request for an existing unconfirmed address can still show "too many attempts".
+  - **Pagination:** a project's API "Max rows" can be set below 1000, so `listTasks` continues after the rows actually received and stops at an empty page. This costs one extra small request per load.
+  - **Logout without a network:** supabase-js removes the local session even when the server call fails, so a logout whose session is gone is treated as done; only a logout that left the session in place shows an error.
+  - **`42501` → `UNAUTHENTICATED`:** a signed-in user sees "Your session has ended" if the migration's grants were never applied. Acceptable, because ST-01 and ST-05 catch a missing grant during setup.
+  - **Route guards and tasks:** `ProtectedRoute` and `PublicOnlyRoute` are layout routes. `/`, the app pages, and unknown paths are protected. After login, `PublicOnlyRoute` redirects to the page originally requested (only same-app paths). `TasksProvider` now lives inside `ProtectedRoute` with `key={user.id}`: tasks load only with a session, each account gets a fresh task state, and logging out drops the list (D-29 M-1).
+  - **Forms:** `useAuthForm` holds the shared mechanics of the four account forms (values, inline errors, focus on the first invalid field, a loading state that also blocks a second Enter). The "check your email" screens (`EmailSent`) never reveal whether an address is registered (D-18, D-19).
+  - **Password length (VR-02):** at least 8 characters and at most 72 **bytes** in UTF-8, because the server's password hashing stops at 72 bytes. For Latin letters and digits this is the same as 72 characters; an Arabic letter takes 2 bytes.
+  - **Error codes:** Supabase Auth error codes (`invalid_credentials`, `email_not_confirmed`, `user_already_exists`, `over_email_send_rate_limit`, `same_password`, ...) and PostgreSQL codes (`23514` check violation, `42501` RLS) map to `ServiceError` codes in `services/supabase/supabaseErrors.js`; a status of 0 is `NETWORK`. On `/reset-password`, `VALIDATION` means Supabase refused the password itself (for example the current one).
+  - **Mock auth:** the demo user starts signed in, so `npm run dev` with the mock opens the app directly. Logging out is remembered in localStorage (`nextu.mockSignedOut`) until the next login, so every auth screen and guard can be used and tested without Supabase.
+  - **Layout:** `components/layout` (SideNav, AppLayout) uses the auth feature's `LogoutButton`. The Phase 2 preview helper `usePreviewSubmit` and its string were removed.
+- **Known limitations:**
+  - Reloading `/reset-password` after the link's token has left the address loses the recovery state, and the (normal) session is sent to `/dashboard`. An expired link opened in a browser that already has a normal session also goes to `/dashboard`, not to "Link invalid or expired". The user requests a new link.
+  - A Supabase build without `VITE_SUPABASE_URL` or the key stops before React starts (blank page with a console error), so the ErrorBoundary cannot show it. Vercel's environment variables are a Phase 6 checklist item.
+  - After a deploy the service chunk is fetched before the first render (a top-level `await`), one extra small request. Not measurable on a local check; revisit in Phase 6 if Lighthouse flags it.
+- **Status:** Approved (2026-10-17). Minor technical decisions within the approved phase.
+
 ---
 
 ## Resolved open decisions
@@ -248,3 +274,10 @@ Business rules (BR-xx) are defined in `PRD.md`; decisions below reference them i
 - **OD-02** (password reset flow) → resolved by D-19.
 
 No decisions are open.
+
+## D-31 — Owner-approved Phase 5 closure and focused finalization
+- **Date/status:** 2026-10-22, explicitly approved by owner.
+- **Decision:** Close Phase 5 on verified core authentication, CRUD, RLS and session-persistence results; defer real-inbox confirmation/recovery, dashboard URL confirmation and remaining external manual checks. Deferred does not mean passed. Carry them into the deployment checklist.
+- Keep the Free-plan Leaked Password Protection Disabled warning as an accepted limitation; do not upgrade or change security settings. No leaked-password screening is supplied by other validation.
+- Authorize Phase 5 commit, then Phase 6 implementation and a separate commit. Preserve current MVP scope/design/languages. Reuse successful unchanged checks; run only new or affected verification.
+- Public deployment, destructive database operations and significant security changes retain their approval gates. Phase 6 may be ready for deployment without claiming a deployed Beta.
