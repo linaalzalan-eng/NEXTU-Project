@@ -3,8 +3,8 @@
 _Last updated: 2026-10-22_
 
 ## Current Status
-- **Current phase:** Phase 5 closed with owner-approved external-check deferrals (D-31). Phase 6 authorized and next: final MVP validation and deployment preparation.
-- **Current task:** commit Phase 5 after staged secret scan, then execute Phase 6. Retain successful test evidence; do not repeat unchanged checks.
+- **Current phase:** Phase 6 local MVP validation and deployment preparation complete. Public deployment (P6-T08) and final deployed Beta acceptance are pending approval/external checks. Phase 5 closed under D-31.
+- **Current task:** final review/commit of Phase 6 preparation; public deployment approval gate next. External email/production URL/smoke checks remain explicitly pending in DEPLOYMENT.md.
 - **Where task data lives now:** VITE_DATA_SOURCE=supabase verified locally; production build includes Supabase and excludes mock services. Tests continue to use the mock/fake clients (D-30). Existing mock data is not migrated.
 - **Branch:** `phase/04-dashboard-analytics` (created from `phase/03-task-management`). Push to `origin` approved by the owner (2026-10-17).
 - **Workflow:** phase-level approval (D-14). Every phase ends with an Arabic explanation file in `docs/phase-reports/` (D-25).
@@ -253,3 +253,16 @@ _Last updated: 2026-10-22_
 - Owner explicitly authorized closure, separate commits and Phase 6. Latest successful evidence remains 363 tests, lint/build, 11 security checks, 19 bidirectional CRUD/RLS checks and 6 real Chrome auth/session checks. No rerun for documentation-only closure.
 - Final reviewer: no critical/security findings. External email, dashboard URL confirmation and remaining cross-browser manual checks are deferred rather than passed. Free-plan leaked-password warning accepted. See D-31.
 - Work continues in the existing feature checkout to preserve local work and avoid duplicating setup. project-presentation is unrelated and excluded from the commit.
+
+
+## Phase 6 local readiness — 2026-10-22
+- Phase 5 committed as ae6b4d6. Existing successful checks reused: 363 tests, lint/build, 11 security, 19 bidirectional CRUD/RLS, 6 Chrome session checks. No unchanged full-suite rerun.
+- New: npm audit reports 0 vulnerabilities; Vercel SPA rewrite/config validated; staged and dist secret-pattern scans pass; .env.local ignored/untracked.
+- Live Supabase fixtures compared with independent arithmetic: Dashboard daily rate/counts and Analytics current/previous same-weekday windows match. Fixtures deleted; existing tasks preserved.
+- 18 core layout combinations pass: Dashboard/Tasks/Analytics × ar/en × 360/768/1280. Keyboard Space toggles a real task. Temporary browser/server/profile cleaned up.
+- Lighthouse 13.5 mobile, local Supabase production preview: Dashboard Performance 99, Accessibility 100, LCP 2176 ms; Tasks 100/100, LCP 1217 ms; Analytics 99/100, LCP 1208 ms. No failed automated accessibility audits on these pages. Dashboard request list has no AnalyticsPage chunk (NFR-03). Results are local lab evidence, not production/network guarantees.
+- Preserved prior 5,000-task calculation performance evidence (NFR-04); no calculation code changed. Exhaustive manual/screen-reader and inbox checks deferred per owner instruction.
+- New files: vercel.json, docs/DEPLOYMENT.md, phase-reports/PHASE_6_EXPLAINED.md. No product code/design/language/DB/security changes.
+- Public deployment not performed; P6-T08/P6-T09 remain open. Do not claim deployed Beta. project-presentation remains excluded.
+
+- Phase 6 final independent review: no critical/security/config findings. Added the requested short real-config walkthrough and practical review prompts to the Arabic report; no product-code changes.

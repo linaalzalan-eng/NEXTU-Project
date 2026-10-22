@@ -6,7 +6,7 @@ NEXTU combines *Next* + *You*: the next, better version of you. Philosophy: "You
 
 A personal productivity and achievement-tracking web app. Plan your daily tasks, complete them, and see how you are progressing compared with **your own** past performance: today's progress, this week vs. last week, and your personal bests.
 
-**Status:** Phase 5 complete with documented external email checks deferred (D-31); Phase 6 final MVP validation and deployment preparation underway. Real Supabase authentication, task CRUD, two-user isolation and browser session persistence verified. See [progress](docs/PROGRESS.md).
+**Status:** MVP implemented and locally verified; ready for deployment approval. Phase 5 committed; Phase 6 local validation and Vercel preparation complete. Public deployment and deferred external email checks remain pending. See [progress](docs/PROGRESS.md).
 
 ## MVP Features
 - Email/password authentication with email confirmation, password reset, and private, per-user data.
@@ -70,3 +70,11 @@ While developing:
 
 ## Development with Claude Code
 Project instructions for Claude Code are in [`CLAUDE.md`](CLAUDE.md). Shared settings and the review agent are in `.claude/`.
+
+
+## Deploying
+Use [the deployment checklist](docs/DEPLOYMENT.md) for Vercel settings, environment variables, Supabase Auth URLs and the post-deployment smoke test. The root vercel.json handles SPA deep links. No public deployment has been performed.
+
+Latest local checks: 363 automated tests, lint/build, two-user RLS, browser session persistence, 18 responsive RTL/LTR combinations and live analytics reference calculations passed. Lighthouse mobile: Dashboard 99/100 performance/accessibility, Tasks 100/100, Analytics 99/100. These are local measurements, not production guarantees.
+
+Accepted limitation: leaked-password screening requires Supabase Pro and remains disabled on Free. Inbox flows and production URL checks are explicitly deferred (D-31).

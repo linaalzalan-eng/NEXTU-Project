@@ -359,24 +359,24 @@ The owner tests with two accounts and approves Phase 6.
 - **Estimated effort:** 3–4 sessions.
 
 ### Tasks
-- [ ] **P6-T01 Critical journey tests**
+- [x] **P6-T01 Critical journey tests** (2026-10-22: core journeys verified; existing 363-test, live CRUD/RLS and session evidence reused; external/manual remainder deferred under D-31)
   - Complete IT-01 to IT-06 against the final code and run the full manual script.
-- [ ] **P6-T02 Analytics accuracy**
+- [x] **P6-T02 Analytics accuracy** (2026-10-22: live Supabase fixture checked against independent date/count arithmetic on Dashboard and Analytics)
   - Run a hand-calculated dataset through the Supabase build and compare the results.
-- [ ] **P6-T03 Security review**
+- [x] **P6-T03 Security review** (2026-10-22: npm audit 0; staged/build secret scan passed; existing real RLS evidence retained; ST-10 deferred, accepted Free-plan warning)
   - Repeat ST-01 to ST-10, run `npm audit`, scan for secrets, and review the RLS policies.
-- [ ] **P6-T04 Responsive and RTL review**
+- [x] **P6-T04 Responsive and RTL review** (2026-10-22: 18 core page/language/width combinations passed; prior auth layout checks retained)
   - Go through `TESTING_PLAN.md` §5 and fix the issues found.
-- [ ] **P6-T05 Accessibility review**
+- [x] **P6-T05 Accessibility review** (2026-10-22: core pages Lighthouse 100 and keyboard Space toggle passed; exhaustive screen-reader/manual review deferred)
   - Go through §6, run Lighthouse and keyboard passes, and fix the issues found.
-- [ ] **P6-T06 Performance**
+- [x] **P6-T06 Performance** (2026-10-22: mobile Lighthouse 99/100/99; Dashboard LCP 2176 ms; lazy Analytics verified; unchanged 5k calculation evidence reused)
   - Check NFR-01 and NFR-03, the bundle size, and the Lighthouse Performance score.
-- [ ] **P6-T07 Production configuration**
+- [x] **P6-T07 Production configuration** (2026-10-22: vercel.json and docs/DEPLOYMENT.md prepared and config validated)
   - Add `vercel.json` with the SPA rewrite.
   - Prepare the environment-variable checklist and the Supabase Auth URLs for production.
 - [ ] **P6-T08 Deploy**
   - **This requires explicit owner approval.** Connect the GitHub repository to Vercel, set the environment variables, deploy, and run a smoke test.
-- [ ] **P6-T09 Beta checklist**
+- [ ] **P6-T09 Beta checklist** (local preparation/report done; deployed URL, smoke test and external checks pending)
   - Complete `TESTING_PLAN.md` §8, finalize the README, write `PHASE_6_EXPLAINED.md`, and write the final report.
 
 ### Acceptance criteria
@@ -400,3 +400,7 @@ A deployed MVP ready for initial real users.
 
 ### Approval checkpoint
 The owner approves the Beta launch.
+
+
+### Phase 6 local readiness — 2026-10-22
+P6-T01 through P6-T07 are complete within the owner-approved focused checks (D-31). P6-T08 public deployment and final deployed Beta acceptance remain pending. Report: docs/phase-reports/PHASE_6_EXPLAINED.md. Do not interpret local readiness as a deployed Beta or deferred email checks as passed.

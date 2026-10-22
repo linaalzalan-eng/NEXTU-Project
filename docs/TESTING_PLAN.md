@@ -140,3 +140,9 @@ Check every page in the browser's device toolbar at **360**, **390**, **768**, *
 - [ ] Deep links (`/tasks` opened directly) work on Vercel.
 - [ ] "Confirm email" is enabled in Supabase Auth (D-18), and the password reset flow works end to end (D-19, US-26).
 - [ ] README has setup and deployment instructions.
+
+## Local readiness snapshot — 2026-10-22 (D-31)
+- Core automated, live RLS/CRUD and Chrome auth/session checks passed; evidence in PROGRESS.md.
+- New Phase 6 checks: audit 0, live reference arithmetic, 18 RTL/LTR layout combinations, keyboard toggle, Lighthouse mobile core-page accessibility 100; Dashboard LCP 2176 ms.
+- Deferred is not passed: ST-10 inbox flows, production Auth URLs, deployed smoke and cross-browser checks, exhaustive manual/screen-reader review. The release checklist above remains open where these conditions require a deployed URL.
+- Accepted Free-plan warning: Leaked Password Protection Disabled. No paid feature or security configuration changes made.
