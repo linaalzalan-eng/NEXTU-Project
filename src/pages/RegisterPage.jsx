@@ -19,7 +19,7 @@ export default function RegisterPage() {
     <>
       <AuthHeader title={t('auth.register.title')} lede={t('auth.register.lede')} />
       <RegisterForm onConfirmationSent={setSentTo} />
-      <p className="mt-8 text-sm text-ink-2">
+      <p className="mt-7 border-t border-line pt-6 text-center text-sm text-ink-2">
         {t('auth.register.haveAccount')}{' '}
         <Link to="/login" className={textLink()}>
           {t('auth.register.login')}

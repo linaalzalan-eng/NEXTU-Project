@@ -1,31 +1,24 @@
-import { Languages } from 'lucide-react'
 import { useI18n } from '@/lib/i18n/useI18n.js'
 import { cx } from '@/lib/cx.js'
 
-// Each language name is written in its own language, so it is not translated.
-const OTHER_LANGUAGE = {
-  ar: { code: 'en', name: 'English' },
-  en: { code: 'ar', name: 'العربية' },
-}
+const LANGUAGES = [{ code: 'ar', label: 'عربي' }, { code: 'en', label: 'EN' }]
 
-/** One button that shows the other language's name, written in that language (US-23). */
-export function LanguageSwitch({ className }) {
+/** Explicit choices keep the active language visible and retain native keyboard behavior. */
+export function LanguageSwitch({ compact = false, className }) {
   const { t, lang, setLanguage } = useI18n()
-  const other = OTHER_LANGUAGE[lang]
-
   return (
-    <button
-      type="button"
-      onClick={() => setLanguage(other.code)}
-      title={t('language.change')}
-      className={cx(
-        'inline-flex h-11 items-center gap-2 rounded-md px-3 text-sm font-medium text-ink-2',
-        'transition-colors duration-150 hover:bg-sunken hover:text-ink',
-        className,
-      )}
-    >
-      <Languages aria-hidden="true" className="size-[1.15rem] shrink-0" />
-      <span lang={other.code}>{other.name}</span>
-    </button>
+    <div role="group" aria-label={t('language.label')} dir="ltr"
+      className={cx('inline-flex h-11 shrink-0 items-stretch rounded-md border border-line bg-surface', className)}>
+      {LANGUAGES.map(({ code, label }) => (
+        <button key={code} type="button" aria-pressed={lang === code} onClick={() => setLanguage(code)}
+          className={cx(
+            'flex flex-1 items-center justify-center border-line font-medium transition-colors duration-150 first:rounded-s-md last:rounded-e-md last:border-s',
+            compact ? 'min-w-7 px-1 text-xs' : 'min-w-11 px-3 text-sm',
+            lang === code ? 'bg-pine-50 font-semibold text-pine-700' : 'text-ink-2 hover:bg-sunken hover:text-ink',
+          )}>
+          <span lang={code} dir={code === 'ar' ? 'rtl' : 'ltr'}>{label}</span>
+        </button>
+      ))}
+    </div>
   )
 }

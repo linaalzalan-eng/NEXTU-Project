@@ -34,11 +34,11 @@ export function LoginForm() {
           dir="ltr"
           {...form.field('password')}
         />
-        <Link to="/forgot-password" className={textLink({ className: 'mt-2 inline-block text-sm' })}>
+        <Link to="/forgot-password" className={textLink({ className: 'mt-3 block text-end text-sm' })}>
           {t('auth.login.forgot')}
         </Link>
       </div>
-      <Button type="submit" loading={form.submitting} className="mt-2 w-full">
+      <Button type="submit" loading={form.submitting} className="mt-1 h-12 w-full">
         {t('auth.login.submit')}
       </Button>
     </form>

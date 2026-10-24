@@ -12,7 +12,7 @@ import { TaskItem } from './TaskItem.jsx'
  */
 export function TaskList({ tasks, busyIds, getMeta, getAction, onToggle, onEdit, onDelete, className }) {
   return (
-    <ul className={cx('divide-y divide-line rounded-lg border border-line bg-surface shadow-hairline', className)}>
+    <ul className={cx('min-w-0 divide-y divide-line rounded-lg border border-line bg-surface shadow-hairline', className)}>
       {tasks.map((task) => {
         const locked = isTaskLocked(task, busyIds)
         return (

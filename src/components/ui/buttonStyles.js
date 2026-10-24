@@ -2,10 +2,10 @@ import { cx } from '@/lib/cx.js'
 
 // `not-disabled:` keeps hover off disabled buttons and still works on links.
 const VARIANTS = {
-  primary: 'bg-pine-600 text-white not-disabled:hover:bg-pine-700 not-disabled:active:bg-pine-700',
+  primary: 'bg-pine-600 text-on-primary not-disabled:hover:bg-pine-700 not-disabled:active:bg-pine-700',
   secondary: 'border border-line-strong bg-surface text-ink not-disabled:hover:bg-sunken',
   ghost: 'text-ink-2 not-disabled:hover:bg-sunken not-disabled:hover:text-ink',
-  danger: 'bg-danger-600 text-white not-disabled:hover:bg-danger-700',
+  danger: 'bg-danger-600 text-on-danger not-disabled:hover:bg-danger-700',
 }
 
 const SIZES = {

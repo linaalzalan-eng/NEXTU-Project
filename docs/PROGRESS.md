@@ -3,8 +3,8 @@
 _Last updated: 2026-10-22_
 
 ## Current Status
-- **Current phase:** Phase 6 local MVP validation and deployment preparation complete. Public deployment (P6-T08) and final deployed Beta acceptance are pending approval/external checks. Phase 5 closed under D-31.
-- **Current task:** final review/commit of Phase 6 preparation; public deployment approval gate next. External email/production URL/smoke checks remain explicitly pending in DEPLOYMENT.md.
+- **Current phase:** Identity redesign phase 1 implemented; awaiting owner approval before redesign phase 2. Prior MVP deployment preparation remains unchanged.
+- **Current task:** final review and owner visual approval of identity/theme foundation. No new commits, pushes, merges or deployments authorized.
 - **Where task data lives now:** VITE_DATA_SOURCE=supabase verified locally; production build includes Supabase and excludes mock services. Tests continue to use the mock/fake clients (D-30). Existing mock data is not migrated.
 - **Branch:** `phase/04-dashboard-analytics` (created from `phase/03-task-management`). Push to `origin` approved by the owner (2026-10-17).
 - **Workflow:** phase-level approval (D-14). Every phase ends with an Arabic explanation file in `docs/phase-reports/` (D-25).
@@ -266,3 +266,66 @@ _Last updated: 2026-10-22_
 - Public deployment not performed; P6-T08/P6-T09 remain open. Do not claim deployed Beta. project-presentation remains excluded.
 
 - Phase 6 final independent review: no critical/security/config findings. Added the requested short real-config walkthrough and practical review prompts to the Arabic report; no product-code changes.
+
+
+## Identity redesign phase 1 — 2026-10-22
+- Approved scope/plan: REDESIGN_PLAN.md, D-32. New U-arrow brand SVGs, semantic light/dark tokens, System preference, independent persistence, native accessible theme selection and pre-paint initialization.
+- Reused existing components/chart CSS variables; preserved Supabase/auth/task behavior. Only necessary on-action/inverse foreground corrections accompany palette changes.
+- 379/379 tests in 43 files with maxWorkers=2; lint/build passed. Earlier concurrent build/test run: 376 passed, Analytics cold-import hook timed out (3 skipped); no timeout/assertion edits, complete rerun passed.
+- Browser: 24 themed RTL/LTR layout combinations, pre-React dark paint, System changes, saved preference and real login/reload/logout checks passed. Core text/action contrast min 5.07:1.
+- Screenshots: artifacts/redesign-phase1. Explanation: phase-reports/REDESIGN_PHASE_1_EXPLAINED.md. Shared components/auth/product-preview/page refinements are later phases, not claimed complete.
+- No dependency, business-rule, API, DB, RLS, commit, push, merge or deployment changes. Existing project-presentation remains untouched.
+
+- Independent phase 1 review: no critical or important findings; theme/bootstrap/select/semantic-role/logo scope checked. Awaiting owner approval; no phase 2 work started.
+
+
+## Identity redesign Phase 2 — owner-scoped authentication UI — 2026-10-23
+- Owner explicitly authorized continuing the UI/UX redesign, including authentication pages in Phase 2 (D-33). Inspected and preserved valid uncommitted work; project-presentation was not modified. No Phase 3, commit, push or deployment.
+- Retained/completed shared AuthLayout, AuthHeader, translated static AuthProductPreview, account form spacing/controls and Light/Dark semantic colors across login/register/forgot-password/reset-password and existing alternate states. Centered the preview column and improved small preview text. Sample data is clearly labelled and internally consistent; no account/task data is fetched by the preview.
+- Appearance menu: retained existing custom radio menu and added viewport clamping, focus-departure dismissal, scroll/resize dismissal with focus restoration and a guard allowing internal menu scrolling. New focus/scroll tests both failed before the fix and pass afterward.
+- Fresh full suite: npm run test:run -- --maxWorkers=2 — 44 files / 388 tests passed. npm run lint and npm run build exited 0; production build includes the Supabase service chunk. No services, auth handlers, route guards or recovery-session logic changed.
+- Actual running Vite UI in headless Chrome: 158/158 checks with no JavaScript exceptions. 48 layout combinations: four account routes × ar/en × light/dark × 320/768/1440. Verified menu bounds/options/Escape for each, pointer/keyboard selection, System reacting to native media changes, reload persistence, Tab/Shift+Tab, outside/focus/scroll dismissal, internal scrolling in 160px viewport, and empty-login validation. Representative screenshots inspected visually.
+- Browser harness initially required corrections for native Enter dispatch and navigation/reload context races; final complete run passed. Lint initially caught missing Node imports in the harness; imports corrected and lint passed. No assertions/timeouts in application tests weakened.
+- Runtime coverage uses the configured application and no test credentials. Reset-password runtime coverage is the expired-link state; recovery form/guards and Supabase contracts are covered by automated tests. No new live-account, real-inbox or recovery-token check claimed.
+- Independent code-reviewer source review: no actionable findings. Arabic report: phase-reports/REDESIGN_PHASE_2_EXPLAINED.md. Screenshots/harness/evidence: artifacts/redesign-phase2, especially verification.json and verified-*.png.
+- Phase 2 requested authentication scope is ready for owner review. Other shared-component redesign and later application-page phases remain deferred.
+
+
+### Phase 2 final visual refinements — 2026-10-23
+- Owner approved the overall direction and requested neutral login field/autofill colors, explicit demo-data labelling and a final Dark/login/menu check before final approval.
+- Shared field tokens are now #F3F2EE (Light) / #2B2D2B (Dark). Scoped autofill CSS uses the same background paint, text and caret colors without disabling native autofill or altering focus, validation or handlers; forced-colors mode retains browser control.
+- Preview now says Demo data / بيانات تجريبية, uses a neutral preview title, and visibly states it is not account activity. Source remains static and has no auth/task/service imports. Updated route tests assert the disclaimer.
+- Fresh relevant suite: 84/84 tests in 11 files; lint/build exited 0. Chrome refinement run: 28/28 checks across ar/en × Light/Dark, including normal input colors, forced autofill pseudo-state paint/text, demo disclaimer and dropdown choices. Final Dark login and Light/Dark menu screenshots inspected visually. Source review: no findings.
+- Autofill verification used Chrome CSS.forcePseudoState, not actual saved account credentials. Initial regression probe failed before CSS changes; final probe passed. Harness waits for the existing color transition before reading normal backgrounds. Results: artifacts/redesign-phase2/refinement-verification.json; screenshots: refinement-*.png. Earlier 388-test/158-browser results remain historical Phase 2 evidence; not rerun for these focused refinements.
+- All existing auth/Supabase behavior and prior styling preserved. project-presentation untouched. Awaiting final owner approval; no Phase 3, commit, push or deployment.
+
+
+## Identity redesign Phase 3 — Dashboard & Application UI Refinement — 2026-10-24
+- Owner accepted Phase 2 and approved the Arabic Phase 3 plan and complete inline execution. Application-page scope previously listed as Phase 4 is included here (D-34). Continued in the existing feature checkout to preserve uncommitted Phase 1/2 work. project-presentation untouched.
+- Refined authenticated shell, page headings, desktop/mobile navigation, cards, dialog viewport scrolling and toast wrapping. Dashboard daily progress now spans content width with clear count tiles; matching skeleton. Task quick-add/date/filter/list/overdue layout refined; analytics comparison/records/charts/tables presentation aligned. Support columns start at xl to preserve content width beside sidebar.
+- Preserved all task callbacks, calculations, auth, Supabase, services, data and business rules. No dependencies or features added. No service/task-logic/analytics-logic/database changes in the diff. Auth-page changes already present at baseline belong to Phase 2.
+- Browser exposed classic-scrollbar appearance-menu bounds: regression failed before the layout-viewport fix and passed afterward. Contrast tests reproduced low ink-3/sunken and planned-chart/surface contrast; corrected Light ink-3 and reused line-strong for planned segments. New automated coverage: 6 tests, total 394.
+- Final automated suite: 45 files / 394 tests passed with maxWorkers=2. Final production build passed with Supabase service chunk (219.39 kB); primary dist remained Supabase. Final standalone lint passed after a parallel run exhausted process memory. git diff --check passed.
+- Real Chrome, isolated temporary profile, production preview with existing mock services: 413/413 checks passed; 64 authenticated and 48 auth-screen route/language/theme/width combinations. Main mock login/signup/logout, task create/Space-complete/edit/delete/filter/date/move-overdue, chart tables, System on all routes, preference persistence, short dialog scrolling, empty/error/retry states and no uncaught JavaScript errors verified. These are not live Supabase/email/RLS results.
+- Inspected representative screenshots visually. Independent source review: no actionable findings. Final evidence: artifacts/redesign-phase3/verification.json; Arabic explanation: docs/phase-reports/REDESIGN_PHASE_3_EXPLAINED.md.
+- Local UI/build readiness achieved. Existing D-31 deferred real-inbox flows, production Auth URLs and deployed smoke test remain pending in DEPLOYMENT.md; no claim of full external release verification. No commit, push, merge or deployment performed.
+
+
+## Final focused UX refinement — 2026-10-24
+- Owner explicitly requested direct minimal implementation. Dashboard now has a smaller progress summary, compact Buddy and New task expandable existing form; tasks visible above the mobile bottom navigation. Date inputs have consistent numeric direction/alignment. Existing tasks-page quick-add remains available.
+- Buddy uses existing daily motivation bands (🌱/😊/💪/🎉), bilingual messages, native keyboard-accessible interaction, and subtle CSS animation disabled for reduced motion. Independent review identified a rounded-halfway mismatch; a new 99/200 regression failed before reusing getMotivationKey and passed afterward. No calculation changes.
+- Only Light/Dark remain; native sun/moon button, persistent selection, cross-tab synchronization and pre-paint behavior preserved. Legacy System resolves once to explicit OS-matching theme and is persisted; invalid/blocked/missing preference defaults to Light. OS changes no longer alter an explicit preference.
+- Fresh full tests: 397/397 in 46 files with maxWorkers=2. Lint passed. Chrome isolated production-mock preview: 163/163 checks passed, including 64 route/language/theme/width layouts, collapsed form/autofocus/Escape/create, actual Buddy progress changes, reduced motion, OS-independent migration, keyboard toggle and reload persistence. No uncaught JavaScript errors; representative mobile Arabic Dark and desktop English Light screenshots inspected. Evidence: artifacts/final-ux/verification.json.
+- Initial regression failures were expected for the new behavior; existing auth-shell test retained its meaningful Appearance accessible-name check. Browser harness corrected occluded-button hit testing rather than changing application behavior.
+- Supabase/auth/services/task/analytics logic and project-presentation preserved. Production Supabase build and temporary QA cleanup run as final closeout. No commit/push/merge/deployment.
+
+
+## Final predeployment verification — 2026-10-24
+- UI/UX approved by owner. Current branch phase/04-dashboard-analytics; existing redesign changes remain uncommitted/untracked. No commit, push or deployment authorized or performed. No product code/configuration changes needed in this pass; project-presentation untouched.
+- Fresh full suite: 46 files / 397 tests passed. Final lint and production build passed; Supabase chunk present, no mock service chunks. git diff --check passed.
+- Live existing security script: 11/11 checks passed (RLS/anonymous denial/ownership/constraints). Additional live smoke: 14/14 passed across both existing test accounts (login, own create/edit/complete/reopen/delete with absence verification, logout). Disposable probes removed; credentials not displayed or changed.
+- Real Chrome on isolated production-mock preview: 243/243 checks passed, including task UI CRUD, analytics rendering, segmented language switching, Light/Dark, 320/768/1440px layouts in both directions, and direct /tasks and /analytics HTTP 200/session restoration. No uncaught JavaScript errors. These browser results are mock UI checks, separate from the live API results. Temporary profile/server cleaned up, QA build replaced by final Supabase build.
+- Git tracks only .env.example among .env files; .env.local ignored and untracked. Exact runtime configuration/test credential matching across tracked files found no values. Private-key/token pattern checks on tracked files and Git index found no findings. Final dist scan found no test credentials, sb_secret/private-key/service-role JWT patterns. These are scoped pattern/value scans, not a full historical secret audit.
+- Required local variables populated: VITE_DATA_SOURCE=supabase, VITE_SUPABASE_URL (HTTPS), VITE_SUPABASE_PUBLISHABLE_KEY (public/anon, not privileged). Their values were never printed. Vercel config reviewed: Vite, npm ci, npm run build, dist, SPA rewrite to /index.html.
+- No critical application blocker found. External release gates remain: configure/verify the three VITE variables on the intended Vercel environment, production Site URL and /dashboard + /reset-password allowlist in Supabase, actual confirmation/recovery inbox tests, then deployed smoke tests. Remote Vercel/Supabase dashboard settings were not accessible/claimed verified. Existing Free-plan password protection limitation remains accepted per D-31.
+- Evidence: artifacts/predeployment/verification.json and build-audit.json. Do not include temporary artifacts/test credentials/project-presentation in a later production commit without separate review.

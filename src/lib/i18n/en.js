@@ -1,6 +1,6 @@
 const en = {
   app: {
-    name: 'NEXTU',
+    name: 'NextU',
     tagline: 'Meet your next self.',
   },
   common: {
@@ -18,7 +18,9 @@ const en = {
     analytics: 'Analytics',
     logout: 'Log out',
   },
+  theme: { label: 'Appearance', light: 'Light', dark: 'Dark', switchTo: 'Switch to {theme} mode' },
   language: {
+    label: 'Language',
     change: 'Change language to Arabic',
   },
   task: {
@@ -39,7 +41,9 @@ const en = {
     left: 'Left',
     planned: 'Planned',
     tasksHeading: 'Today’s tasks',
-    messageHeading: 'A word for today',
+    messageHeading: 'NextU Buddy',
+    buddyAction: 'Say hello to NextU Buddy',
+    newTask: 'New task',
     emptyTitle: 'Plan your day',
     emptyBody: 'Start with one small task. Every finished task counts.',
     overdueTitle: 'Open tasks from earlier days: {count}',
@@ -194,6 +198,20 @@ const en = {
     rate: 'Completion rate',
   },
   auth: {
+    branding: {
+      eyebrow: 'YOUR PERSONAL GROWTH SPACE',
+      title: 'Small steps.\nA better you.',
+      subtitle: 'Compete with your past self, not others.',
+      footer: 'Your pace. Your progress.',
+    },
+    preview: {
+      label: 'Product preview — demo data', title: 'Progress preview', sample: 'Demo data',
+      disclaimer: 'Sample data only. This is not your account activity.',
+      today: 'Today’s progress', dailyCount: '8 of 10 tasks complete', week: 'Your week', completed: 'completed',
+      growth: '3 more tasks than last week', comparison: '21 this week · 18 last week',
+      days: { sat: 'Sat', sun: 'Sun', mon: 'Mon', tue: 'Tue', wed: 'Wed', thu: 'Thu', fri: 'Fri' },
+    },
+
     quote: 'Meet your next self.',
     quoteNote: 'Plan the day. Finish what you can. See how you grow.',
     email: 'Email',

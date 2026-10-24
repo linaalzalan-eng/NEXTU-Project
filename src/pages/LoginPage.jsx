@@ -12,7 +12,7 @@ export default function LoginPage() {
     <>
       <AuthHeader title={t('auth.login.title')} lede={t('auth.login.lede')} />
       <LoginForm />
-      <p className="mt-8 text-sm text-ink-2">
+      <p className="mt-7 border-t border-line pt-6 text-center text-sm text-ink-2">
         {t('auth.login.noAccount')}{' '}
         <Link to="/register" className={textLink()}>
           {t('auth.login.create')}

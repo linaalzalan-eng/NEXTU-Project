@@ -43,7 +43,7 @@ export function TaskForm({ defaultDate, today, onCreate }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-3 sm:flex-row sm:items-start">
+    <form onSubmit={handleSubmit} noValidate className="grid min-w-0 gap-4 rounded-lg border border-line bg-surface p-4 shadow-hairline">
       <Input
         ref={titleRef}
         label={t('taskForm.titleLabel')}
@@ -56,9 +56,9 @@ export function TaskForm({ defaultDate, today, onCreate }) {
         error={errors.title && t(`validation.title.${errors.title}`)}
         dir="auto"
         autoComplete="off"
-        className="sm:flex-1"
+        className="min-w-0"
       />
-      <div className="flex items-start gap-3">
+      <div className="flex flex-wrap items-start gap-3">
         <Input
           ref={dateRef}
           type="date"
@@ -71,7 +71,7 @@ export function TaskForm({ defaultDate, today, onCreate }) {
             if (errors.taskDate) setErrors((current) => ({ ...current, taskDate: undefined }))
           }}
           error={errors.taskDate && t(`validation.taskDate.${errors.taskDate}`)}
-          className="flex-1 sm:w-44 sm:flex-none"
+          className="min-w-0 flex-1"
         />
         {/* Aligns with the inputs: label height (1.25rem line + 0.375rem gap) above. */}
         <Button type="submit" icon={Plus} className="mt-[1.625rem] h-12">

@@ -11,7 +11,7 @@ export const COLORS = {
   present: 'var(--color-pine-600)',
   ghostStroke: 'var(--color-line-strong)',
   ghostFill: 'var(--color-surface)',
-  planned: 'var(--color-line)',
+  planned: 'var(--color-line-strong)',
   grid: 'var(--color-line)',
   tick: 'var(--color-ink-3)',
   tickStrong: 'var(--color-ink)',
@@ -22,7 +22,7 @@ export const COLORS = {
 /** The dashed outline of a "ghost" (past) bar. */
 export const GHOST_BAR = { fill: COLORS.ghostFill, stroke: COLORS.ghostStroke, strokeWidth: 1.5, strokeDasharray: '4 3' }
 
-export const TICK_STYLE = { fill: COLORS.tick, fontSize: 12 }
+export const TICK_STYLE = { fill: COLORS.tick, fontSize: 13 }
 
 /**
  * Axis settings that depend on the reading direction. In RTL time runs from

@@ -47,7 +47,7 @@ export default function TasksPage() {
     content = (
       // DOM order = reading and focus order: overdue first. On desktop the grid
       // places it in the end column without changing that order (WCAG 1.3.2).
-      <div className="grid gap-8 lg:grid-cols-3">
+      <div className="grid items-start gap-6 xl:grid-cols-3">
         <OverdueSection
           tasks={overdue}
           busyIds={busyIds}
@@ -59,7 +59,7 @@ export default function TasksPage() {
             actions.moveToToday(task, today)
             focusDayHeading()
           }}
-          className="lg:col-start-3 lg:row-start-1 lg:self-start"
+          className="xl:col-start-3 xl:row-start-1 xl:self-start"
         />
         <DayTasksSection
           date={date}
@@ -73,7 +73,7 @@ export default function TasksPage() {
           onEdit={setEditingTask}
           onDelete={setDeletingTask}
           onRowHidden={focusDayHeading}
-          className="flex flex-col gap-5 lg:col-span-2 lg:col-start-1 lg:row-start-1"
+          className="flex min-w-0 flex-col gap-5 xl:col-span-2 xl:col-start-1 xl:row-start-1"
         />
       </div>
     )

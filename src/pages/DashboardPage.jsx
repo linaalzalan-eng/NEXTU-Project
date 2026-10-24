@@ -1,6 +1,7 @@
-import { Sprout } from 'lucide-react'
-import { useMemo } from 'react'
+import { Plus, Sprout } from 'lucide-react'
+import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { PageHeader } from '@/components/layout/PageHeader.jsx'
+import { Button } from '@/components/ui/Button.jsx'
 import { EmptyState } from '@/components/ui/EmptyState.jsx'
 import { MotivationMessage } from '@/features/dashboard/components/MotivationMessage.jsx'
 import { OverdueBanner } from '@/features/dashboard/components/OverdueBanner.jsx'
@@ -26,6 +27,13 @@ import { useToday } from '@/lib/useToday.js'
 export default function DashboardPage() {
   const { t, formatDay } = useI18n()
   const today = useToday()
+  const [adding, setAdding] = useState(false)
+  const formId = useId()
+  const addButton = useRef(null)
+  const formRegion = useRef(null)
+  useEffect(() => {
+    if (adding) formRegion.current?.querySelector('input')?.focus()
+  }, [adding, today])
   const { tasks, busyIds, loadStatus, error, reload } = useTasks()
   const actions = useTaskActions()
 
@@ -36,7 +44,7 @@ export default function DashboardPage() {
   let content
   if (loadStatus === 'loading') {
     content = (
-      <div className="flex flex-col gap-8 lg:w-2/3">
+      <div className="flex flex-col gap-6">
         <TodaySummarySkeleton />
         <TaskListSkeleton />
       </div>
@@ -45,32 +53,36 @@ export default function DashboardPage() {
     content = <TasksLoadError error={error} onRetry={reload} />
   } else {
     content = (
-      <div className="grid gap-6 lg:grid-cols-3 lg:gap-8">
-        <div className="flex flex-col gap-8 lg:col-span-2">
+      <div className="flex flex-col gap-4">
+        <div className="grid items-stretch gap-3 xl:grid-cols-[minmax(0,1fr)_16rem]">
           <TodaySummary completed={stats.completed} remaining={stats.remaining} total={stats.total} rate={stats.rate} />
-
-          <section aria-labelledby="today-tasks-heading" className="flex flex-col gap-5">
-            <h2 id="today-tasks-heading" className="text-xl font-semibold text-ink">
-              {t('dashboard.tasksHeading')}
-            </h2>
-            {/* key: a new day starts with a fresh form whose date is the new today (BR-10). */}
-            <TaskForm key={today} defaultDate={today} today={today} onCreate={actions.create} />
-            {todayTasks.length > 0 ? (
-              <TaskList tasks={todayTasks} busyIds={busyIds} onToggle={actions.setCompleted} />
-            ) : (
-              <div className="rounded-lg border border-dashed border-line-strong">
-                <EmptyState icon={Sprout} title={t('dashboard.emptyTitle')} headingLevel="h3">
-                  {t('dashboard.emptyBody')}
-                </EmptyState>
-              </div>
-            )}
-          </section>
+          <MotivationMessage completed={stats.completed} total={stats.total} message={t(getMotivationKey(stats))} />
         </div>
-
-        <aside className="flex flex-col gap-6">
-          <MotivationMessage message={t(getMotivationKey(stats))} />
-          {overdueCount > 0 && <OverdueBanner count={overdueCount} />}
-        </aside>
+        <section aria-labelledby="today-tasks-heading" className="flex min-w-0 flex-col gap-3">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 id="today-tasks-heading" className="text-xl font-semibold text-ink">{t('dashboard.tasksHeading')}</h2>
+            <Button ref={addButton} icon={Plus} aria-expanded={adding} aria-controls={adding ? formId : undefined} onClick={() => setAdding(value => !value)}>
+              {t('dashboard.newTask')}
+            </Button>
+          </div>
+          {adding && (
+            <div id={formId} ref={formRegion} role="region" aria-label={t('dashboard.newTask')} onKeyDown={event => {
+              if (event.key === 'Escape') { event.preventDefault(); setAdding(false); addButton.current?.focus() }
+            }}>
+              <TaskForm key={today} defaultDate={today} today={today} onCreate={actions.create} />
+            </div>
+          )}
+          {todayTasks.length > 0 ? (
+            <TaskList tasks={todayTasks} busyIds={busyIds} onToggle={actions.setCompleted} />
+          ) : (
+            <div className="rounded-lg border border-dashed border-line-strong">
+              <EmptyState icon={Sprout} title={t('dashboard.emptyTitle')} headingLevel="h3" className="py-6">
+                {t('dashboard.emptyBody')}
+              </EmptyState>
+            </div>
+          )}
+        </section>
+        {overdueCount > 0 && <OverdueBanner count={overdueCount} />}
       </div>
     )
   }

@@ -47,8 +47,8 @@ export default function AnalyticsPage() {
   } else {
     content = (
       <div className="flex flex-col gap-6 lg:gap-8">
-        <div className="grid gap-6 lg:grid-cols-3 lg:gap-8">
-          <div className="lg:col-span-2">
+        <div className="grid items-stretch gap-6 xl:grid-cols-3">
+          <div className="min-w-0 xl:col-span-2">
             <WeekComparison {...comparison} />
           </div>
           <PersonalBest {...best} />

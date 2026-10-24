@@ -20,10 +20,10 @@ export function ChartFigure({ title, description, legend, summary, table, childr
         <div aria-hidden="true" className="mt-4">
           {children}
         </div>
-        <figcaption className="mt-4 text-ink-2">{summary}</figcaption>
+        <figcaption className="mt-5 text-sm leading-relaxed text-ink-2">{summary}</figcaption>
       </figure>
       <details className="group mt-4 border-t border-line pt-3">
-        <summary className="inline-flex cursor-pointer list-none items-center gap-1 rounded-md py-1 text-sm font-medium text-pine-700 [&::-webkit-details-marker]:hidden">
+        <summary className="inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-md px-2 py-2 text-sm font-medium text-pine-700 [&::-webkit-details-marker]:hidden">
           {t('charts.showTable')}
           <ChevronDown aria-hidden="true" className="size-4 transition-transform group-open:rotate-180" />
         </summary>
@@ -40,7 +40,7 @@ export function ChartFigure({ title, description, legend, summary, table, childr
  * Arabic through their axis settings (directionProps in chartTheme.js).
  */
 export function ChartCanvas({ children }) {
-  return <div dir="ltr">{children}</div>
+  return <div dir="ltr" className="min-w-0">{children}</div>
 }
 
 /** A swatch + label pair for chart legends. `swatch` is the class list of the small mark. */
@@ -65,7 +65,7 @@ export function ChartTooltip({ active, payload, render }) {
     // The drawing is LTR (ChartCanvas); the tooltip text follows the page language.
     <div
       dir={dir}
-      className="rounded-md border border-line bg-surface px-3 py-2 text-start text-sm text-ink shadow-raised"
+      className="max-w-[min(20rem,80vw)] rounded-md border border-line-strong bg-surface px-3 py-2 text-start text-sm text-ink shadow-raised"
     >
       {render(payload[0].payload)}
     </div>
@@ -80,7 +80,7 @@ export function ChartTable({ caption, columns, rows }) {
       <thead>
         <tr className="border-b border-line text-ink-3">
           {columns.map((column) => (
-            <th key={column} scope="col" className="py-2 pe-4 text-start font-medium">
+            <th key={column} scope="col" className="py-3 pe-4 text-start font-medium">
               {column}
             </th>
           ))}
@@ -89,11 +89,11 @@ export function ChartTable({ caption, columns, rows }) {
       <tbody className="tabular-nums">
         {rows.map(([header, ...cells]) => (
           <tr key={header} className="border-b border-line last:border-0">
-            <th scope="row" className="py-2 pe-4 text-start font-medium text-ink">
+            <th scope="row" className="py-3 pe-4 text-start font-medium text-ink">
               {header}
             </th>
             {cells.map((cell, index) => (
-              <td key={index} className="py-2 pe-4 text-ink-2">
+              <td key={index} className="py-3 pe-4 text-ink-2">
                 {cell}
               </td>
             ))}

@@ -53,7 +53,7 @@ export function Dialog({ open, onClose, title, description, children, footer, on
       onClose={handleClose}
       onMouseDown={handleMouseDown}
       onClick={handleClick}
-      className="m-auto w-[calc(100%-2rem)] max-w-md rounded-xl bg-surface p-0 text-ink shadow-overlay"
+      className="m-auto max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-md overflow-y-auto border border-line rounded-xl bg-surface p-0 text-ink shadow-overlay"
     >
       <Body {...(onSubmit && { onSubmit, noValidate: true })}>
         <div className="p-6">

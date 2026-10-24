@@ -31,10 +31,10 @@ function Toast({ toast, onDismiss }) {
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
-      className="pointer-events-auto flex items-start gap-3 rounded-lg border border-line bg-surface py-3 ps-4 pe-2 text-sm text-ink shadow-overlay"
+      className="pointer-events-auto flex flex-wrap items-start gap-2 rounded-lg border border-line bg-surface py-3 ps-4 pe-2 text-sm text-ink shadow-overlay"
     >
       <Icon aria-hidden="true" className={cx('mt-0.5 size-[1.15rem] shrink-0', ICON_COLORS[toast.variant])} />
-      <p className="flex-1 py-0.5">{toast.message}</p>
+      <p className="min-w-0 flex-1 basis-24 break-words py-0.5">{toast.message}</p>
       {toast.action && (
         <button
           type="button"

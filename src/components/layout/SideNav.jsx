@@ -1,3 +1,4 @@
+import { ThemeSwitch } from './ThemeSwitch.jsx'
 import { NavLink } from 'react-router'
 import { LogoutButton } from '@/features/auth/components/LogoutButton.jsx'
 import { useI18n } from '@/lib/i18n/useI18n.js'
@@ -20,7 +21,7 @@ export function SideNav() {
   const { t } = useI18n()
 
   return (
-    <aside className="fixed inset-y-0 start-0 z-30 hidden w-64 flex-col border-e border-line bg-paper px-4 py-6 lg:flex">
+    <aside className="fixed inset-y-0 start-0 z-30 hidden w-64 flex-col overflow-y-auto border-e border-line bg-surface px-4 py-7 lg:flex">
       <BrandMark className="px-2" />
       <p className="mt-3 px-2 text-sm leading-snug text-ink-3">{t('app.tagline')}</p>
 
@@ -37,9 +38,10 @@ export function SideNav() {
         </ul>
       </nav>
 
-      <div className="mt-auto flex flex-col gap-1 border-t border-line pt-4">
+      <div className="mt-auto flex flex-col gap-2 border-t border-line pt-5">
         <LogoutButton className={cx(sideLinkClass({ isActive: false }), 'w-full')} />
-        <LanguageSwitch className="justify-start" />
+        <LanguageSwitch className="w-full" />
+        <ThemeSwitch />
       </div>
     </aside>
   )

@@ -20,7 +20,7 @@ export default function ForgotPasswordPage() {
     <>
       <AuthHeader title={t('auth.forgot.title')} lede={t('auth.forgot.lede')} />
       <ForgotPasswordForm onSent={setSentTo} />
-      <Link to="/login" className={textLink({ className: 'mt-8 inline-flex items-center gap-1.5 text-sm' })}>
+      <Link to="/login" className={textLink({ className: 'mt-7 flex items-center justify-center gap-1.5 border-t border-line pt-6 text-sm' })}>
         <ArrowLeft aria-hidden="true" className="size-4 rtl:-scale-x-100" />
         {t('auth.forgot.back')}
       </Link>

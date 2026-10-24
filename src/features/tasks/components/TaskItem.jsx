@@ -26,7 +26,7 @@ export function TaskItem({ task, meta, action, locked = false, onToggle, onEdit,
   // the Arabic UI reads left to right but sits on the right.
 
   return (
-    <li className="flex items-start gap-1 py-1.5 ps-1 pe-2">
+    <li className="flex min-w-0 flex-wrap items-start gap-1 rounded-lg py-2 ps-1 pe-2 transition-colors hover:bg-sunken/50 sm:ps-2 sm:pe-3">
       <span className="relative grid size-11 shrink-0 place-items-center">
         <input
           id={checkboxId}
@@ -43,7 +43,7 @@ export function TaskItem({ task, meta, action, locked = false, onToggle, onEdit,
           className={cx(
             markClass,
             'pointer-events-none border-line-strong text-transparent',
-            'peer-checked:border-pine-600 peer-checked:bg-pine-600 peer-checked:text-white peer-aria-disabled:opacity-50',
+            'peer-checked:border-pine-600 peer-checked:bg-pine-600 peer-checked:text-on-primary peer-aria-disabled:opacity-50',
           )}
         >
           <Check className="size-3.5" strokeWidth={3} />
@@ -51,7 +51,7 @@ export function TaskItem({ task, meta, action, locked = false, onToggle, onEdit,
       </span>
 
       <div className="min-w-0 flex-1 py-2.5">
-        <label htmlFor={checkboxId} className="block cursor-pointer break-words">
+        <label htmlFor={checkboxId} className="block cursor-pointer [overflow-wrap:anywhere]">
           <span dir="auto" className={titleClass}>
             {task.title}
           </span>

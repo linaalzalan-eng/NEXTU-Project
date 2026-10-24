@@ -19,7 +19,7 @@ function DayTick({ x, y, payload, todayLabel }) {
       x={x}
       y={y + 14}
       textAnchor="middle"
-      fontSize={12}
+      fontSize={13}
       fontWeight={isToday ? 600 : 400}
       fill={isToday ? COLORS.tickStrong : COLORS.tick}
     >
@@ -31,7 +31,7 @@ function DayTick({ x, y, payload, todayLabel }) {
 /**
  * Per-day completed and planned tasks for the current and previous FULL weeks,
  * Saturday to Friday (FR-31, US-19). Each day has two stacked columns: the
- * bottom part is completed, the light gray top part is planned but not done, so the
+ * bottom part is completed, the neutral top part is planned but not done, so the
  * full height is the day's total. This week is solid pine; last week is the
  * dashed "ghost" (DESIGN_SYSTEM §1). Because these are full weeks, tasks planned
  * for later this week are included; the "so far" comparison is WeekComparison (BR-04).
@@ -68,7 +68,7 @@ export function DailyChart({ currentWeek, previousWeek, today }) {
           <LegendItem swatch="border-[1.5px] border-dashed border-line-strong bg-surface">
             {t('charts.lastWeekCompleted')}
           </LegendItem>
-          <LegendItem swatch="bg-line">{t('charts.plannedNotDone')}</LegendItem>
+          <LegendItem swatch="bg-line-strong">{t('charts.plannedNotDone')}</LegendItem>
         </ul>
       }
       summary={t('charts.dailySummary', { current: describe(currentWeek), previous: describe(previousWeek) })}
@@ -91,7 +91,7 @@ export function DailyChart({ currentWeek, previousWeek, today }) {
               tick={<DayTick todayLabel={todayLabel} />}
               {...axes.xAxis}
             />
-            <YAxis allowDecimals={false} tickLine={false} axisLine={false} width={28} tick={TICK_STYLE} {...axes.yAxis} />
+            <YAxis allowDecimals={false} tickLine={false} axisLine={false} width={36} tick={TICK_STYLE} {...axes.yAxis} />
             <Tooltip
               cursor={{ fill: COLORS.cursor }}
               content={

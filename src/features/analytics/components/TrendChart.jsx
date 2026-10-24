@@ -85,7 +85,7 @@ export function TrendChart({ history, summary }) {
           <BarChart data={rows} margin={MARGIN} {...CHART_PROPS}>
             <CartesianGrid vertical={false} stroke={COLORS.grid} />
             <XAxis {...xAxis} />
-            <YAxis allowDecimals={false} tickLine={false} axisLine={false} width={28} tick={TICK_STYLE} {...axes.yAxis} />
+            <YAxis allowDecimals={false} tickLine={false} axisLine={false} width={36} tick={TICK_STYLE} {...axes.yAxis} />
             <Tooltip cursor={{ fill: COLORS.cursor }} content={tooltip} />
             <Bar dataKey="completed" maxBarSize={24} radius={[3, 3, 0, 0]} {...SERIES_PROPS}>
               {rows.map((row) => (
@@ -108,7 +108,7 @@ export function TrendChart({ history, summary }) {
               unit="%"
               tickLine={false}
               axisLine={false}
-              width={40}
+              width={46}
               tick={TICK_STYLE}
               {...axes.yAxis}
             />

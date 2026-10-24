@@ -53,7 +53,7 @@ export function ResetPasswordForm({ onExpired }) {
         dir="ltr"
         {...form.field('confirmPassword')}
       />
-      <Button type="submit" loading={form.submitting} className="mt-2 w-full">
+      <Button type="submit" loading={form.submitting} className="mt-1 h-12 w-full">
         {t('auth.reset.submit')}
       </Button>
     </form>

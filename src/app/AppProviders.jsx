@@ -1,3 +1,4 @@
+import { ThemeProvider } from '@/lib/theme/ThemeProvider.jsx'
 import { BrowserRouter } from 'react-router'
 import { ToastProvider } from '@/components/ui/ToastProvider.jsx'
 import { AuthProvider } from '@/features/auth/AuthProvider.jsx'
@@ -10,14 +11,16 @@ import { ErrorBoundary } from './ErrorBoundary.jsx'
  */
 export function AppProviders({ children }) {
   return (
-    <I18nProvider>
-      <ErrorBoundary>
-        <BrowserRouter>
-          <ToastProvider>
-            <AuthProvider>{children}</AuthProvider>
-          </ToastProvider>
-        </BrowserRouter>
-      </ErrorBoundary>
-    </I18nProvider>
+    <ThemeProvider>
+      <I18nProvider>
+        <ErrorBoundary>
+          <BrowserRouter>
+            <ToastProvider>
+              <AuthProvider>{children}</AuthProvider>
+            </ToastProvider>
+          </BrowserRouter>
+        </ErrorBoundary>
+      </I18nProvider>
+    </ThemeProvider>
   )
 }

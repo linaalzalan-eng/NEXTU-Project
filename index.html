@@ -3,16 +3,34 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#F6F4EF" />
-    <meta name="description" content="NEXTU — خطّط ليومك وقارن تقدّمك بنسختك السابقة. تعرّف على نسختك القادمة." />
+    <meta name="theme-color" content="#F8F7F3" />
+    <meta name="description" content="NextU — خطّط ليومك وقارن تقدّمك بنسختك السابقة. تعرّف على نسختك القادمة." />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <script id="theme-init">
+      // Keep key, validation and palette in sync with src/lib/theme/theme.js.
+      (() => {
+        let preference = 'light';
+        try { preference = localStorage.getItem('nextu.theme') || 'light'; } catch {}
+        if (preference === 'system') preference = window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        if (!['light', 'dark'].includes(preference)) preference = 'light';
+        const dark = preference === 'dark';
+        const theme = dark ? 'dark' : 'light';
+        const root = document.documentElement;
+        root.dataset.theme = theme;
+        root.style.colorScheme = theme;
+        root.style.backgroundColor = dark ? '#171c1a' : '#f8f7f3';
+        document.querySelector('meta[name="theme-color"]').setAttribute('content', dark ? '#171c1a' : '#f8f7f3');
+        document.querySelector('link[rel="icon"]').setAttribute('href', '/brand/icon-' + theme + '.svg');
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
     />
-    <title>NEXTU</title>
+    <title>NextU</title>
     <script>
       // Apply the saved language before the first paint to avoid a direction flash (D-02).
       try {

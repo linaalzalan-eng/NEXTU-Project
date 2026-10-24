@@ -20,10 +20,11 @@ export function Input({ id, label, hint, error, className, ...props }) {
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy}
         className={cx(
-          'h-12 w-full rounded-md border bg-surface px-3.5 text-base text-ink transition-colors duration-150',
+          'nextu-input h-12 w-full min-w-0 rounded-md border bg-field px-3.5 text-base text-ink transition-colors duration-150',
           'placeholder:text-ink-3 disabled:cursor-not-allowed disabled:opacity-50',
           error ? 'border-danger-600' : 'border-line-strong not-disabled:hover:border-ink-2',
         )}
+        dir={props.type === 'date' ? 'ltr' : undefined}
         {...props}
       />
       {hint && (

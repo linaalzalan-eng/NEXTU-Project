@@ -29,7 +29,7 @@ function WeekRow({ label, week, ghost }) {
           {label}
           <span className="block text-sm font-normal text-ink-3">{range}</span>
         </p>
-        <p className="text-sm text-ink-3">
+        <p className="text-sm text-ink-2">
           {t('analytics.completedOf', { completed: week.completed, total: week.total })}
           <span className="mx-2" aria-hidden="true">
             ·
@@ -57,7 +57,7 @@ function Delta({ label, value }) {
   if (value === null) {
     return (
       <div>
-        <dt className="text-sm text-ink-3">{label}</dt>
+        <dt className="text-sm text-ink-2">{label}</dt>
         <dd className="mt-1 text-ink-2">{t('analytics.notEnoughData')}</dd>
       </div>
     )
@@ -66,14 +66,14 @@ function Delta({ label, value }) {
   const Icon = value > 0 ? TrendingUp : value < 0 ? TrendingDown : Minus
   return (
     <div>
-      <dt className="text-sm text-ink-3">{label}</dt>
+      <dt className="text-sm text-ink-2">{label}</dt>
       <dd className="mt-1 flex items-center gap-2">
         {/* Time runs toward the end side, so in RTL trend arrows mirror to point that way. */}
         <Icon
           aria-hidden="true"
           className={cx('size-5 shrink-0 rtl:-scale-x-100', value > 0 ? 'text-pine-600' : 'text-ink-2')}
         />
-        <bdi dir="ltr" className="text-xl font-semibold text-ink tabular-nums">
+        <bdi dir="ltr" className="text-3xl font-semibold text-ink tabular-nums">
           {signed(value)}
         </bdi>
       </dd>
@@ -89,7 +89,7 @@ export function WeekComparison({ current, previous, completedDelta, rateDelta })
   const { t } = useI18n()
 
   return (
-    <Card title={t('analytics.comparisonHeading')} description={t('analytics.comparisonHint')}>
+    <Card title={t('analytics.comparisonHeading')} description={t('analytics.comparisonHint')} className="h-full">
       <div className="flex flex-col gap-5">
         <WeekRow label={t('analytics.thisWeek')} week={current} />
         <WeekRow label={t('analytics.lastWeek')} week={previous} ghost />

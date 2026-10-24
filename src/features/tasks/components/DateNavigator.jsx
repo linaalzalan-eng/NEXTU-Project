@@ -28,6 +28,7 @@ export function DateNavigator({ date, today, onChange }) {
       />
       <input
         type="date"
+        dir="ltr"
         aria-label={t('dateNav.pick')}
         value={date}
         min={range.min}
@@ -37,7 +38,7 @@ export function DateNavigator({ date, today, onChange }) {
           const value = event.target.value
           if (isValidDateString(value) && value >= range.min && value <= range.max) onChange(value)
         }}
-        className="h-11 rounded-md border border-line-strong bg-surface px-3 text-sm text-ink transition-colors hover:border-ink-2"
+        className="h-11 min-w-0 max-w-full flex-1 rounded-md border border-line-strong bg-field px-2 text-sm sm:flex-none sm:px-3 text-ink transition-colors hover:border-ink-2"
       />
       <Button
         variant="secondary"

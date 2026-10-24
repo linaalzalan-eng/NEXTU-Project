@@ -35,7 +35,7 @@ export default function ResetPasswordPage() {
   return (
     <>
       <AuthHeader title={t('auth.reset.invalidTitle')} lede={t('auth.reset.invalidBody')} />
-      <Link to="/forgot-password" className={buttonStyles({ className: 'w-full' })}>
+      <Link to="/forgot-password" className={buttonStyles({ className: 'h-12 w-full' })}>
         {t('auth.reset.invalidAction')}
       </Link>
     </>

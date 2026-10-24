@@ -18,7 +18,7 @@ export function OverdueSection({ tasks, busyIds, onToggle, onMoveToToday, classN
   return (
     <section
       aria-labelledby={headingId}
-      className={cx('rounded-lg border border-warning-700/25 bg-warning-50 p-4', className)}
+      className={cx('min-w-0 rounded-lg border border-warning-700/25 bg-warning-50 p-4 md:p-5', className)}
     >
       <h2 id={headingId} className="font-semibold text-warning-700">
         {t('tasks.overdueHeading', { count: tasks.length })}

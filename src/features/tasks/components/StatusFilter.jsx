@@ -10,7 +10,7 @@ export function StatusFilter({ value, onChange }) {
     <div
       role="group"
       aria-label={t('filter.label')}
-      className="inline-flex self-start overflow-hidden rounded-md border border-line-strong bg-surface"
+      className="inline-flex max-w-full flex-wrap self-start gap-1 rounded-md border border-line bg-sunken p-1"
     >
       {STATUS_FILTERS.map((status) => {
         const active = status === value
@@ -21,8 +21,8 @@ export function StatusFilter({ value, onChange }) {
             aria-pressed={active}
             onClick={() => onChange(status)}
             className={cx(
-              'h-11 border-s border-line-strong px-4 text-sm font-medium transition-colors duration-150 first:border-s-0',
-              active ? 'bg-pine-50 text-pine-700' : 'text-ink-2 hover:bg-sunken hover:text-ink',
+              'min-h-11 rounded-md px-3 text-sm font-medium transition-colors duration-150 sm:px-4',
+              active ? 'bg-surface text-pine-700 shadow-hairline' : 'text-ink-2 hover:bg-sunken hover:text-ink',
             )}
           >
             {t(`filter.${status}`)}

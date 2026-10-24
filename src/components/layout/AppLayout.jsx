@@ -1,3 +1,4 @@
+import { ThemeSwitch } from './ThemeSwitch.jsx'
 import { Suspense } from 'react'
 import { Outlet } from 'react-router'
 import { LogoutButton } from '@/features/auth/components/LogoutButton.jsx'
@@ -15,16 +16,17 @@ export function AppLayout() {
       <SkipLink />
       <SideNav />
 
-      <header className="sticky top-0 z-20 flex h-16 items-center justify-between gap-2 border-b border-line bg-paper px-4 md:px-6 lg:hidden">
+      <header className="sticky top-0 z-20 flex min-h-16 items-center justify-between gap-2 border-b border-line bg-surface px-4 py-2 md:px-6 lg:hidden">
         <BrandMark />
         <div className="flex items-center gap-1">
-          <LanguageSwitch />
+          <ThemeSwitch compact />
+          <LanguageSwitch compact />
           <LogoutButton iconOnly />
         </div>
       </header>
 
-      <main id="main" tabIndex={-1} className="pb-28 outline-none lg:ps-64 lg:pb-16">
-        <div className="mx-auto w-full max-w-6xl px-4 pt-6 md:px-6 lg:px-10 lg:pt-12">
+      <main id="main" tabIndex={-1} className="pb-[calc(7rem+env(safe-area-inset-bottom))] outline-none lg:ps-64 lg:pb-16">
+        <div className="mx-auto w-full min-w-0 max-w-6xl px-4 pt-7 md:px-6 md:pt-9 lg:px-10 lg:pt-10">
           <Suspense fallback={<PageLoader />}>
             <Outlet />
           </Suspense>

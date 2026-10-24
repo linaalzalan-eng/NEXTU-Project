@@ -8,7 +8,7 @@ function Record({ label, count, caption }) {
     <div>
       <dt className="text-sm text-ink-3">{label}</dt>
       <dd className="mt-0.5">
-        <span className="block text-3xl font-semibold text-ember-700">{count}</span>
+        <span className="block text-3xl font-semibold text-ember-700 tabular-nums">{count}</span>
         <span className="text-sm text-ink-3">{caption}</span>
       </dd>
     </div>
@@ -30,6 +30,7 @@ export function PersonalBest({ bestDay, bestWeek, isTodayBest, isThisWeekBest })
   return (
     <Card
       title={t('analytics.bestHeading')}
+      className="h-full"
       description={t('analytics.bestDescription')}
       action={
         <span className="grid size-10 shrink-0 place-items-center rounded-full bg-ember-50 text-ember-600">
@@ -49,7 +50,7 @@ export function PersonalBest({ bestDay, bestWeek, isTodayBest, isThisWeekBest })
               </div>
             </div>
           )}
-          <dl className="flex flex-col gap-5">
+          <dl className="grid grid-cols-2 gap-5 xl:grid-cols-1">
             <Record label={t('analytics.bestDay')} count={bestDay.completed} caption={day(bestDay.date)} />
             <Record
               label={t('analytics.bestWeek')}

@@ -1,54 +1,38 @@
 import { Outlet } from 'react-router'
 import { useI18n } from '@/lib/i18n/useI18n.js'
+import { AuthProductPreview } from './AuthProductPreview.jsx'
 import { BrandMark } from './BrandMark.jsx'
 import { LanguageSwitch } from './LanguageSwitch.jsx'
+import { ThemeSwitch } from './ThemeSwitch.jsx'
 import { SkipLink } from './SkipLink.jsx'
 
-/**
- * Shell for the account screens. On desktop the start half is an ink panel with
- * the product philosophy; the form sits in the end half.
- */
+/** Shared visual shell only; existing auth routes and form handlers remain unchanged. */
 export function AuthLayout() {
   const { t } = useI18n()
-
   return (
-    <div className="grid min-h-dvh lg:grid-cols-2">
+    <div data-auth-design="product-preview-v2" className="min-h-dvh lg:grid lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
       <SkipLink />
-
-      <aside className="relative hidden overflow-hidden bg-ink p-12 text-paper lg:flex lg:flex-col">
+      <aside className="hidden min-h-dvh flex-col bg-inverse px-10 py-8 text-on-inverse lg:flex xl:px-14">
         <BrandMark inverted />
-        <div className="my-auto max-w-md">
-          <p className="text-4xl leading-tight font-semibold">{t('auth.quote')}</p>
-          <p className="mt-5 text-lg text-paper/70">{t('auth.quoteNote')}</p>
+        <div className="mx-auto my-auto w-full max-w-[27rem] py-8">
+          <p className="mb-3 text-xs font-medium text-inverse-muted">{t('auth.branding.eyebrow')}</p>
+          <h2 className="max-w-md whitespace-pre-line text-[2rem] leading-[1.25] font-semibold xl:text-[2.5rem]">{t('auth.branding.title')}</h2>
+          <p className="mt-4 max-w-sm text-sm leading-relaxed text-inverse-muted">{t('auth.branding.subtitle')}</p>
+          <div className="mt-7 max-w-[27rem]"><AuthProductPreview /></div>
         </div>
-        {/* The "past self" motif at large scale: dashed past, solid present. */}
-        <svg
-          aria-hidden="true"
-          viewBox="0 0 200 200"
-          className="absolute -end-24 -bottom-24 size-96 text-paper/15"
-        >
-          <circle cx="100" cy="100" r="80" fill="none" stroke="currentColor" strokeWidth="6" strokeDasharray="12 12" />
-          <path
-            d="M100 20a80 80 0 0 1 0 160"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="6"
-            strokeLinecap="round"
-            className="text-pine-50/40"
-          />
-        </svg>
+        <p className="text-xs text-inverse-muted">{t('auth.branding.footer')}</p>
       </aside>
-
-      <div className="flex flex-col">
-        <header className="flex h-16 items-center justify-between px-4 md:px-6 lg:justify-end lg:px-10">
+      <div className="flex min-h-dvh min-w-0 flex-col">
+        <header className="flex min-h-20 items-center justify-between gap-3 px-5 py-3 sm:px-8 lg:justify-end lg:px-10">
           <BrandMark className="lg:hidden" />
-          <LanguageSwitch />
+          <div className="flex items-center gap-2"><ThemeSwitch compact /><LanguageSwitch /></div>
         </header>
-        <main id="main" tabIndex={-1} className="flex flex-1 items-center justify-center px-4 py-10 outline-none md:px-6">
-          <div className="w-full max-w-sm">
+        <main id="main" tabIndex={-1} className="flex flex-1 items-center justify-center px-5 pb-12 pt-6 outline-none sm:px-8 lg:px-12 lg:pb-20 lg:pt-8">
+          <div className="w-full max-w-[25rem]">
             <Outlet />
           </div>
         </main>
+        <p className="px-6 pb-6 text-center text-xs text-ink-3 lg:hidden">{t('auth.branding.footer')}</p>
       </div>
     </div>
   )

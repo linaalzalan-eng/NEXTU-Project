@@ -1,6 +1,6 @@
 const ar = {
   app: {
-    name: 'NEXTU',
+    name: 'NextU',
     tagline: 'تعرّف على نسختك القادمة.',
   },
   common: {
@@ -18,7 +18,9 @@ const ar = {
     analytics: 'التحليلات',
     logout: 'تسجيل الخروج',
   },
+  theme: { label: 'المظهر', light: 'فاتح', dark: 'داكن', switchTo: 'التبديل إلى المظهر {theme}' },
   language: {
+    label: 'اللغة',
     change: 'تغيير اللغة إلى الإنجليزية',
   },
   task: {
@@ -39,7 +41,9 @@ const ar = {
     left: 'متبقية',
     planned: 'مخطط لها',
     tasksHeading: 'مهام اليوم',
-    messageHeading: 'كلمة لليوم',
+    messageHeading: 'رفيق NextU',
+    buddyAction: 'حيّ رفيق NextU',
+    newTask: 'مهمة جديدة',
     emptyTitle: 'خطّط ليومك',
     emptyBody: 'ابدأ بمهمة صغيرة واحدة. كل مهمة تُنجزها تُحسب لك.',
     overdueTitle: 'مهام مفتوحة من أيام سابقة: {count}',
@@ -194,6 +198,20 @@ const ar = {
     rate: 'نسبة الإنجاز',
   },
   auth: {
+    branding: {
+      eyebrow: 'مساحتك للنمو الشخصي',
+      title: 'كل يوم، خطوة.\nنحو نسختك القادمة.',
+      subtitle: 'نافس نسختك السابقة، لا الآخرين.',
+      footer: 'وتيرتك. تقدّمك.',
+    },
+    preview: {
+      label: 'معاينة المنتج — بيانات تجريبية', title: 'معاينة التقدّم', sample: 'بيانات تجريبية',
+      disclaimer: 'بيانات تجريبية فقط، لا تمثل نشاط حسابك.',
+      today: 'تقدّم اليوم', dailyCount: 'أُنجزت 8 من 10 مهام', week: 'أسبوعك', completed: 'مهمة منجزة',
+      growth: '3 مهام أكثر من الأسبوع السابق', comparison: '21 هذا الأسبوع · 18 الأسبوع السابق',
+      days: { sat: 'سبت', sun: 'أحد', mon: 'إثنين', tue: 'ثلاثاء', wed: 'أربعاء', thu: 'خميس', fri: 'جمعة' },
+    },
+
     quote: 'تعرّف على نسختك القادمة.',
     quoteNote: 'خطّط ليومك، وأنجز ما تستطيع، وشاهد كيف تنمو.',
     email: 'البريد الإلكتروني',

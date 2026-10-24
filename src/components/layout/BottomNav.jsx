@@ -10,7 +10,7 @@ export function BottomNav() {
   return (
     <nav
       aria-label={t('nav.label')}
-      className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-paper pb-[env(safe-area-inset-bottom)] lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface pb-[env(safe-area-inset-bottom)] lg:hidden"
     >
       <ul className="mx-auto grid h-16 max-w-md grid-cols-3">
         {NAV_ITEMS.map(({ to, labelKey, icon: Icon }) => (
@@ -20,7 +20,7 @@ export function BottomNav() {
               className={({ isActive }) =>
                 cx(
                   'relative flex h-full flex-col items-center justify-center gap-1 text-xs font-medium transition-colors duration-150',
-                  isActive ? 'text-pine-700' : 'text-ink-3 hover:text-ink',
+                  isActive ? 'bg-pine-50/60 text-pine-700' : 'text-ink-3 hover:text-ink',
                 )
               }
             >

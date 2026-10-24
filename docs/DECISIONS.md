@@ -281,3 +281,36 @@ No decisions are open.
 - Keep the Free-plan Leaked Password Protection Disabled warning as an accepted limitation; do not upgrade or change security settings. No leaked-password screening is supplied by other validation.
 - Authorize Phase 5 commit, then Phase 6 implementation and a separate commit. Preserve current MVP scope/design/languages. Reuse successful unchanged checks; run only new or affected verification.
 - Public deployment, destructive database operations and significant security changes retain their approval gates. Phase 6 may be ready for deployment without claiming a deployed Beta.
+
+
+## D-32 — Owner-approved NextU identity and theme redesign
+- **Status/date:** Approved in conversation, 2026-10-22. Phase-by-phase approval; no commit/push/merge/deploy authorized.
+- Replace the prior light-only identity with forest #174F43, sage #DCE9DE, warm canvas #F8F7F3 and charcoal #171C1A/#242B27. Preserve IBM Plex Sans Arabic and all business/data layers.
+- Keep existing token names for compatibility; add on-primary/on-danger and inverse roles. Dark actions may use lighter sage for contrast while the brand color stays constant. Legacy ember names now use sage achievement colors.
+- Theme state is separate from auth/tasks and uses nextu.theme, System default, pre-paint initialization and a native translated select in existing shells. No new settings route or dependency.
+- Logo: authored U with a rising arrow stem, full/icon/favicon SVG variants; do not mirror the mark in RTL.
+- Current phase delivers the foundation only. Shared-component, auth-page and application-layout redesign remain individually gated in REDESIGN_PLAN.md.
+
+
+## D-33 — Owner-scoped Phase 2 authentication redesign
+- **Status/date:** Explicitly approved in conversation, 2026-10-23; implementation accepted by owner 2026-10-24.
+- The owner places authentication-page refinement in Phase 2, superseding its earlier Phase 3 placement in REDESIGN_PLAN. Preserve valid uncommitted work and exclude project-presentation. Do not begin Phase 3, commit, push or deploy.
+- Keep the existing shared AuthLayout and translated static AuthProductPreview: a meaningful daily/weekly illustration replaces the decorative cropped circle. Sample counts are internally consistent and never connected to account/task data.
+- Replace the foundational native appearance select with the existing custom translated radio menu, using semantic colors, a body portal, viewport clamping, keyboard operation and focus/dismissal handling. This supersedes the native-select UI choice in D-32; theme provider, storage, pre-paint and Supabase contracts remain unchanged. No dependency added.
+- Verify the actual running application in Chrome, alongside regression tests, lint and production build. Browser checks use no credentials or real email/recovery token; live inbox/recovery checks are not claimed.
+
+
+## D-34 — Owner-approved Phase 3 application refinement
+- **Status/date:** Phase 2 accepted; Phase 3 plan and complete inline implementation explicitly authorized in conversation, 2026-10-24. No intermediate approval required within scope. No commit, push, merge or deployment authorized.
+- Includes Dashboard, Tasks, Analytics, existing navigation and shared UI, superseding the older application-page Phase 4 placement. Reuse existing React/Vite/JS, Tailwind, Recharts, semantic tokens and components; no dependencies, features, service/auth/data/business-rule changes. Preserve project-presentation.
+- Continue in the existing feature checkout to preserve valid uncommitted Phase 1/2 work. Daily progress is full-width; application support columns begin at xl so lg sidebar layouts retain usable content width.
+- Retain task handlers, focus restoration, analytics calculations and accessible chart summaries/tables. Improve only presentation and the appearance menu's layout-viewport measurement, proven by a failing scrollbar regression before fixing.
+- Neutral secondary text is #606F65 in Light to meet 4.5:1 on sunken. Planned chart segments use existing line-strong to meet 3:1 in both themes; preserve solid present/dashed past.
+- Browser QA uses existing mock services on a separate localhost port and temporary Chrome profile, without real accounts or database writes. This verifies UI behavior; live Supabase/email/production redirects remain separate deployment checks (D-31).
+
+
+## D-35 — Owner-requested final UX refinements — 2026-10-24
+- Supersedes the System/menu interaction from D-32–D-34: only Light/Dark via a sun/moon button. Migrate saved System once using OS preference, persist an explicit theme; default invalid/missing/blocked storage to Light. Pre-paint and provider share the rule.
+- Dashboard compact summary and New task expandable form reuse existing TaskForm/actions/validation. Focus on opening and Escape restoration; no modal duplication. Date fields use LTR numeric order.
+- Replace motivational quote presentation with lightweight interactive emoji Buddy. Reuse getMotivationKey for matching message/expression bands; raw counts prevent a rounded 100% from falsely celebrating. CSS motion respects reduced-motion; no dependencies, API, data or business-rule changes.
+- No project-presentation modifications or commit/push/merge/deployment authorized.

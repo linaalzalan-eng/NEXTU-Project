@@ -50,7 +50,7 @@ export function ForgotPasswordForm({ onSent }) {
         </Alert>
       )}
       <Input label={t('auth.email')} type="email" autoComplete="email" dir="ltr" {...form.field('email')} />
-      <Button type="submit" loading={form.submitting} className="mt-2 w-full">
+      <Button type="submit" loading={form.submitting} className="mt-1 h-12 w-full">
         {t('auth.forgot.submit')}
       </Button>
     </form>

@@ -18,7 +18,7 @@ async function openDashboard(tasks = []) {
 
 const hero = () => screen.getByRole('region', { name: 'Today’s progress' })
 const count = (label) => within(hero()).getByText(label, { selector: 'dt' }).nextElementSibling.textContent
-const message = () => screen.getByRole('region', { name: 'A word for today' })
+const message = () => screen.getByRole('region', { name: 'NextU Buddy' })
 
 describe('Dashboard (integration)', () => {
   beforeEach(() => {
@@ -68,7 +68,10 @@ describe('Dashboard (integration)', () => {
     expect(screen.getByText('Plan your day')).toBeInTheDocument()
     expect(message()).toHaveTextContent('A fresh page.')
 
-    await user.type(screen.getByLabelText('New task'), 'Call the bank{Enter}')
+    expect(screen.queryByRole('textbox', { name: 'New task' })).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'New task', exact: true }))
+    expect(screen.getByRole('textbox', { name: 'New task' })).toHaveFocus()
+    await user.type(screen.getByRole('textbox', { name: 'New task' }), 'Call the bank{Enter}')
     expect(await screen.findByRole('checkbox', { name: 'Call the bank' })).not.toBeChecked()
     await waitFor(() => expect(count('Planned')).toBe('1'))
     expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '0')
@@ -85,9 +88,20 @@ describe('Dashboard (integration)', () => {
     expect(screen.getByRole('link', { name: 'Review in Tasks' })).toHaveAttribute('href', '/tasks')
   })
 
+  it('collapses the new task form with Escape and restores focus', async () => {
+    const { user } = await openDashboard()
+    const trigger = screen.getByRole('button', { name: 'New task', exact: true })
+    await user.click(trigger)
+    expect(trigger).toHaveAttribute('aria-expanded', 'true')
+    await user.keyboard('{Escape}')
+    expect(screen.queryByRole('textbox', { name: 'New task' })).not.toBeInTheDocument()
+    expect(trigger).toHaveFocus()
+    expect(trigger).toHaveAttribute('aria-expanded', 'false')
+  })
+
   // IT-06 (BR-10)
   it('moves to the new day when the page becomes visible after midnight', async () => {
-    await openDashboard([
+    const { user } = await openDashboard([
       makeTask({ title: 'Read', taskDate: '2026-10-14', status: 'completed' }),
       makeTask({ title: 'Run', taskDate: '2026-10-14' }),
       makeTask({ title: 'Plan', taskDate: '2026-10-15' }),
@@ -107,6 +121,7 @@ describe('Dashboard (integration)', () => {
     // Yesterday's unfinished task is now overdue.
     expect(screen.getByText('Open tasks from earlier days: 1')).toBeInTheDocument()
     // Quick add now defaults to the new day.
+    await user.click(screen.getByRole('button', { name: 'New task', exact: true }))
     expect(screen.getByLabelText('Date')).toHaveValue('2026-10-15')
   })
 })

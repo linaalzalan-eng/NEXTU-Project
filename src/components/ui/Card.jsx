@@ -12,15 +12,15 @@ export function Card({ title, description, action, className, children }) {
   return (
     <Tag
       aria-labelledby={title ? titleId : undefined}
-      className={cx('rounded-lg border border-line bg-surface p-5 shadow-hairline lg:p-6', className)}
+      className={cx('min-w-0 rounded-lg border border-line bg-surface p-5 shadow-hairline md:p-6', className)}
     >
       {title && (
-        <div className="mb-4 flex items-start justify-between gap-4">
-          <div>
+        <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
+          <div className="min-w-0 flex-1">
             <h2 id={titleId} className="text-lg font-semibold text-ink">
               {title}
             </h2>
-            {description && <p className="mt-0.5 text-sm text-ink-3">{description}</p>}
+            {description && <p className="mt-1 text-sm leading-relaxed text-ink-2">{description}</p>}
           </div>
           {action}
         </div>
